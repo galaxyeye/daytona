@@ -1,13 +1,28 @@
-# Daytona SDK for Python
+# Platon-Daytona SDK for Python
+
+[![PyPI version](https://badge.fury.io/py/platon-daytona.svg)](https://badge.fury.io/py/platon-daytona)
+[![Python Support](https://img.shields.io/pypi/pyversions/platon-daytona.svg)](https://pypi.org/project/platon-daytona/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A Python SDK for interacting with the Daytona API, providing a simple interface for Daytona Sandbox management, Git operations, file system operations, and language server protocol support.
+
+**This is a fork of the original Daytona SDK, enhanced and maintained by Platon.AI.**
+
+## Key Features
+
+- **Sandbox Management**: Create, manage and remove sandboxes
+- **Git Operations**: Clone repositories, manage branches, and more
+- **File System Operations**: Upload, download, search and manipulate files
+- **Language Server Protocol**: Interact with language servers for code intelligence
+- **Process Management**: Execute code and commands in sandboxes
+- **Async Support**: Full async/await support for modern Python applications
 
 ## Installation
 
 You can install the package using pip:
 
 ```bash
-pip install daytona
+pip install platon-daytona
 ```
 
 ## Quick Start
@@ -63,14 +78,6 @@ sandbox = daytona.create(CreateSandboxFromSnapshotParams(
     auto_archive_interval=60  # Auto-archive after a Sandbox has been stopped for 1 hour
 ))
 ```
-
-## Features
-
-- **Sandbox Management**: Create, manage and remove sandboxes
-- **Git Operations**: Clone repositories, manage branches, and more
-- **File System Operations**: Upload, download, search and manipulate files
-- **Language Server Protocol**: Interact with language servers for code intelligence
-- **Process Management**: Execute code and commands in sandboxes
 
 ## Examples
 
@@ -133,8 +140,72 @@ symbols = lsp.document_symbols('path/to/file.ts')
 completions = lsp.completions('path/to/file.ts', {"line": 10, "character": 15})
 ```
 
+### Async Support
+
+```python
+import asyncio
+from daytona import AsyncDaytona
+
+async def main():
+    daytona = AsyncDaytona()
+    sandbox = await daytona.create()
+    
+    response = await sandbox.process.code_run('print("Async Hello!")')
+    print(response.result)
+    
+    await daytona.delete(sandbox)
+
+asyncio.run(main())
+```
+
+## What's Different in This Fork
+
+This fork includes several enhancements over the original Daytona SDK:
+
+- Enhanced error handling and debugging capabilities
+- Additional utility functions for common operations
+- Improved documentation and examples
+- Better type hints and IDE support
+- Regular updates and maintenance by Platon.AI team
+
+## API Compatibility
+
+This package maintains 100% API compatibility with the original Daytona SDK. You can use it as a drop-in replacement:
+
+```python
+# Import works exactly the same as original
+from daytona import Daytona, DaytonaConfig, AsyncDaytona
+```
+
+## Requirements
+
+- Python 3.8 or higher
+- Valid Daytona API credentials
+
 ## Contributing
 
-Daytona is Open Source under the [Apache License 2.0](/libs/sdk-python/LICENSE), and is the [copyright of its contributors](/NOTICE). If you would like to contribute to the software, read the Developer Certificate of Origin Version 1.1 (https://developercertificate.org/). Afterwards, navigate to the [contributing guide](/CONTRIBUTING.md) to get started.
+We welcome contributions! This project is based on the original Daytona SDK and follows the same contribution guidelines.
 
-Code in [\_sync](/libs/sdk-python/src/daytona/_sync/) directory shouldn't be edited directly. It should be generated from the corresponding async code in the [\_async](/libs/sdk-python/src/daytona/_async/) directory using the [sync_generator.py](/libs/sdk-python/scripts/sync_generator.py) script.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/galaxyeye/daytona/issues)
+- **Documentation**: [Project Documentation](https://galaxyeye.github.io/daytona)
+- **Email**: ivincent.zhang@gmail.com
+
+## Acknowledgments
+
+This project is based on the excellent work by Daytona Platforms Inc. We thank the original team for creating such a powerful SDK.
+
+---
+
+**Note**: This is an independent fork maintained by Platon.AI. For the original Daytona SDK, please visit the official Daytona repository.

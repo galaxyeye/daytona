@@ -1,8 +1,12 @@
-from daytona import CreateSandboxFromImageParams, Daytona, Resources
+from daytona import CreateSandboxFromImageParams, Daytona, DaytonaConfig, Resources
 
 
 def main():
-    daytona = Daytona()
+    config = DaytonaConfig(
+        api_key="dtn_1431fcd3abf038d1098de554c0bba0a4ec1366186128049f6d39306f4039d5a8",
+        api_url="http://localhost:3000/api",
+    )
+    daytona = Daytona(config)
 
     params = CreateSandboxFromImageParams(
         image="python:3.9.23-slim",
@@ -13,6 +17,7 @@ def main():
             disk=3,
         ),
     )
+
     sandbox = daytona.create(params, timeout=150, on_snapshot_create_logs=print)
 
     # Run the code securely inside the sandbox

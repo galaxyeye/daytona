@@ -71,3 +71,4 @@ examples/**/*.png
 **/poetry.lock
 !/poetry.lock
 .astro
+.devcontainer/pgadmin4/pgpass

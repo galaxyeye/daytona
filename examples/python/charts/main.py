@@ -10,6 +10,7 @@ from daytona import (
     CompositeChart,
     CreateSandboxFromImageParams,
     Daytona,
+    DaytonaConfig,
     Image,
     LineChart,
     PieChart,
@@ -77,7 +78,12 @@ plt.show()
 
 
 def main():
-    daytona = Daytona()
+    config = DaytonaConfig(
+        api_key="dtn_1431fcd3abf038d1098de554c0bba0a4ec1366186128049f6d39306f4039d5a8",
+        api_url="http://localhost:3000/api",
+    )
+    daytona = Daytona(config)
+
     sandbox = daytona.create(
         CreateSandboxFromImageParams(
             image=Image.debian_slim("3.13").pip_install("matplotlib"),
