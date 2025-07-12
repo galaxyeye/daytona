@@ -1119,72 +1119,6 @@ files = [
 databind = ">=4.5.2,<5.0.0"
 
 [[package]]
-name = "daytona"
-version = "0.0.0-dev"
-description = "Python SDK for Daytona"
-optional = false
-python-versions = ">=3.8,<4.0"
-groups = ["main"]
-files = []
-develop = true
-
-[package.dependencies]
-aioboto3 = ">=13.0.0,<15.0.0"
-aiofiles = ">=24.1.0,<24.2.0"
-boto3 = ">=1.0.0,<2.0.0"
-Deprecated = ">=1.2.18,<2.0.0"
-environs = ">=10.0.0,<15.0.0"
-httpx = ">=0.28.0,<0.29.0"
-pydantic = ">=2.4.2,<3.0.0"
-toml = ">=0.10.0,<0.11.0"
-
-[package.source]
-type = "directory"
-url = "libs/sdk-python"
-
-[[package]]
-name = "daytona-api-client"
-version = "0.0.0-dev"
-description = "Daytona"
-optional = false
-python-versions = "^3.8"
-groups = ["main"]
-files = []
-develop = true
-
-[package.dependencies]
-pydantic = ">= 2"
-python-dateutil = ">= 2.8.2"
-typing-extensions = ">= 4.7.1"
-urllib3 = ">= 1.25.3, < 3.0.0"
-
-[package.source]
-type = "directory"
-url = "libs/api-client-python"
-
-[[package]]
-name = "daytona-api-client-async"
-version = "0.0.0-dev"
-description = "Daytona"
-optional = false
-python-versions = "^3.8"
-groups = ["main"]
-files = []
-develop = true
-
-[package.dependencies]
-aiohttp = ">= 3.8.4"
-aiohttp-retry = ">= 2.8.3"
-pydantic = ">= 2"
-python-dateutil = ">= 2.8.2"
-typing-extensions = ">= 4.7.1"
-urllib3 = ">= 1.25.3, < 3.0.0"
-
-[package.source]
-type = "directory"
-url = "libs/api-client-python-async"
-
-[[package]]
 name = "decorator"
 version = "5.2.1"
 description = "Decorators for Humans"
@@ -3095,6 +3029,74 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=8.3.4)", "pytest-
 type = ["mypy (>=1.14.1)"]
 
 [[package]]
+name = "platon-daytona"
+version = "0.1.1"
+description = "Python SDK for Daytona, forked by platon.ai with enhanced features"
+optional = false
+python-versions = ">=3.8,<4.0"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+aioboto3 = ">=13.0.0,<15.0.0"
+aiofiles = ">=24.1.0,<24.2.0"
+boto3 = ">=1.0.0,<2.0.0"
+Deprecated = ">=1.2.18,<2.0.0"
+environs = ">=10.0.0,<15.0.0"
+httpx = ">=0.28.0,<0.29.0"
+platon-daytona-api-client = "0.1.0"
+platon-daytona-api-client-async = "0.1.0"
+pydantic = ">=2.4.2,<3.0.0"
+toml = ">=0.10.0,<0.11.0"
+
+[package.source]
+type = "directory"
+url = "libs/sdk-python"
+
+[[package]]
+name = "platon-daytona-api-client"
+version = "0.1.0"
+description = "Daytona"
+optional = false
+python-versions = "^3.8"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+pydantic = ">= 2"
+python-dateutil = ">= 2.8.2"
+typing-extensions = ">= 4.7.1"
+urllib3 = ">= 1.25.3, < 3.0.0"
+
+[package.source]
+type = "directory"
+url = "libs/api-client-python"
+
+[[package]]
+name = "platon-daytona-api-client-async"
+version = "0.1.0"
+description = "Daytona"
+optional = false
+python-versions = "^3.8"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+aiohttp = ">= 3.8.4"
+aiohttp-retry = ">= 2.8.3"
+pydantic = ">= 2"
+python-dateutil = ">= 2.8.2"
+typing-extensions = ">= 4.7.1"
+urllib3 = ">= 1.25.3, < 3.0.0"
+
+[package.source]
+type = "directory"
+url = "libs/api-client-python-async"
+
+[[package]]
 name = "prompt-toolkit"
 version = "3.0.51"
 description = "Library for building powerful interactive command lines in Python"
@@ -4364,4 +4366,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "ad14d924b8bb5ddad5c5279318a62cefd2ece6ebef07fcdb8a8f0806ad191979"
+content-hash = "15673bce1483fc4348887c89c271711a8ae64a50709c9a4743638167ac22407d"
