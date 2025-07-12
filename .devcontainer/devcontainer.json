@@ -65,7 +65,8 @@
   },
   "onCreateCommand": {
     // "install-deps": "git config --global --add safe.directory ${containerWorkspaceFolder} && yarn",
-    "env": "test -f .env.local || touch .env.local"
+    "env": "test -f .env.local || touch .env.local",
+    "fix-scripts": "find ${containerWorkspaceFolder}/.devcontainer -type f -name '*.sh' -exec dos2unix {} \\; find ${containerWorkspaceFolder}/.devcontainer -type f -name '*.sh' -exec chmod +x {} \\;"
   },
   "postStartCommand": "yarn && poetry lock && poetry install",
   "postAttachCommand": "",

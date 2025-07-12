@@ -4,8 +4,11 @@ ARG TARGETARCH
 
 # common tools
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
-    && apt -y install --no-install-recommends apt-utils vim htop telnet socat expect-dev tini psmisc libgit2-dev \
-    python3 python3-pip
+    && apt -y install --no-install-recommends apt-utils vim htop telnet socat expect-dev \
+    tini psmisc libgit2-dev \
+    dos2unix \
+    python3 python3-pip \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 # build tools
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
