@@ -35,6 +35,8 @@ import { SandboxDesiredState } from '../../sandbox/enums/sandbox-desired-state.e
 import { SnapshotRunner } from '../../sandbox/entities/snapshot-runner.entity'
 import { OrganizationSuspendedSnapshotRunnerRemovedEvent } from '../events/organization-suspended-snapshot-runner-removed'
 
+const DAYTONA_ADMIN_USER_ID = 'daytona-admin'
+
 @Injectable()
 export class OrganizationService implements OnModuleInit {
   private readonly logger = new Logger(OrganizationService.name)
@@ -241,11 +243,14 @@ export class OrganizationService implements OnModuleInit {
     organization.maxSnapshotSize = quota.maxSnapshotSize
     organization.volumeQuota = quota.volumeQuota
 
-    if (!creatorEmailVerified) {
+    // Special handling for admin user - never suspend their personal organization
+    const isAdminUser = createdBy === DAYTONA_ADMIN_USER_ID
+
+    if (!creatorEmailVerified && !isAdminUser) {
       organization.suspended = true
       organization.suspendedAt = new Date()
       organization.suspensionReason = 'Please verify your email address'
-    } else if (this.configService.get<boolean>('BILLING_ENABLED') && !personal) {
+    } else if (this.configService.get<boolean>('BILLING_ENABLED') && !personal && !isAdminUser) {
       organization.suspended = true
       organization.suspendedAt = new Date()
       organization.suspensionReason = 'Payment method required'

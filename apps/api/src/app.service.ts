@@ -14,7 +14,7 @@ import { SnapshotService } from './sandbox/services/snapshot.service'
 import { SystemRole } from './user/enums/system-role.enum'
 import { TypedConfigService } from './config/typed-config.service'
 
-const DAYTONA_ADMIN_USER_ID = 'daytona-admin'
+const DAYTONA_ADMIN_USER_ID = 'admin'
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -38,29 +38,52 @@ export class AppService implements OnApplicationBootstrap {
   }
 
   private async initializeAdminUser(): Promise<void> {
-    if (await this.userService.findOne(DAYTONA_ADMIN_USER_ID)) {
+    const existingUser = await this.userService.findOne(DAYTONA_ADMIN_USER_ID)
+    if (existingUser) {
+      // If admin user already exists, ensure their personal organization is not suspended
+      const personalOrg = await this.organizationService.findPersonal(existingUser.id)
+      if (personalOrg.suspended) {
+        this.logger.log(
+          `Admin user's personal organization is suspended with reason: ${personalOrg.suspensionReason}. Unsuspending...`,
+        )
+        await this.organizationService.unsuspend(personalOrg.id)
+        this.logger.log("Admin user's personal organization has been unsuspended")
+      }
       return
     }
 
     await this.eventEmitterReadinessWatcher.waitUntilReady()
+
+    // Create admin user with email verified to prevent suspension
     const user = await this.userService.create({
       id: DAYTONA_ADMIN_USER_ID,
       name: 'Daytona Admin',
       personalOrganizationQuota: {
-        totalCpuQuota: 0,
-        totalMemoryQuota: 0,
-        totalDiskQuota: 0,
-        maxCpuPerSandbox: 0,
-        maxMemoryPerSandbox: 0,
-        maxDiskPerSandbox: 0,
+        totalCpuQuota: 100,
+        totalMemoryQuota: 100,
+        totalDiskQuota: 100,
+        maxCpuPerSandbox: 100,
+        maxMemoryPerSandbox: 100,
+        maxDiskPerSandbox: 100,
         snapshotQuota: 100,
         maxSnapshotSize: 100,
-        volumeQuota: 0,
+        volumeQuota: 100,
       },
+      email: 'admin@daytona.local',
+      emailVerified: true,
       role: SystemRole.ADMIN,
     })
+
+    // Ensure the personal organization is not suspended after creation
     const personalOrg = await this.organizationService.findPersonal(user.id)
+    if (personalOrg.suspended) {
+      this.logger.log("Admin user's personal organization was created as suspended. Unsuspending...")
+      await this.organizationService.unsuspend(personalOrg.id)
+      this.logger.log("Admin user's personal organization has been unsuspended")
+    }
+
     await this.apiKeyService.createApiKey(personalOrg.id, user.id, DAYTONA_ADMIN_USER_ID, [])
+    this.logger.log('Admin user initialized successfully')
   }
 
   private async initializeTransientRegistry(): Promise<void> {
@@ -132,6 +155,23 @@ export class AppService implements OnApplicationBootstrap {
   private async initializeDefaultSnapshot(): Promise<void> {
     const adminPersonalOrg = await this.organizationService.findPersonal(DAYTONA_ADMIN_USER_ID)
 
+    // Additional safety check to ensure the organization is not suspended
+    if (adminPersonalOrg.suspended) {
+      this.logger.warn(
+        `Admin personal organization is suspended during default snapshot initialization. Reason: ${adminPersonalOrg.suspensionReason}`,
+      )
+      this.logger.log('Attempting to unsuspend admin personal organization...')
+      await this.organizationService.unsuspend(adminPersonalOrg.id)
+
+      // Re-fetch the organization to ensure it's updated
+      const updatedOrg = await this.organizationService.findPersonal(DAYTONA_ADMIN_USER_ID)
+      if (updatedOrg.suspended) {
+        this.logger.error('Failed to unsuspend admin personal organization. Skipping default snapshot creation.')
+        return
+      }
+      this.logger.log('Admin personal organization has been unsuspended successfully')
+    }
+
     try {
       const existingSnapshot = await this.snapshotService.getSnapshotByName(
         this.configService.getOrThrow('defaultSnapshot'),
@@ -146,13 +186,22 @@ export class AppService implements OnApplicationBootstrap {
 
     const defaultSnapshot = this.configService.getOrThrow('defaultSnapshot')
 
-    await this.snapshotService.createSnapshot(
-      adminPersonalOrg,
-      {
-        name: defaultSnapshot,
-        imageName: defaultSnapshot,
-      },
-      true,
-    )
+    try {
+      await this.snapshotService.createSnapshot(
+        adminPersonalOrg,
+        {
+          name: defaultSnapshot,
+          imageName: defaultSnapshot,
+          cpu: 2,
+          memory: 4,
+          disk: 10,
+        },
+        true,
+      )
+      this.logger.log('Default snapshot created successfully')
+    } catch (error) {
+      this.logger.error('Failed to create default snapshot:', error.message)
+      throw error
+    }
   }
 }
