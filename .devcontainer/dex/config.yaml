@@ -6,6 +6,11 @@ web:
   http: 0.0.0.0:5556
   allowedOrigins: ['*']
   allowedHeaders: ['x-requested-with']
+# Configure token expiration - 3 days = 72 hours
+expiry:
+  idTokens: "72h"
+  accessTokens: "72h"
+  refreshTokens: "720h"  # 30 days for refresh tokens
 staticClients:
   - id: daytona
     redirectURIs:

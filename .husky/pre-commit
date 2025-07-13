@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Activate virtual environment before running lint-staged
+. .venv/bin/activate
+
 yarn lint-staged
 
 # Run sync generator check for Python SDK
