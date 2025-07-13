@@ -69,7 +69,7 @@ export class AppService implements OnApplicationBootstrap {
         maxSnapshotSize: 100,
         volumeQuota: 100,
       },
-      email: 'admin@daytona.local',
+      email: 'dev@daytona.io',
       emailVerified: true,
       role: SystemRole.ADMIN,
     })
