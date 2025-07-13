@@ -40,8 +40,8 @@ packages = [{include = "daytona", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-platon-daytona-api-client = "0.1.0"
-platon-daytona-api-client-async = "0.1.0"
+platon-daytona-api-client = "0.1.2"
+platon-daytona-api-client-async = "0.1.2"
 environs = ">=10.0.0,<15.0.0"
 pydantic = ">=2.4.2,<3.0.0"
 Deprecated = ">=1.2.18,<2.0.0"
