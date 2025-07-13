@@ -1,5 +1,5 @@
 {
-  "version": "0.0.0-dev",
+  "version": "0.1.2",
   "config": {
     "docsDir": "../../apps/docs/src/content/docs/python-sdk"
   },

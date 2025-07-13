@@ -14,9 +14,3 @@ else
 fi
 
 poetry build
-
-mv src/daytona src/daytona_sdk
-sed -i 's/^name = "[^"]*"/name = "daytona_sdk"/' pyproject.toml
-poetry build
-mv src/daytona_sdk src/daytona
-sed -i 's/^name = "[^"]*"/name = "daytona"/' pyproject.toml
