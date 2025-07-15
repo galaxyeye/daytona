@@ -10,7 +10,9 @@ web:
 expiry:
   idTokens: "72h"
   accessTokens: "72h"
-  refreshTokens: "720h"  # 30 days for refresh tokens
+  refreshTokens:
+    validIfNotUsedFor: "720h"  # 30 days - invalidate if not used for this time
+    absoluteLifetime: "2160h"  # 90 days - absolute maximum lifetime
 staticClients:
   - id: daytona
     redirectURIs:

@@ -32,7 +32,13 @@ if (process.env.LOG_LEVEL) {
 const logger = new NestJSDiagLogger('OpenTelemetry')
 logger.localInstance.setLogLevels(logLevels)
 
-if (process.env.OTEL_ENABLED === 'true') {
+// Only enable OpenTelemetry if explicitly enabled or in production
+// Skip in development to improve startup time
+const shouldEnableOtel =
+  process.env.OTEL_ENABLED === 'true' &&
+  (process.env.NODE_ENV === 'production' || process.env.FORCE_OTEL_DEV === 'true')
+
+if (shouldEnableOtel) {
   // Enable OpenTelemetry diagnostics
   diag.setLogger(logger, DiagLogLevel.ALL)
   logger.debug(`OpenTelemetry diagnostics enabled with log level: ${DiagLogLevel.INFO}`)
@@ -68,4 +74,7 @@ if (process.env.OTEL_ENABLED === 'true') {
   } catch (error) {
     logger.error('Failed to start OpenTelemetry SDK:', error)
   }
+} else if (process.env.NODE_ENV === 'development') {
+  logger.log('OpenTelemetry disabled in development for faster startup')
+  logger.log('Use FORCE_OTEL_DEV=true to enable OpenTelemetry in development')
 }

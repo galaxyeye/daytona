@@ -3068,7 +3068,7 @@ type = ["mypy (>=1.14.1)"]
 
 [[package]]
 name = "platon-daytona"
-version = "0.1.1"
+version = "0.1.5"
 description = "Python SDK for Daytona, forked by platon.ai with enhanced features"
 optional = false
 python-versions = ">=3.8,<4.0"
@@ -3083,8 +3083,8 @@ boto3 = ">=1.0.0,<2.0.0"
 Deprecated = ">=1.2.18,<2.0.0"
 environs = ">=10.0.0,<15.0.0"
 httpx = ">=0.28.0,<0.29.0"
-platon-daytona-api-client = "0.1.0"
-platon-daytona-api-client-async = "0.1.0"
+platon-daytona-api-client = "0.1.5"
+platon-daytona-api-client-async = "0.1.5"
 pydantic = ">=2.4.2,<3.0.0"
 toml = ">=0.10.0,<0.11.0"
 
@@ -3094,7 +3094,7 @@ url = "libs/sdk-python"
 
 [[package]]
 name = "platon-daytona-api-client"
-version = "0.1.0"
+version = "0.1.5"
 description = "Daytona"
 optional = false
 python-versions = "^3.8"
@@ -3114,7 +3114,7 @@ url = "libs/api-client-python"
 
 [[package]]
 name = "platon-daytona-api-client-async"
-version = "0.1.0"
+version = "0.1.5"
 description = "Daytona"
 optional = false
 python-versions = "^3.8"
