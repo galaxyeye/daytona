@@ -10,7 +10,7 @@
 
 ```bash
 # 从当前项目复制wheel文件
-cp libs/sdk-python/dist/platon_daytona-0.0.0.dev0-py3-none-any.whl ~/Downloads/
+cp libs/sdk-python/dist/daytona-0.0.0.dev0-py3-none-any.whl ~/Downloads/
 ```
 
 ### 步骤2：在目标项目中安装
@@ -25,7 +25,7 @@ source venv/bin/activate  # Linux/macOS
 venv\Scripts\activate     # Windows
 
 # 安装platon-daytona
-pip install ~/Downloads/platon_daytona-0.0.0.dev0-py3-none-any.whl
+pip install ~/Downloads/daytona-0.0.0.dev0-py3-none-any.whl
 ```
 
 ### 步骤3：在代码中使用
@@ -66,7 +66,7 @@ pip install pypiserver
 
 # 创建包目录
 mkdir ~/pypi-packages
-cp libs/sdk-python/dist/platon_daytona-0.0.0.dev0-py3-none-any.whl ~/pypi-packages/
+cp libs/sdk-python/dist/daytona-0.0.0.dev0-py3-none-any.whl ~/pypi-packages/
 
 # 启动服务器
 pypi-server -p 8080 ~/pypi-packages/
@@ -134,10 +134,10 @@ pip install -e /path/to/daytona/libs/sdk-python/
 FROM python:3.10-slim
 
 # 复制wheel文件到容器
-COPY platon_daytona-0.0.0.dev0-py3-none-any.whl /tmp/
+COPY daytona-0.0.0.dev0-py3-none-any.whl /tmp/
 
 # 安装依赖
-RUN pip install /tmp/platon_daytona-0.0.0.dev0-py3-none-any.whl
+RUN pip install /tmp/daytona-0.0.0.dev0-py3-none-any.whl
 
 # 复制应用代码
 COPY . /app
@@ -163,7 +163,7 @@ services:
       - DAYTONA_API_URL=${DAYTONA_API_URL}
       - DAYTONA_TARGET=${DAYTONA_TARGET}
     volumes:
-      - ./platon_daytona-0.0.0.dev0-py3-none-any.whl:/tmp/platon_daytona.whl
+      - ./daytona-0.0.0.dev0-py3-none-any.whl:/tmp/daytona.whl
 ```
 
 ## 📝 实际使用示例
@@ -297,7 +297,7 @@ print(f"版本: {package.version}")
 
 ```bash
 # 如果有新的wheel文件
-pip install --upgrade platon_daytona-0.0.1.dev0-py3-none-any.whl --force-reinstall
+pip install --upgrade daytona-0.0.1.dev0-py3-none-any.whl --force-reinstall
 ```
 
 ## ❓ 常见问题

@@ -41,7 +41,7 @@ poetry publish --repository platon-pypi
 pip install twine
 
 # 发布
-twine upload --repository platon-pypi dist/platon_daytona-*
+twine upload --repository platon-pypi dist/daytona-*
 ```
 
 ## 3. 在其他项目中安装

@@ -11,7 +11,7 @@
 - **包名**: `platon-daytona`
 - **版本**: `0.0.0-dev`
 - **源码目录**: `src/daytona/` (保持不变)
-- **发布名称**: `platon_daytona-0.0.0.dev0-py3-none-any.whl`
+- **发布名称**: `daytona-0.0.0.dev0-py3-none-any.whl`
 
 ### 作者信息
 
@@ -31,7 +31,7 @@ poetry build
 ### 2. 安装包
 
 ```bash
-pip install dist/platon_daytona-0.0.0.dev0-py3-none-any.whl
+pip install dist/daytona-0.0.0.dev0-py3-none-any.whl
 ```
 
 ### 3. 验证安装
@@ -98,8 +98,8 @@ asyncio.run(main())
 
 ### 📋 命名规则
 
-- **包文件**: `platon_daytona-0.0.0.dev0-py3-none-any.whl`
-- **下载名**: 使用下划线 `platon_daytona`
+- **包文件**: `daytona-0.0.0.dev0-py3-none-any.whl`
+- **下载名**: 使用下划线 `daytona`
 - **配置名**: 使用连字符 `platon-daytona`
 - **导入名**: 保持原样 `daytona`
 
@@ -122,8 +122,8 @@ libs/sdk-python/
 ├── scripts/
 │   └── build-sdk-platon.sh   # 自定义构建脚本
 ├── dist/
-│   ├── platon_daytona-0.0.0.dev0-py3-none-any.whl
-│   └── platon_daytona-0.0.0.dev0.tar.gz
+│   ├── daytona-0.0.0.dev0-py3-none-any.whl
+│   └── daytona-0.0.0.dev0.tar.gz
 └── README.md
 ```
 

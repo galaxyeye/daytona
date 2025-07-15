@@ -35,7 +35,7 @@ classifiers = [
     "Topic :: System :: Distributed Computing",
 ]
 
-packages = [{include = "platon_daytona", from = "src"}]
+packages = [{include = "daytona", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"

@@ -80,7 +80,7 @@ POST_REPLACEMENTS = [
     (re.compile(r"httpx\.SyncClient\b"), "httpx.Client"),
     (re.compile(r"\.aiter_bytes\b"), ".iter_bytes"),
     # Update module imports
-    (re.compile(r"from daytona\._async"), "from daytona._sync"),
+    (re.compile(r"from daytona_api\._async"), "from daytona._sync"),
     # Documentation cleanup
     (re.compile(r"\basynchronous methods\b"), "methods"),
     (re.compile(r"\basynchronous\b"), "synchronous"),
