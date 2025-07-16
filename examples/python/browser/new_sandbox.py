@@ -45,32 +45,10 @@ def main():
         auto_archive_interval=24 * 60,
     )
 
-    # Create a sandbox from the image if not exists
-    # Read the sandbox id from the file if it exists
-    sandbox_id = None
-    sandbox = None
-
-    if os.path.exists("sandbox_id.txt"):
-        with open("sandbox_id.txt", "r") as f:
-            sandbox_id = f.read().strip()
-        if sandbox_id:
-            try:
-                sandbox = daytona.get(sandbox_id)
-            except Exception:
-                sandbox = None
-                print(f"Sandbox {sandbox_id} not found, creating new sandbox...")
-                # delete the file
-                os.remove("sandbox_id.txt")
-
-    if sandbox is None:
-        print("Creating sandbox...")
-        sandbox = daytona.create(params, timeout=300, on_snapshot_create_logs=print)
-        # Save the sandbox id to a file
-        with open("sandbox_id.txt", "w") as f:
-            f.write(sandbox.id)
-        print(f"Created sandbox with ID: {sandbox.id}")
-    else:
-        print(f"Using existing sandbox with ID: {sandbox.id}")
+    # Create a new sandbox
+    print("Creating sandbox...")
+    sandbox = daytona.create(params, timeout=300, on_snapshot_create_logs=print)
+    print(f"Created sandbox with ID: {sandbox.id}")
 
     # Run the code securely inside the sandbox
     response = sandbox.process.code_run('print("Hello World!")')
@@ -130,8 +108,12 @@ def main():
     # Open the website URL in the default browser
     # webbrowser.open(website_url)
 
-    time.sleep(10)
-    # daytona.delete(sandbox)
+    # Wait for user input to exit
+    input("\nPress any key to delete the sandbox and exit...")
+    
+    print("Deleting sandbox...")
+    daytona.delete(sandbox)
+    print("Sandbox deleted successfully.")
 
 
 if __name__ == "__main__":
