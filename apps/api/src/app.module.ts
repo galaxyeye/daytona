@@ -73,6 +73,7 @@ const conditionalImports = () => {
     AuthModule,
     UserModule,
     SandboxModule,
+    DockerRegistryModule,
   ]
 
   // Skip heavy modules in development for faster startup
@@ -93,7 +94,6 @@ const conditionalImports = () => {
         },
       ]),
       TeamModule,
-      DockerRegistryModule,
       ScheduleModule.forRoot(),
       UsageModule,
       AnalyticsModule,
