@@ -1,15 +1,17 @@
 # config.yaml
 issuer: http://localhost:5556/dex
 storage:
-  type: memory
+  type: sqlite3
+  config:
+    file: /tmp/dex.db
 web:
   http: 0.0.0.0:5556
   allowedOrigins: ['*']
   allowedHeaders: ['x-requested-with']
-# Configure token expiration - 3 days = 72 hours
+# Configure token expiration - 7 days = 168 hours (for development)
 expiry:
-  idTokens: "72h"
-  accessTokens: "72h"
+  idTokens: "168h"
+  accessTokens: "168h"
   refreshTokens:
     validIfNotUsedFor: "720h"  # 30 days - invalidate if not used for this time
     absoluteLifetime: "2160h"  # 90 days - absolute maximum lifetime
