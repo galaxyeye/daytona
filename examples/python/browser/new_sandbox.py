@@ -1,12 +1,20 @@
 import os
 import time
 
+from dotenv import load_dotenv
+
 from daytona import CreateSandboxFromImageParams, Daytona, DaytonaConfig, Resources, SessionExecuteRequest
+
+load_dotenv()
 
 
 def main():
+    api_key = os.getenv("DAYTONA_API_KEY")
+    if not api_key:
+        raise ValueError("DAYTONA_API_KEY is not set")
+
     config = DaytonaConfig(
-        api_key="dtn_7f8818a4d63cbd3ab1f582ec5919a6aca3abb70264d453e99bacda8f329712a7",
+        api_key=api_key,
         api_url="http://localhost:3000/api",
     )
     daytona = Daytona(config)
