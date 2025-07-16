@@ -7,7 +7,6 @@ import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/c
 import { VersionHeaderMiddleware } from './common/middleware/version-header.middleware'
 import { AppService } from './app.service'
 import { UserModule } from './user/user.module'
-import { TeamModule } from './team/team.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { SandboxModule } from './sandbox/sandbox.module'
 import { AuthModule } from './auth/auth.module'
@@ -30,9 +29,8 @@ import { ObjectStorageModule } from './object-storage/object-storage.module'
 import { CustomNamingStrategy } from './common/utils/naming-strategy.util'
 import { MaintenanceMiddleware } from './common/middleware/maintenance.middleware'
 
-// Conditional imports for development optimization
-const conditionalImports = () => {
-  const baseImports = [
+@Module({
+  imports: [
     TypedConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -48,12 +46,26 @@ const conditionalImports = () => {
           database: configService.getOrThrow('database.database'),
           autoLoadEntities: true,
           migrations: [join(__dirname, 'migrations/**/*{.ts,.js}')],
-          migrationsRun: !configService.getOrThrow('production') && !configService.get('skipConnections'),
+          migrationsRun: !configService.getOrThrow('production'),
           namingStrategy: new CustomNamingStrategy(),
           manualInitialization: configService.get('skipConnections'),
         }
       },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'dashboard'),
+      exclude: ['/api/*'],
+      renderPath: '/',
+      serveStaticOptions: {
+        cacheControl: false,
+      },
+    }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 1000,
+        limit: 10,
+      },
+    ]),
     RedisModule.forRootAsync({
       inject: [TypedConfigService],
       useFactory: (configService: TypedConfigService) => {
@@ -74,54 +86,27 @@ const conditionalImports = () => {
     UserModule,
     SandboxModule,
     DockerRegistryModule,
-  ]
-
-  // Skip heavy modules in development for faster startup
-  if (process.env.NODE_ENV !== 'development' || process.env.LOAD_ALL_MODULES === 'true') {
-    baseImports.push(
-      ServeStaticModule.forRoot({
-        rootPath: join(__dirname, '..', 'dashboard'),
-        exclude: ['/api/*'],
-        renderPath: '/',
-        serveStaticOptions: {
-          cacheControl: false,
-        },
-      }),
-      ThrottlerModule.forRoot([
-        {
-          ttl: 1000,
-          limit: 10,
-        },
-      ]),
-      TeamModule,
-      ScheduleModule.forRoot(),
-      UsageModule,
-      AnalyticsModule,
-      OrganizationModule,
-      EmailModule.forRootAsync({
-        inject: [TypedConfigService],
-        useFactory: (configService: TypedConfigService) => {
-          return {
-            host: configService.get('smtp.host'),
-            port: configService.get('smtp.port'),
-            user: configService.get('smtp.user'),
-            password: configService.get('smtp.password'),
-            secure: configService.get('smtp.secure'),
-            from: configService.get('smtp.from'),
-            dashboardUrl: configService.getOrThrow('dashboardUrl'),
-          }
-        },
-      }),
-      NotificationModule,
-      ObjectStorageModule,
-    )
-  }
-
-  return baseImports
-}
-
-@Module({
-  imports: conditionalImports(),
+    ScheduleModule.forRoot(),
+    UsageModule,
+    AnalyticsModule,
+    OrganizationModule,
+    EmailModule.forRootAsync({
+      inject: [TypedConfigService],
+      useFactory: (configService: TypedConfigService) => {
+        return {
+          host: configService.get('smtp.host'),
+          port: configService.get('smtp.port'),
+          user: configService.get('smtp.user'),
+          password: configService.get('smtp.password'),
+          secure: configService.get('smtp.secure'),
+          from: configService.get('smtp.from'),
+          dashboardUrl: configService.getOrThrow('dashboardUrl'),
+        }
+      },
+    }),
+    NotificationModule,
+    ObjectStorageModule,
+  ],
   controllers: [],
   providers: [AppService],
 })

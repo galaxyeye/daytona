@@ -45,8 +45,6 @@ async function bootstrap() {
     }),
     httpsOptions: httpsEnabled ? httpsOptions : undefined,
   })
-
-  // Enable CORS early for development
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -57,12 +55,7 @@ async function bootstrap() {
   const httpAdapter = app.get(HttpAdapterHost)
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter))
   app.useGlobalFilters(new NotFoundExceptionFilter())
-
-  // Skip metrics in development for faster startup
-  if (process.env.NODE_ENV !== 'development') {
-    app.useGlobalInterceptors(new MetricsInterceptor())
-  }
-
+  app.useGlobalInterceptors(new MetricsInterceptor())
   app.useGlobalPipes(new ValidationPipe())
 
   const eventEmitter = app.get(EventEmitter2)
@@ -91,49 +84,39 @@ async function bootstrap() {
   const globalPrefix = 'api'
   app.setGlobalPrefix(globalPrefix)
 
-  // Only setup Swagger in development or when explicitly requested
-  if (process.env.NODE_ENV === 'development' || process.env.ENABLE_SWAGGER === 'true') {
-    const documentFactory = () => SwaggerModule.createDocument(app, getOpenApiConfig(configService.get('oidc.issuer')))
-    SwaggerModule.setup('api', app, documentFactory, {
-      swaggerOptions: {
-        initOAuth: {
-          clientId: configService.get('oidc.clientId'),
-          appName: 'Daytona AI',
-          scopes: ['openid', 'profile', 'email'],
-          additionalQueryStringParams: {
-            audience: configService.get('oidc.audience'),
-          },
+  const documentFactory = () => SwaggerModule.createDocument(app, getOpenApiConfig(configService.get('oidc.issuer')))
+  SwaggerModule.setup('api', app, documentFactory, {
+    swaggerOptions: {
+      initOAuth: {
+        clientId: configService.get('oidc.clientId'),
+        appName: 'Daytona AI',
+        scopes: ['openid', 'profile', 'email'],
+        additionalQueryStringParams: {
+          audience: configService.get('oidc.audience'),
         },
       },
-    })
-  }
+    },
+  })
 
-  // Auto create runners only in local development environment (make it async but non-blocking)
-  if (!configService.get('production') && !configService.get('skipConnections')) {
-    // Run this asynchronously to not block startup
-    setImmediate(async () => {
-      try {
-        const runnerService = app.get(RunnerService)
-        const runners = await runnerService.findAll()
-        if (!runners.find((runner) => runner.domain === 'localtest.me:3003')) {
-          await runnerService.create({
-            apiUrl: 'http://localhost:3003',
-            apiKey: 'secret_api_token',
-            cpu: 4,
-            memory: 8192,
-            disk: 50,
-            gpu: 0,
-            gpuType: 'none',
-            capacity: 100,
-            region: RunnerRegion.US,
-            class: SandboxClass.SMALL,
-            domain: 'localtest.me:3003',
-          })
-        }
-      } catch (error) {
-        Logger.warn('Failed to auto-create runner:', error.message)
-      }
-    })
+  // Auto create runners only in local development environment
+  if (!configService.get('production')) {
+    const runnerService = app.get(RunnerService)
+    const runners = await runnerService.findAll()
+    if (!runners.find((runner) => runner.domain === 'localtest.me:3003')) {
+      await runnerService.create({
+        apiUrl: 'http://localhost:3003',
+        apiKey: 'secret_api_token',
+        cpu: 4,
+        memory: 8192,
+        disk: 50,
+        gpu: 0,
+        gpuType: 'none',
+        capacity: 100,
+        region: RunnerRegion.US,
+        class: SandboxClass.SMALL,
+        domain: 'localtest.me:3003',
+      })
+    }
   }
 
   // Stop all cron jobs if maintenance mode is enabled
@@ -149,13 +132,6 @@ async function bootstrap() {
   const port = configService.get('port')
   await app.listen(port, host)
   Logger.log(`🚀 Daytona API is running on: http://${host}:${port}/${globalPrefix}`)
-
-  // Log startup performance info
-  if (process.env.NODE_ENV === 'development') {
-    Logger.log(`⚡ Development mode optimizations enabled`)
-    Logger.log(`📊 Use LOAD_ALL_MODULES=true to enable all modules`)
-    Logger.log(`🔗 Use SKIP_CONNECTIONS=true to skip database/redis connections`)
-  }
 }
 
 bootstrap()
