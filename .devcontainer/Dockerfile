@@ -2,6 +2,8 @@ FROM buildpack-deps:jammy-curl
 
 ARG TARGETARCH
 
+ENV LC_ALL=zh_CN.UTF-8
+
 # common tools
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
     && apt -y install --no-install-recommends apt-utils vim htop telnet socat expect-dev \
@@ -9,6 +11,11 @@ RUN apt update && export DEBIAN_FRONTEND=noninteractive \
     dos2unix \
     python3 python3-pip \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+
+# install Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 - \
+    && ln -s /root/.local/bin/poetry /usr/local/bin/poetry
+ENV PATH="/root/.local/bin:$PATH"
 
 # find all bash scripts, apply dos2unix, and make them executable
 RUN find / -type f -name "*.sh" -exec dos2unix {} \; && find / -type f -name "*.sh" -exec chmod +x {} \;
