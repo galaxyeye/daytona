@@ -1,7 +1,14 @@
 #!/bin/sh
 
 # Activate virtual environment before running lint-staged
-. .venv/bin/activate
+# Support both Unix-like (bin/activate) and Windows (Scripts/activate) paths
+if [ -f ".venv/bin/activate" ]; then
+    . .venv/bin/activate
+elif [ -f ".venv/Scripts/activate" ]; then
+    . .venv/Scripts/activate
+else
+    echo "Warning: Virtual environment not found. Using system Python."
+fi
 
 yarn lint-staged
 
