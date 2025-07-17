@@ -10,6 +10,9 @@ RUN apt update && export DEBIAN_FRONTEND=noninteractive \
     python3 python3-pip \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
+# find all bash scripts, apply dos2unix, and make them executable
+RUN find / -type f -name "*.sh" -exec dos2unix {} \; && find / -type f -name "*.sh" -exec chmod +x {} \;
+
 # build tools
 RUN apt update && export DEBIAN_FRONTEND=noninteractive \
     && apt -y install --no-install-recommends openjdk-11-jdk protobuf-compiler libprotobuf-dev
