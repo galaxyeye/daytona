@@ -1,4 +1,4 @@
-# Platon-Daytona SDK for Python
+# Daytona SDK for Python
 
 [![PyPI version](https://badge.fury.io/py/daytona.svg)](https://badge.fury.io/py/daytona)
 [![Python Support](https://img.shields.io/pypi/pyversions/daytona.svg)](https://pypi.org/project/daytona/)

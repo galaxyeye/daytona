@@ -1,4 +1,4 @@
-# Platon-Daytona SDK 设置指南
+# Daytona SDK 设置指南
 
 ## 概述
 
@@ -62,7 +62,7 @@ daytona = Daytona(config)
 sandbox = daytona.create()
 
 # 运行代码
-response = sandbox.process.code_run('print("Hello from Platon-Daytona!")')
+response = sandbox.process.code_run('print("Hello from Daytona!")')
 print(response.result)
 
 # 清理
