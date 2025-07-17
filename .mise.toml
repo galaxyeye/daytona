@@ -1,0 +1,72 @@
+[tools]
+# Node.js 版本
+node = "20"
+
+# Go 版本 (基于 go.mod 中的要求)
+go = "1.23"
+
+# Python 版本 (基于 pyproject.toml 中的要求)
+python = "3.11"
+
+# Yarn 包管理器
+yarn = "4"
+
+# Poetry for Python package management
+poetry = "latest"
+
+# Docker (如果需要)
+docker = "latest"
+
+# 其他常用工具
+jq = "latest"
+curl = "latest"
+
+[env]
+# 设置一些环境变量
+GOPATH = "{{config_root}}/go"
+GOPROXY = "https://proxy.golang.org,direct"
+GOSUMDB = "sum.golang.org"
+
+# Node.js 相关
+NODE_ENV = "development"
+
+# Python 相关
+PYTHONPATH = "{{config_root}}"
+
+[tasks.install]
+description = "Install all dependencies"
+run = [
+  "yarn install",
+  "poetry install",
+  "go mod download"
+]
+
+[tasks.build]
+description = "Build all projects"
+run = "yarn build"
+
+[tasks.dev]
+description = "Start development servers"
+run = "yarn serve"
+
+[tasks.test]
+description = "Run all tests"
+run = [
+  "yarn test",
+  "yarn lint"
+]
+
+[tasks.format]
+description = "Format all code"
+run = "yarn format"
+
+[tasks.clean]
+description = "Clean all build artifacts and node_modules"
+run = [
+  "rm -rf node_modules",
+  "rm -rf dist",
+  "rm -rf build",
+  "find . -name 'node_modules' -type d -exec rm -rf {} +",
+  "find . -name 'dist' -type d -exec rm -rf {} +",
+  "go clean -modcache"
+]

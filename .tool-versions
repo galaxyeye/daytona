@@ -1,0 +1,5 @@
+node 20.18.1
+go 1.23.5
+python 3.11.11
+yarn 4.5.3
+poetry 1.8.5
