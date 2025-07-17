@@ -46,6 +46,6 @@ RUN curl -fL https://app.getambassador.io/download/tel2oss/releases/download/v2.
     && chmod a+x /usr/local/bin/telepresence
 
 # Process shell scripts
-RUN find / -type f -name "*.sh" 2>/dev/null -exec dos2unix {} \; -exec chmod +x {} \; || true
+# RUN find / -type f -name "*.sh" 2>/dev/null -exec dos2unix {} \; -exec chmod +x {} \; || true
 
 CMD ["tail", "-f", "/dev/null"]
