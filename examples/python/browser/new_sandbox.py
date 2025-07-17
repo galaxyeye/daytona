@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from daytona import CreateSandboxFromImageParams, Daytona, DaytonaConfig, Resources, SessionExecuteRequest
 
-load_dotenv()
+load_dotenv(dotenv_path=".env.local", verbose=True, override=True)
 
 
 def main():
@@ -110,7 +110,7 @@ def main():
 
     # Wait for user input to exit
     input("\nPress any key to delete the sandbox and exit...")
-    
+
     print("Deleting sandbox...")
     daytona.delete(sandbox)
     print("Sandbox deleted successfully.")
