@@ -50,10 +50,10 @@ twine upload --repository platon-pypi dist/daytona-*
 
 ```bash
 # 方法1：使用pip配置
-pip install platon-daytona --index-url https://pypi.platon.ai/simple/
+pip install daytona --index-url https://pypi.platon.ai/simple/
 
 # 方法2：在requirements.txt中指定
-echo "platon-daytona==0.0.0.dev0" >> requirements.txt
+echo "daytona==0.0.0.dev0" >> requirements.txt
 pip install -r requirements.txt --index-url https://pypi.platon.ai/simple/
 ```
 
@@ -78,7 +78,7 @@ priority = "explicit"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-platon-daytona = {version = "^0.0.0.dev0", source = "platon-pypi"}
+daytona = {version = "^0.0.0.dev0", source = "platon-pypi"}
 ```
 
 ### 安装命令

@@ -21,7 +21,7 @@ from setuptools import setup, find_packages  # noqa: H301
 #
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
-NAME = "platon-daytona-api-client"
+NAME = "daytona-api-client"
 VERSION = "0.1.5"
 PYTHON_REQUIRES = ">= 3.8"
 REQUIRES = [

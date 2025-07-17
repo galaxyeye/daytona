@@ -5,7 +5,7 @@
 ```bash
 # 创建新的Git仓库或推送到现有仓库
 git add libs/sdk-python/
-git commit -m "Add platon-daytona SDK"
+git commit -m "Add daytona SDK"
 git push origin main
 ```
 
@@ -28,7 +28,7 @@ pip install git+https://github.com/galaxyeye/daytona.git@commit-hash#subdirector
 
 ```txt
 # requirements.txt
-platon-daytona @ git+https://github.com/galaxyeye/daytona.git@main#subdirectory=libs/sdk-python
+daytona @ git+https://github.com/galaxyeye/daytona.git@main#subdirectory=libs/sdk-python
 ```
 
 ### 在Poetry项目中使用
@@ -37,7 +37,7 @@ platon-daytona @ git+https://github.com/galaxyeye/daytona.git@main#subdirectory=
 # pyproject.toml
 [tool.poetry.dependencies]
 python = "^3.8"
-platon-daytona = {git = "https://github.com/galaxyeye/daytona.git", subdirectory = "libs/sdk-python"}
+daytona = {git = "https://github.com/galaxyeye/daytona.git", subdirectory = "libs/sdk-python"}
 ```
 
 ## 3. 私有Git仓库安装

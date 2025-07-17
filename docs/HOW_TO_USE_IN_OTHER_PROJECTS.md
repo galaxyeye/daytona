@@ -1,8 +1,8 @@
-# 在其他项目中使用 platon-daytona 模块
+# 在其他项目中使用 daytona 模块
 
 ## 📋 概述
 
-这份指南详细说明了如何在您的其他项目中使用 `platon-daytona` 模块。
+这份指南详细说明了如何在您的其他项目中使用 `daytona` 模块。
 
 ## 🚀 方法1：本地Wheel文件安装（最简单）
 
@@ -24,7 +24,7 @@ source venv/bin/activate  # Linux/macOS
 # 或
 venv\Scripts\activate     # Windows
 
-# 安装platon-daytona
+# 安装daytona
 pip install ~/Downloads/daytona-0.0.0.dev0-py3-none-any.whl
 ```
 
@@ -76,7 +76,7 @@ pypi-server -p 8080 ~/pypi-packages/
 
 ```bash
 # 在其他项目中安装
-pip install platon-daytona --index-url http://localhost:8080/simple/ --trusted-host localhost
+pip install daytona --index-url http://localhost:8080/simple/ --trusted-host localhost
 ```
 
 ### 在requirements.txt中使用
@@ -85,7 +85,7 @@ pip install platon-daytona --index-url http://localhost:8080/simple/ --trusted-h
 # requirements.txt
 --index-url http://your-pypi-server:8080/simple/
 --trusted-host your-pypi-server
-platon-daytona==0.0.0.dev0
+daytona==0.0.0.dev0
 ```
 
 ## 🔗 方法3：Git仓库安装（适合版本控制）
@@ -95,7 +95,7 @@ platon-daytona==0.0.0.dev0
 ```bash
 # 提交到Git
 git add libs/sdk-python/
-git commit -m "Add platon-daytona SDK"
+git commit -m "Add daytona SDK"
 git push origin main
 ```
 
@@ -112,7 +112,7 @@ pip install git+https://github.com/your-username/your-repo.git#subdirectory=libs
 # pyproject.toml
 [tool.poetry.dependencies]
 python = "^3.8"
-platon-daytona = {git = "https://github.com/your-username/your-repo.git", subdirectory = "libs/sdk-python"}
+daytona = {git = "https://github.com/your-username/your-repo.git", subdirectory = "libs/sdk-python"}
 ```
 
 ## 🔧 方法4：开发模式（适合同时开发）
@@ -289,7 +289,7 @@ daytona = Daytona()  # 自动读取环境变量
 
 ```python
 import pkg_resources
-package = pkg_resources.get_distribution('platon-daytona')
+package = pkg_resources.get_distribution('daytona')
 print(f"版本: {package.version}")
 ```
 
@@ -305,19 +305,19 @@ pip install --upgrade daytona-0.0.1.dev0-py3-none-any.whl --force-reinstall
 ### Q: 如何卸载？
 
 ```bash
-pip uninstall platon-daytona
+pip uninstall daytona
 ```
 
 ### Q: 如何与原版daytona共存？
 
-由于包名不同（`platon-daytona` vs `daytona`），可以同时安装两个版本。
+由于包名不同（`daytona` vs `daytona`），可以同时安装两个版本。
 
 ### Q: 如何验证安装？
 
 ```python
 try:
     from daytona import Daytona
-    print("✅ platon-daytona 安装成功")
+    print("✅ daytona 安装成功")
 except ImportError:
     print("❌ 安装失败")
 ```
@@ -330,4 +330,4 @@ except ImportError:
 
 ---
 
-选择最适合您项目需求的安装方法，开始使用 platon-daytona 吧！
+选择最适合您项目需求的安装方法，开始使用 daytona 吧！

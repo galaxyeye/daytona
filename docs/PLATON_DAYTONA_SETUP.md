@@ -2,13 +2,13 @@
 
 ## 概述
 
-成功创建了 **platon-daytona** 包，这是从原始 Daytona SDK fork 的版本。
+成功创建了 **daytona** 包，这是从原始 Daytona SDK fork 的版本。
 
 ## 配置详情
 
 ### 包名和版本
 
-- **包名**: `platon-daytona`
+- **包名**: `daytona`
 - **版本**: `0.0.0-dev`
 - **源码目录**: `src/daytona/` (保持不变)
 - **发布名称**: `daytona-0.0.0.dev0-py3-none-any.whl`
@@ -37,7 +37,7 @@ pip install dist/daytona-0.0.0.dev0-py3-none-any.whl
 ### 3. 验证安装
 
 ```python
-python -c "import daytona; print('✓ platon-daytona 安装成功')"
+python -c "import daytona; print('✓ daytona 安装成功')"
 ```
 
 ## 使用方式
@@ -91,7 +91,7 @@ asyncio.run(main())
 
 ### ✅ 成功解决的问题
 
-1. **包名独立**: 发布为 `platon-daytona`，避免与原包冲突
+1. **包名独立**: 发布为 `daytona`，避免与原包冲突
 2. **源码不变**: `src/daytona/` 目录保持原样，无需重构
 3. **API兼容**: 导入方式 `from daytona import ...` 保持一致
 4. **功能完整**: 所有原版功能都可正常使用
@@ -100,7 +100,7 @@ asyncio.run(main())
 
 - **包文件**: `daytona-0.0.0.dev0-py3-none-any.whl`
 - **下载名**: 使用下划线 `daytona`
-- **配置名**: 使用连字符 `platon-daytona`
+- **配置名**: 使用连字符 `daytona`
 - **导入名**: 保持原样 `daytona`
 
 ## 环境变量配置
@@ -133,7 +133,7 @@ libs/sdk-python/
 
 ```toml
 [tool.poetry]
-name = "platon-daytona"
+name = "daytona"
 version = "0.0.0-dev"
 description = "Python SDK for Daytona, forked by platon.ai"
 authors = [
@@ -178,9 +178,9 @@ packages = [{include = "daytona", from = "src"}]
 
 ## 总结
 
-🎉 **platon-daytona** 包已成功创建并测试！
+🎉 **daytona** 包已成功创建并测试！
 
-- **包名**: `platon-daytona`
+- **包名**: `daytona`
 - **使用方式**: 与原版本完全一致
 - **源码**: 保持原有结构不变
 - **功能**: 100% 兼容原版本

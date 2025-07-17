@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "platon-daytona-api-client"
+name = "daytona-api-client"
 version = "0.1.5"
 description = "Daytona"
 authors = ["Daytona Platforms Inc. <support@daytona.com>"]

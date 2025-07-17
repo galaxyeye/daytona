@@ -1,7 +1,7 @@
 # Platon-Daytona SDK for Python
 
-[![PyPI version](https://badge.fury.io/py/platon-daytona.svg)](https://badge.fury.io/py/platon-daytona)
-[![Python Support](https://img.shields.io/pypi/pyversions/platon-daytona.svg)](https://pypi.org/project/platon-daytona/)
+[![PyPI version](https://badge.fury.io/py/daytona.svg)](https://badge.fury.io/py/daytona)
+[![Python Support](https://img.shields.io/pypi/pyversions/daytona.svg)](https://pypi.org/project/daytona/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A Python SDK for interacting with the Daytona API, providing a simple interface for Daytona Sandbox management, Git operations, file system operations, and language server protocol support.
@@ -22,7 +22,7 @@ A Python SDK for interacting with the Daytona API, providing a simple interface 
 You can install the package using pip:
 
 ```bash
-pip install platon-daytona
+pip install daytona
 ```
 
 ## Quick Start
