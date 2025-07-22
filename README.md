@@ -56,6 +56,35 @@ npm install @daytonaio/sdk
 
 ---
 
+## Deployment
+
+### 🐳 Docker Deployment (Self-Hosted)
+
+Deploy Daytona on your own infrastructure with Docker:
+
+```bash
+# Quick start with our setup wizard
+./scripts/quick-start.sh
+
+# Or manual deployment
+cp .env.production.template .env.production
+# Edit .env.production with your configuration
+./scripts/build-images.sh
+./scripts/deploy.sh
+```
+
+**📖 Complete Docker deployment guide:** [docs/DOCKER_DEPLOYMENT.md](docs/DOCKER_DEPLOYMENT.md)
+
+**🛠️ What's included:**
+- Complete microservices stack
+- PostgreSQL, Redis, MinIO storage
+- Nginx reverse proxy with load balancing
+- Monitoring with Grafana + Jaeger
+- Automated backup and restore scripts
+- Kubernetes deployment configs
+
+---
+
 ## Features
 
 - **Lightning-Fast Infrastructure**: Sub-90ms Sandbox creation from code to execution.
