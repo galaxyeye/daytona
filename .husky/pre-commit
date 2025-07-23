@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 # Detect the current shell and platform
 case "$0" in
     *bash*|*sh*)

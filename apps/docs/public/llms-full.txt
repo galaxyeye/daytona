@@ -1,5 +1,5 @@
 # Daytona Documentation v0.0.0-dev
-# Generated on: 2025-07-12
+# Generated on: 2025-07-23
 
 
 title: API Keys
@@ -131,7 +131,7 @@ Set environment variables in your shell:
 
     ```bash export DAYTONA_API_KEY=your-api-key export
     DAYTONA_API_URL=https://your-api-url ```
-    ```bash
+    ```bash 
     $env:DAYTONA_API_KEY="your-api-key"
     $env:DAYTONA_API_URL="https://your-api-url"
     ```
@@ -1418,14 +1418,14 @@ Daytona enforces resource limits to ensure fair usage and stability across all o
 - **Memory** — total RAM available
 - **Disk** — total disk space across sandboxes
 
-These resources are pooled and shared across all running Sandboxes.
+These resources are pooled and shared across all running Sandboxes.  
 The number of Sandboxes you can run at once depends on how much CPU, RAM, and disk each one uses. You can see how to configure and estimate resource usage in the [Sandbox Management docs](https://www.daytona.io/docs/sandbox-management/).
 
 :::tip
 
 ### Manage usage dynamically
 
-Only **Running** Sandboxes count against your vCPU, memory, and disk limits.
+Only **Running** Sandboxes count against your vCPU, memory, and disk limits.  
 Use **Stop**, **Archive**, or **Delete** to manage resources:
 
 - **Stopped** Sandboxes free up CPU and memory but still consume disk.
@@ -1438,7 +1438,7 @@ Check your current usage and limits in the [Dashboard](https://app.daytona.io/da
 
 ## Tiers & Limit Increases
 
-Organizations are automatically placed into a Tier based on verification status.
+Organizations are automatically placed into a Tier based on verification status.  
 You can unlock higher limits by completing the following steps:
 
 | Tier   | Compute Pool (vCPU / RAM / Disk) | Access Requirements                                                                                                     |
@@ -2305,7 +2305,7 @@ const sandbox = await daytona.create({ labels: { SOME_LABEL: 'my-label' } });
 When Sandboxes are not actively used, it is recommended that they be stopped. This can be done manually [using the stop command](/docs/sandbox-management#stop-and-start-sandbox) or automatically by [setting the auto-stop interval](/docs/sandbox-management#auto-stop-and-auto-archive).
 
 :::note
-Daytona keeps a pool of warm Sandboxes using default Snapshots.
+Daytona keeps a pool of warm Sandboxes using default Snapshots.  
 When available, your Sandbox will launch in milliseconds instead of cold-booting.
 :::
 
