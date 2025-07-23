@@ -8,20 +8,23 @@ import secrets
 import string
 from pathlib import Path
 
+
 def generate_password(length=32):
     """生成随机密码"""
     alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
+    return "".join(secrets.choice(alphabet) for _ in range(length))
+
 
 def generate_jwt_secret(length=64):
     """生成JWT密钥"""
     return secrets.token_urlsafe(length)
 
+
 def quick_setup():
     """快速设置环境变量"""
     print("🚀 Daytona 快速配置工具")
     print("正在生成默认的生产环境配置...")
-    
+
     env_content = f"""# Daytona 生产环境配置文件
 # 快速配置工具自动生成
 
@@ -56,19 +59,19 @@ DOCS_URL=http://localhost/docs
 GRAFANA_USER=admin
 GRAFANA_PASSWORD={generate_password(16)}
 """
-    
-    env_file = Path('.env.production')
-    
+
+    env_file = Path(".env.production")
+
     if env_file.exists():
         overwrite = input("⚠️  .env.production 文件已存在，是否覆盖? (y/N): ")
-        if overwrite.lower() not in ['y', 'yes']:
+        if overwrite.lower() not in ["y", "yes"]:
             print("❌ 操作已取消")
             return False
-    
+
     try:
-        with open(env_file, 'w', encoding='utf-8') as f:
+        with open(env_file, "w", encoding="utf-8") as f:
             f.write(env_content)
-        
+
         print(f"✅ 配置文件已生成: {env_file}")
         print("\n⚠️  重要提醒:")
         print("1. 请根据您的实际部署环境修改URL配置")
@@ -76,12 +79,13 @@ GRAFANA_PASSWORD={generate_password(16)}
         print("3. 建议在生产环境中使用更强的密码")
         print("\n🚀 启动命令:")
         print("docker-compose -f docker-compose.prod.yaml up -d")
-        
+
         return True
-    
+
     except Exception as e:
         print(f"❌ 生成配置文件失败: {e}")
         return False
+
 
 if __name__ == "__main__":
     quick_setup()

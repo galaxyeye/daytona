@@ -1,16 +1,49 @@
 #!/bin/sh
 
-# Activate virtual environment before running lint-staged
-# Support both Unix-like (bin/activate) and Windows (Scripts/activate) paths
-if [ -f ".venv/bin/activate" ]; then
-    . .venv/bin/activate
-elif [ -f ".venv/Scripts/activate" ]; then
-    . .venv/Scripts/activate
-else
-    echo "Warning: Virtual environment not found. Using system Python."
+
+# Detect the current shell and platform
+case "$0" in
+    *bash*|*sh*)
+        # For bash/sh on Unix-like systems
+        if [ -f ".venv/bin/activate" ]; then
+            . ".venv/bin/activate"
+            break
+        # For bash/sh on Windows (Git Bash, MSYS2, etc.)
+        elif [ -f ".venv/Scripts/activate" ]; then
+            . ".venv/Scripts/activate"
+            break
+        fi
+        ;;
+    *cmd*|*CMD*)
+        # For Windows Command Prompt
+        if [ -f ".venv/Scripts/activate.bat" ]; then
+            cmd //c ".venv/Scripts/activate.bat"
+            break
+        fi
+        ;;
+    *powershell*|*pwsh*)
+        # For PowerShell
+        if [ -f ".venv/Scripts/Activate.ps1" ]; then
+            powershell -ExecutionPolicy Bypass -File ".venv/Scripts/Activate.ps1"
+            break
+        fi
+        ;;
+esac
+
+# Check if virtual environment was activated successfully
+if [ -z "$VIRTUAL_ENV" ]; then
+    echo "Warning: Virtual environment not found or failed to activate. Using system Python."
 fi
 
-yarn lint-staged
+# Use yarn instead of npm since this project uses yarn as package manager
+if command -v yarn >/dev/null 2>&1; then
+    yarn lint-staged
+elif command -v npm >/dev/null 2>&1; then
+    npm run lint-staged
+else
+    echo "Error: Neither yarn nor npm found. Please ensure Node.js and yarn are installed and in PATH."
+    exit 1
+fi
 
 # Run sync generator check for Python SDK
 ./.husky/pre-commit-sdk-py-sync-check.sh

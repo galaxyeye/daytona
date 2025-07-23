@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "daytona"
-version = "0.1.5"
+version = "0.0.0-dev"
 description = "Python SDK for Daytona, forked by platon.ai with enhanced features"
 authors = [
     "Daytona Platforms Inc. <support@daytona.io>",
