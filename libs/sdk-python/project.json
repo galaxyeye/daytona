@@ -35,7 +35,10 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["rm -rf dist", "./scripts/build-sdk.sh"],
+        "commands": [
+          "node ../../scripts/clean-dir.js dist",
+          "node ../../scripts/python-build.js"
+        ],
         "parallel": false
       }
     },

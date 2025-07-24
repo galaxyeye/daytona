@@ -1,5 +1,5 @@
-//go:build !windows
-// +build !windows
+//go:build windows
+// +build windows
 
 // Copyright 2025 Daytona Platforms Inc.
 // SPDX-License-Identifier: AGPL-3.0
@@ -11,8 +11,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
-	"syscall"
+	"os/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -47,15 +46,27 @@ func getFileInfo(path string) (FileInfo, error) {
 		return FileInfo{}, err
 	}
 
-	stat := info.Sys().(*syscall.Stat_t)
+	// Windows-specific file information handling
+	// Windows doesn't have the same UID/GID concept as Unix
+	owner := "unknown"
+	group := "unknown"
+
+	// Try to get the current user as a fallback
+	if currentUser, err := user.Current(); err == nil {
+		owner = currentUser.Username
+		if currentUser.Gid != "" {
+			group = currentUser.Gid
+		}
+	}
+
 	return FileInfo{
 		Name:        info.Name(),
 		Size:        info.Size(),
 		Mode:        info.Mode().String(),
 		ModTime:     info.ModTime().String(),
 		IsDir:       info.IsDir(),
-		Owner:       strconv.FormatUint(uint64(stat.Uid), 10),
-		Group:       strconv.FormatUint(uint64(stat.Gid), 10),
+		Owner:       owner,
+		Group:       group,
 		Permissions: fmt.Sprintf("%04o", info.Mode().Perm()),
 	}, nil
 }
