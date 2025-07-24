@@ -41,12 +41,14 @@ k8s/                          # ☸️ Kubernetes 部署配置
 ### 方式二：手动步骤
 
 #### 开发环境
+
 ```bash
 # 启动开发环境
 docker-compose -f .devcontainer/docker-compose.yaml up -d
 ```
 
 #### 生产环境
+
 ```bash
 # 1. 创建环境配置
 cp .env.production.template .env.production
@@ -74,6 +76,7 @@ cp .env.production.template .env.production
 ## 🛠️ 常用命令
 
 ### 服务管理
+
 ```bash
 # 查看服务状态
 docker-compose -f docker-compose.prod.yaml ps
@@ -89,6 +92,7 @@ docker-compose -f docker-compose.prod.yaml down
 ```
 
 ### 健康检查
+
 ```bash
 # 运行完整健康检查
 ./scripts/health-check.sh
@@ -98,6 +102,7 @@ curl http://localhost/api/health
 ```
 
 ### 备份和恢复
+
 ```bash
 # 创建备份
 ./scripts/backup.sh
@@ -150,6 +155,7 @@ curl http://localhost/api/health
 ### 常见问题
 
 1. **服务无法启动**
+
    ```bash
    # 检查容器状态
    docker ps -a
@@ -159,6 +165,7 @@ curl http://localhost/api/health
    ```
 
 2. **网络连接问题**
+
    ```bash
    # 检查网络配置
    docker network ls
@@ -166,6 +173,7 @@ curl http://localhost/api/health
    ```
 
 3. **数据库连接失败**
+
    ```bash
    # 测试数据库连接
    docker exec -it daytona-postgres psql -U daytona -d daytona

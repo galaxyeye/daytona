@@ -19,10 +19,12 @@
 Daytona 是一个基于微服务架构的云原生开发环境平台，包含以下主要组件：
 
 ### 前端服务
+
 - **Dashboard** - React 前端应用 (Vite)
 - **Docs** - 文档站点 (Astro)
 
 ### 后端服务  
+
 - **API** - 主要 API 服务 (Node.js/TypeScript + Webpack)
 - **CLI** - 命令行工具 (Go)
 - **Daemon** - 系统守护进程 (Go)
@@ -30,6 +32,7 @@ Daytona 是一个基于微服务架构的云原生开发环境平台，包含以
 - **Runner** - 任务运行器 (Go)
 
 ### 基础设施服务
+
 - **PostgreSQL** - 主数据库
 - **Redis** - 缓存服务
 - **MinIO** - 对象存储服务
@@ -81,6 +84,7 @@ python3 scripts/validate-env.py
 ```
 
 配置工具功能：
+
 - 🎨 **交互式界面** - 彩色输出和友好提示
 - 🔐 **自动密码生成** - 生成安全的随机密码
 - ✅ **配置验证** - 检查格式和完整性
@@ -144,6 +148,7 @@ yarn build:production
 我们提供了全新的交互式配置工具，让环境配置变得简单安全：
 
 #### 方式1: 使用统一配置管理脚本 (推荐)
+
 ```bash
 ./scripts/setup.sh
 # 选择 "1) 完整配置向导" 进行详细配置
@@ -151,6 +156,7 @@ yarn build:production
 ```
 
 #### 方式2: 直接使用Python配置工具
+
 ```bash
 # 完整交互式配置向导
 python3 scripts/setup-env.py
@@ -160,6 +166,7 @@ python3 scripts/quick-setup-env.py
 ```
 
 #### 方式3: 传统方式 (手动配置)
+
 ```bash
 cp .env.production.template .env.production
 # 手动编辑 .env.production 文件

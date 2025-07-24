@@ -14,7 +14,6 @@ poetry = "1.8.5"        # Python dependency management
 # Development tools
 jq = "1.7.1"           # JSON processing
 curl = "8.10.1"        # HTTP client
-docker = "27.5.1"      # Container management
 
 # Optional tools for development
 helm = "latest"         # Kubernetes package manager

@@ -14791,6 +14791,7 @@ __metadata:
     express-session: "npm:^1.18.1"
     fast-glob: "npm:^3.3.0"
     form-data: "npm:^4.0.0"
+    https-proxy-agent: "npm:^7.0.6"
     husky: "npm:^9.1.7"
     ioredis: "npm:^5.5.0"
     is-ci: "npm:^4.1.0"

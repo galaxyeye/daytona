@@ -73,3 +73,6 @@ examples/**/*.png
 .astro
 .devcontainer/pgadmin4/pgpass
 /NUL
+/logs/nginx/error.log
+.cache
+/go/

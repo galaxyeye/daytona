@@ -18,7 +18,8 @@
     "serve": {
       "executor": "@nx-go/nx-go:serve",
       "options": {
-        "cmd": "gow",
+        "cmd": "go",
+        "args": ["run"],
         "cwd": ".",
         "main": "{projectRoot}/cmd/proxy/main.go"
       },

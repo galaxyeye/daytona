@@ -76,6 +76,7 @@ cp .env.production.template .env.production
 **📖 Complete Docker deployment guide:** [docs/DOCKER_DEPLOYMENT.md](docs/DOCKER_DEPLOYMENT.md)
 
 **🛠️ What's included:**
+
 - Complete microservices stack
 - PostgreSQL, Redis, MinIO storage
 - Nginx reverse proxy with load balancing
