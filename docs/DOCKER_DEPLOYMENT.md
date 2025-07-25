@@ -74,13 +74,13 @@ docker-compose -f .devcontainer/docker-compose.yaml ps
 
 # 方式2: 直接使用Python配置工具
 # 完整配置向导
-python3 scripts/setup-env.py
+python3 scripts/config/setup-env.py
 
 # 快速配置 (使用默认值)
-python3 scripts/quick-setup-env.py
+python3 scripts/config/quick-setup-env.py
 
 # 验证配置
-python3 scripts/validate-env.py
+python3 scripts/config/validate-env.py
 ```
 
 配置工具功能：
@@ -159,10 +159,10 @@ yarn build:production
 
 ```bash
 # 完整交互式配置向导
-python3 scripts/setup-env.py
+python3 scripts/config/setup-env.py
 
 # 快速配置 (适合测试环境)
-python3 scripts/quick-setup-env.py
+python3 scripts/config/quick-setup-env.py
 ```
 
 #### 方式3: 传统方式 (手动配置)
@@ -176,7 +176,7 @@ cp .env.production.template .env.production
 
 ```bash
 # 验证配置完整性和安全性
-python3 scripts/validate-env.py
+python3 scripts/config/validate-env.py
 ```
 
 ### 步骤 4: 启动生产环境

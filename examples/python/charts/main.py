@@ -66,7 +66,7 @@ plt.show()
 
 # 5. Box and Whisker Plot
 plt.figure(figsize=(10, 6))
-plt.boxplot(box_data, patch_artist=True, 
+plt.boxplot(box_data, patch_artist=True,
             boxprops=dict(facecolor='lightblue'),
             medianprops=dict(color='red', linewidth=2))
 plt.title('Box and Whisker Plot')

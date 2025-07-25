@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 静态文件目录
-const staticDir = path.join(__dirname, '..', 'apps', 'daemon', 'pkg', 'terminal', 'static');
+const staticDir = path.join(__dirname, '..', '..', 'apps', 'daemon', 'pkg', 'terminal', 'static');
 
 // 基本的xterm文件内容（最小化版本，仅用于开发环境）
 const fallbackFiles = {

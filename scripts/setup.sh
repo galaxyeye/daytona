@@ -26,9 +26,9 @@ fi
 echo -e "${GREEN}✅ Python 3 已安装${NC}"
 
 # 检查脚本文件是否存在
-SETUP_SCRIPT="$SCRIPT_DIR/setup-env.py"
-QUICK_SETUP_SCRIPT="$SCRIPT_DIR/quick-setup-env.py"
-VALIDATE_SCRIPT="$SCRIPT_DIR/validate-env.py"
+SETUP_SCRIPT="$SCRIPT_DIR/config/setup-env.py"
+QUICK_SETUP_SCRIPT="$SCRIPT_DIR/config/quick-setup-env.py"
+VALIDATE_SCRIPT="$SCRIPT_DIR/config/validate-env.py"
 
 if [[ ! -f "$SETUP_SCRIPT" ]] || [[ ! -f "$QUICK_SETUP_SCRIPT" ]] || [[ ! -f "$VALIDATE_SCRIPT" ]]; then
     echo -e "${RED}❌ 配置脚本文件缺失${NC}"
@@ -138,26 +138,31 @@ show_help() {
     echo -e "${BLUE}📚 Daytona 环境配置帮助${NC}"
     echo "================================================="
     echo
-    echo "这个工具包含以下脚本："
+    echo "这个工具包含以下配置脚本（位于 config/ 目录）："
     echo
-    echo "1. setup-env.py - 完整的交互式配置向导"
+    echo "1. config/setup-env.py - 完整的交互式配置向导"
     echo "   - 逐步引导配置所有环境变量"
     echo "   - 自动生成安全的随机密码"
     echo "   - 验证输入格式"
     echo "   - 支持修改现有配置"
     echo
-    echo "2. quick-setup-env.py - 快速配置工具"
+    echo "2. config/quick-setup-env.py - 快速配置工具"
     echo "   - 使用默认值和随机生成的密码"
     echo "   - 适合快速测试和开发环境"
     echo "   - 生成基本可用的配置"
     echo
-    echo "3. validate-env.py - 配置验证工具"
+    echo "3. config/validate-env.py - 配置验证工具"
     echo "   - 检查配置文件完整性"
     echo "   - 验证URL格式"
     echo "   - 分析密码强度"
     echo "   - 生成安全报告"
     echo
-    echo "4. .env.production.template - 配置模板"
+    echo "其他脚本分类："
+    echo "- deployment/ - 部署和运维脚本"
+    echo "- build/ - 构建工具脚本"  
+    echo "- utils/ - 实用工具脚本"
+    echo "- docs/ - 文档和指南"
+    echo "- templates/ - 配置模板"
     echo "   - 包含所有必需和可选的环境变量"
     echo "   - 提供详细的配置说明"
     echo "   - 可以手动复制并修改"

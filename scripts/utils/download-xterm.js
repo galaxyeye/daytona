@@ -10,7 +10,7 @@ const XTERM_VERSION = '5.3.0';
 const XTERM_FIT_VERSION = '0.8.0';
 
 // 静态文件目录
-const staticDir = path.join(__dirname, '..', 'apps', 'daemon', 'pkg', 'terminal', 'static');
+const staticDir = path.join(__dirname, '..', '..', 'apps', 'daemon', 'pkg', 'terminal', 'static');
 
 // 多个CDN源
 const cdnSources = [

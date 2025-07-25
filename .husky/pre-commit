@@ -1,33 +1,19 @@
 #!/bin/sh
 
-# Detect the current shell and platform
-case "$0" in
-    *bash*|*sh*)
-        # For bash/sh on Unix-like systems
-        if [ -f ".venv/bin/activate" ]; then
-            . ".venv/bin/activate"
-            break
-        # For bash/sh on Windows (Git Bash, MSYS2, etc.)
-        elif [ -f ".venv/Scripts/activate" ]; then
-            . ".venv/Scripts/activate"
-            break
-        fi
-        ;;
-    *cmd*|*CMD*)
-        # For Windows Command Prompt
-        if [ -f ".venv/Scripts/activate.bat" ]; then
-            cmd //c ".venv/Scripts/activate.bat"
-            break
-        fi
-        ;;
-    *powershell*|*pwsh*)
-        # For PowerShell
-        if [ -f ".venv/Scripts/Activate.ps1" ]; then
-            powershell -ExecutionPolicy Bypass -File ".venv/Scripts/Activate.ps1"
-            break
-        fi
-        ;;
-esac
+# Detect the current shell and platform and activate virtual environment
+if [ -f ".venv/bin/activate" ]; then
+    # For Unix-like systems
+    . ".venv/bin/activate"
+elif [ -f ".venv/Scripts/activate" ]; then
+    # For Windows (Git Bash, MSYS2, etc.)
+    . ".venv/Scripts/activate"
+elif [ -f ".venv/Scripts/activate.bat" ]; then
+    # For Windows Command Prompt
+    cmd //c ".venv/Scripts/activate.bat"
+elif [ -f ".venv/Scripts/Activate.ps1" ]; then
+    # For PowerShell
+    powershell -ExecutionPolicy Bypass -File ".venv/Scripts/Activate.ps1"
+fi
 
 # Check if virtual environment was activated successfully
 if [ -z "$VIRTUAL_ENV" ]; then

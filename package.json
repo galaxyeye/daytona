@@ -6,12 +6,12 @@
   "scripts": {
     "postinstall": "is-ci || husky",
     "lint-staged": "lint-staged",
-    "get-cpu-count": "node scripts/get-cpu-count.js",
-    "download-xterm": "node scripts/download-xterm.js",
-    "download-xterm-fallback": "node scripts/create-xterm-fallback.js",
-    "download-xterm-with-fallback": "node scripts/download-xterm.js || node scripts/create-xterm-fallback.js",
+    "get-cpu-count": "node scripts/utils/get-cpu-count.js",
+    "download-xterm": "node scripts/utils/download-xterm.js",
+    "download-xterm-fallback": "node scripts/utils/create-xterm-fallback.js",
+    "download-xterm-with-fallback": "node scripts/utils/download-xterm.js || node scripts/utils/create-xterm-fallback.js",
     "prebuild": "yarn download-xterm-with-fallback",
-    "format": "node scripts/nx-with-parallel.js run-many --target=format --all && prettier --write \"*.{ts,js,json,yaml}\" \"functions/**/*.js\" && markdownlint-cli2 \"**/*.{mdx,md}\" --fix && yarn format:py && yarn format:jupyter",
+    "format": "node scripts/build/nx-with-parallel.js run-many --target=format --all && prettier --write \"*.{ts,js,json,yaml}\" \"functions/**/*.js\" && markdownlint-cli2 \"**/*.{mdx,md}\" --fix && yarn format:py && yarn format:jupyter",
     "format:py": "isort libs examples/python --skip-glob \"**/libs/api-client-python/**\" --skip-glob \"**/libs/api-client-python-async/**\" --skip-glob \"**/.venv/**\" && black libs examples/python --extend-exclude '(^|/)(libs/api-client-python|libs/api-client-python-async|\\.venv)(/|$)'",
     "format:jupyter": "nbqa isort examples/jupyter && black examples/jupyter",
     "lint": "yarn lint:ts && yarn lint:py && yarn lint:jupyter",
@@ -19,12 +19,12 @@
     "lint:py": "pylint libs examples/python --ignore-paths='^(?:.*/build/.*|libs/api-client-python/.*|libs/api-client-python-async/.*|.*\\.venv/.*)$' --recursive=y -sn",
     "lint:fix": "eslint \"{apps,libs,test}/**/*.{ts,tsx}\" --fix",
     "lint:jupyter": "nbqa pylint examples/jupyter --recursive=y -sn",
-    "build": "node scripts/nx-with-parallel.js run-many --target=build --all --configuration=development",
-    "build:production": "node scripts/nx-with-parallel.js run-many --target=build --all --configuration=production",
-    "serve": "node scripts/nx-with-parallel.js run-many --target=serve --all --exclude=daemon --configuration=development",
-    "serve:skip-runner": "node scripts/nx-with-parallel.js run-many --target=serve --all --exclude=runner,daemon --configuration=development",
-    "serve:skip-proxy": "node scripts/nx-with-parallel.js run-many --target=serve --all --exclude=proxy,daemon --configuration=development",
-    "serve:production": "node scripts/nx-with-parallel.js run-many --target=serve --all --exclude=daemon --configuration=production",
+    "build": "node scripts/build/nx-with-parallel.js run-many --target=build --all --configuration=development",
+    "build:production": "node scripts/build/nx-with-parallel.js run-many --target=build --all --configuration=production",
+    "serve": "node scripts/build/nx-with-parallel.js run-many --target=serve --all --exclude=daemon --configuration=development",
+    "serve:skip-runner": "node scripts/build/nx-with-parallel.js run-many --target=serve --all --exclude=runner,daemon --configuration=development",
+    "serve:skip-proxy": "node scripts/build/nx-with-parallel.js run-many --target=serve --all --exclude=proxy,daemon --configuration=development",
+    "serve:production": "node scripts/build/nx-with-parallel.js run-many --target=serve --all --exclude=daemon --configuration=production",
     "generate:openapi": "nx run-many --target=openapi --all",
     "generate:api-client": "yarn generate:openapi && nx run-many --target=generate:api-client --all",
     "migration:generate": "cd apps/api && npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:generate -d ./src/data-source.ts ./src/migrations/migration",
@@ -251,13 +251,11 @@
     ],
     "!(libs/api-client-python/**/*|libs/api-client-python-async/**/*)*.py": [
       "isort",
-      "black --config pyproject.toml",
-      "pylint -sn"
+      "black --config pyproject.toml"
     ],
     "*.ipynb": [
       "nbqa isort",
-      "black --config pyproject.toml",
-      "nbqa pylint -sn"
+      "black --config pyproject.toml"
     ]
   }
 }

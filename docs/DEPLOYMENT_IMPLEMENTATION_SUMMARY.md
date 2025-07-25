@@ -123,13 +123,13 @@
 
 ```bash
 # 完整配置向导 - 逐步引导配置
-python3 scripts/setup-env.py
+python3 scripts/config/setup-env.py
 
 # 快速配置 - 使用默认值和随机密码
-python3 scripts/quick-setup-env.py
+python3 scripts/config/quick-setup-env.py
 
 # 验证配置 - 检查配置完整性
-python3 scripts/validate-env.py
+python3 scripts/config/validate-env.py
 
 # 清理环境 - 重置配置和清理资源
 python3 scripts/cleanup-env.py
@@ -142,7 +142,7 @@ python3 scripts/cleanup-env.py
 ./scripts/setup.sh  # 选择完整配置向导
 
 # 2. 验证配置
-python3 scripts/validate-env.py
+python3 scripts/config/validate-env.py
 
 # 2. 构建镜像
 ./scripts/build-images.sh
