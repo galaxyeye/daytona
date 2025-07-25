@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node scripts/copy-file.js dist/apps/daemon-amd64 apps/runner/pkg/daemon/static/daemon-amd64"
+        "command": "node scripts/utils/copy-file.js dist/apps/daemon-amd64 apps/runner/pkg/daemon/static/daemon-amd64"
       },
       "dependsOn": [
         {

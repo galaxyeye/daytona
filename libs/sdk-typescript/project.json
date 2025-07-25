@@ -35,7 +35,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node ../../scripts/set-package-version.js"
+        "command": "node ../../scripts/utils/set-package-version.js"
       }
     },
     "publish": {

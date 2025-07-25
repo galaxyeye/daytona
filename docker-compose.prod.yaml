@@ -141,7 +141,7 @@ services:
   # 监控和追踪服务
   # =============================================================================
   jaeger:
-    image: jaegertracing/all-in-one:1.67.0
+    image: docker.m.daocloud.io/jaegertracing/all-in-one:1.67.0
     container_name: daytona-jaeger
     restart: unless-stopped
     networks:
@@ -173,12 +173,13 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_USERS_ALLOW_SIGN_UP: false
       GF_INSTALL_PLUGINS: grafana-piechart-panel
+      GF_SERVER_HTTP_PORT: 3050
     volumes:
       - grafana_data:/var/lib/grafana
       - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
     ports:
-      - "3001:3000"
+      - "3050:3050"
     user: "472"
     deploy:
       resources:
@@ -273,7 +274,7 @@ services:
       - daytona-network
     environment:
       NODE_ENV: production
-      PORT: 3000
+      PORT: 3001
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${DB_NAME}
@@ -291,7 +292,7 @@ services:
       - ./logs/api:/app/logs
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "3000:3000"
+      - "3001:3001"
     depends_on:
       postgres:
         condition: service_healthy
@@ -300,7 +301,7 @@ services:
       minio:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -323,6 +324,14 @@ services:
       - daytona-network
     volumes:
       - ./logs/dashboard:/var/log/nginx
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     deploy:
       resources:
         limits:
@@ -340,6 +349,15 @@ services:
       - daytona-network
     environment:
       PUBLIC_WEB_URL: ${FRONTEND_URL}
+      FUNCTIONS_PORT: 4000
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     deploy:
       resources:
         limits:
@@ -382,7 +400,7 @@ services:
     networks:
       - daytona-network
     environment:
-      API_URL: http://api:3000
+      API_URL: http://api:3001
       REGISTRY_URL: registry:5000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

@@ -36,8 +36,8 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "node ../../scripts/clean-dir.js dist",
-          "node ../../scripts/python-build.js"
+          "node ../../scripts/utils/clean-dir.js dist",
+          "node ../../scripts/build/python-build.js"
         ],
         "parallel": false
       }
