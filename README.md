@@ -163,6 +163,37 @@ main().catch(console.error)
 
 ---
 
+## Development Setup
+
+### Dev Container Environment
+
+This project includes a dev container configuration for consistent development environment. When working in the dev container, Git proxy settings are automatically configured.
+
+#### Git Connectivity Issues
+
+If you encounter Git connectivity issues in the dev container:
+
+```bash
+# Automatic setup (recommended)
+./scripts/setup-git.sh
+
+# Force proxy usage
+./scripts/setup-git.sh --force-proxy
+
+# Disable proxy
+./scripts/setup-git.sh --no-proxy
+```
+
+The setup script intelligently:
+
+1. Tests direct connection first (preferred)
+2. Falls back to proxy if needed
+3. Automatically detects the best proxy configuration
+
+For more details, see [Git Proxy Setup Guide](.devcontainer/GIT_PROXY_SETUP.md).
+
+---
+
 ## Contributing
 
 Daytona is Open Source under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE), and is the [copyright of its contributors](NOTICE). If you would like to contribute to the software, read the Developer Certificate of Origin Version 1.1 (https://developercertificate.org/). Afterwards, navigate to the [contributing guide](CONTRIBUTING.md) to get started.
