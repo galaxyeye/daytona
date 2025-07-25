@@ -251,11 +251,13 @@
     ],
     "!(libs/api-client-python/**/*|libs/api-client-python-async/**/*)*.py": [
       "isort",
-      "black --config pyproject.toml"
+      "black --config pyproject.toml",
+      "pylint --disable=trailing-whitespace,f-string-without-interpolation,unused-variable,line-too-long -sn"
     ],
     "*.ipynb": [
       "nbqa isort",
-      "black --config pyproject.toml"
+      "black --config pyproject.toml",
+      "nbqa pylint --disable=trailing-whitespace,f-string-without-interpolation,unused-variable,line-too-long -sn"
     ]
   }
 }
