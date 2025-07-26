@@ -1,0 +1,160 @@
+services:
+  daytona-api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/workspaces/daytona
+    environment:
+      - PORT=3001
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USERNAME=user
+      - DB_PASSWORD=pass
+      - DB_DATABASE=application_ctx
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OIDC_CLIENT_ID=daytona
+      - OIDC_ISSUER_BASE_URL=http://dex:5556/dex
+      - OIDC_AUDIENCE=daytona
+      - DEFAULT_SNAPSHOT=ubuntu:22.04
+      - DASHBOARD_URL=http://localhost:3000/dashboard
+      - TRANSIENT_REGISTRY_URL=http://registry:5000
+      - TRANSIENT_REGISTRY_ADMIN=admin
+      - TRANSIENT_REGISTRY_PASSWORD=password
+      - TRANSIENT_REGISTRY_PROJECT_ID=daytona
+      - INTERNAL_REGISTRY_URL=http://registry:5000
+      - INTERNAL_REGISTRY_ADMIN=admin
+      - INTERNAL_REGISTRY_PASSWORD=password
+      - INTERNAL_REGISTRY_PROJECT_ID=daytona
+      - SMTP_HOST=maildev
+      - SMTP_PORT=1025
+      - SMTP_EMAIL_FROM=Daytona Team <no-reply@daytona.io>
+      - S3_ENDPOINT=http://minio:9000
+      - S3_STS_ENDPOINT=http://minio:9000/minio/v1/assume-role
+      - S3_REGION=us-east-1
+      - S3_ACCESS_KEY=minioadmin
+      - S3_SECRET_KEY=minioadmin
+      - S3_DEFAULT_BUCKET=daytona
+      - S3_ACCOUNT_ID=/
+      - S3_ROLE_NAME=/
+      - ENVIRONMENT=dev
+      - OTEL_ENABLED=true
+      - OTEL_COLLECTOR_URL=http://jaeger:4318/v1/traces
+      - MAINTENANCE_MODE=false
+      - PROXY_DOMAIN=proxy.localhost:4000
+      - PROXY_PROTOCOL=http
+      - PROXY_API_KEY=super_secret_key
+    depends_on:
+      - db
+      - redis
+    networks:
+      - daytona-network
+
+  dex:
+    image: dexidp/dex:v2.42.0
+    ports:
+      - "5556:5556"
+    volumes:
+      - ./config/dex/config.yaml:/etc/dex/config.yaml
+      - ./tmp/dex:/tmp
+    command: ['dex', 'serve', '/etc/dex/config.yaml']
+    networks:
+      - daytona-network
+
+  db:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=user
+      - POSTGRES_DB=application_ctx
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - daytona-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@daytona.io
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    depends_on:
+      - db
+    networks:
+      - daytona-network
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - daytona-network
+
+  registry-ui:
+    image: joxit/docker-registry-ui:main
+    environment:
+      - SINGLE_REGISTRY=true
+      - REGISTRY_TITLE=Docker Registry UI
+      - DELETE_IMAGES=true
+      - SHOW_CONTENT_DIGEST=true
+      - NGINX_PROXY_PASS_URL=http://registry:5000
+      - SHOW_CATALOG_NB_TAGS=true
+      - CATALOG_MIN_BRANCHES=1
+      - CATALOG_MAX_BRANCHES=1
+      - TAGLIST_PAGE_SIZE=100
+      - REGISTRY_SECURED=false
+      - CATALOG_ELEMENTS_LIMIT=1000
+    depends_on:
+      - registry
+    networks:
+      - daytona-network
+
+  registry:
+    image: registry:2.8.2
+    environment:
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[http://registry-ui:5100]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
+      REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+    volumes:
+      - registry:/var/lib/registry
+    networks:
+      - daytona-network
+
+  maildev:
+    image: maildev/maildev
+    networks:
+      - daytona-network
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_IDENTITY_STS_EXPIRY="24h"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - daytona-network
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.67.0
+    networks:
+      - daytona-network
+
+volumes:
+  registry: {}
+  minio_data: {}
+  postgres_data: {}
+  redis_data: {}
+
+networks:
+  daytona-network:
+    driver: bridge
