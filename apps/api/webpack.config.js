@@ -23,7 +23,7 @@ module.exports = composePlugins(
   // Default Nx composable plugin
   withNx(),
   // Custom composable plugin
-  (config, { options, context }) => {
+  (config) => {
     // `config` is the Webpack configuration object
     // `options` is the options passed to the `@nx/webpack:webpack` executor
     // `context` is the context passed to the `@nx/webpack:webpack` executor
@@ -34,6 +34,17 @@ module.exports = composePlugins(
       config.devtool = 'eval-cheap-module-source-map'
       
       // Enable caching for faster rebuilds
+      config.cache = {
+        type: 'filesystem',
+        buildDependencies: {
+          config: [__filename],
+        },
+      }
+      
+      // Enable parallel processing
+      config.parallelism = require('os').cpus().length
+    } else {
+      // Production optimizations
       config.cache = {
         type: 'filesystem',
         buildDependencies: {

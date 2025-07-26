@@ -7,6 +7,9 @@
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "outputs": ["{workspaceRoot}/dist/apps/api"],
       "options": {
         "outputPath": "dist/apps/api",
         "main": "apps/api/src/main.ts",
