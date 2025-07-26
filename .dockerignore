@@ -1,0 +1,139 @@
+# Node modules should be installed in container
+node_modules
+npm-debug.log*
+
+# Build outputs - exclude unnecessary build artifacts
+dist/
+.nx/cache
+.next/
+out/
+build/
+coverage/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Test coverage
+coverage
+*.lcov
+.nyc_output
+
+# Environment files
+.env
+.env.test
+.env.production
+.env.local
+
+# Development tools
+.husky/
+.github/
+.git/
+.gitignore
+
+# Documentation and non-essential files
+*.md
+LICENSE
+docs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.Python
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+
+# Temporary folders
+tmp/
+temp/
+.tmp/
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+.env.production
+.env.local
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# Development files
+*.md
+LICENSE

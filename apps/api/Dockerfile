@@ -1,32 +1,49 @@
 # Multi-stage build for API service
-FROM node:20.18.1-alpine AS builder
+FROM node:20.18.1-alpine AS base
+
+# Install build dependencies once and cache them
+RUN apk add --no-cache python3 make g++ && \
+    corepack enable
+
+# Dependencies stage - for better caching
+FROM base AS deps
 
 WORKDIR /app
 
-# Install build dependencies
-RUN apk add --no-cache python3 make g++
+# Copy only dependency files for better layer caching
+COPY package.json yarn.lock .yarnrc.yml ./
 
-# Enable corepack to manage package manager versions
-RUN corepack enable
+# Install dependencies with comprehensive caching
+RUN --mount=type=cache,target=/root/.yarn/cache \
+    --mount=type=cache,target=/root/.cache/yarn \
+    corepack prepare && \
+    yarn install --immutable
 
-# Copy package files
-COPY package.json yarn.lock ./
+# Build stage
+FROM base AS builder
 
-# Prepare the correct yarn version using corepack
-RUN corepack prepare
+WORKDIR /app
 
-# Install all dependencies
-RUN yarn install
+# Copy dependencies from previous stage
+COPY --from=deps /app/node_modules ./node_modules
 
-# Copy source code
-COPY . .
+# Copy essential build files first (for better caching)
+COPY package.json yarn.lock .yarnrc.yml nx.json tsconfig.base.json eslint.config.mjs ./
 
-# Set environment variables to avoid Jest binding issues
+# Copy source code - only what's needed for API build
+COPY apps/api ./apps/api
+COPY libs ./libs
+
+# Set optimized environment variables
 ENV NX_SKIP_NX_CACHE=true
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_ENV=production
+ENV NX_DAEMON=false
+ENV NX_PARALLEL=2
 
-# Build the application with production configuration
-RUN yarn nx build api --configuration=production --skip-nx-cache
+# Build only what's needed with optimizations
+RUN --mount=type=cache,target=/app/.nx/cache \
+    yarn nx build api --configuration=production --skip-nx-cache --verbose
 
 # Production stage
 FROM node:20.18.1-alpine
@@ -46,17 +63,17 @@ RUN apk add --no-cache curl
 
 # Set environment
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=3001
 
 # Switch to non-root user
 USER daytona
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3000/health || exit 1
+    CMD curl -f http://localhost:3001/health || exit 1
 
 # Start the application
 CMD ["node", "main.js"]
