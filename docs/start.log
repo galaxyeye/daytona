@@ -1,0 +1,324 @@
+(monorepo-py3.10) daytona ➜ /workspaces/daytona (main) $ yarn run serve
+Auto-adding parallel execution with 8 processes
+Command: nx run-many --target=serve --all --exclude=daemon --configuration=development --parallel=8
+
+ NX   Running target serve for 5 projects and 6 tasks they depend on:
+
+- dashboard
+- runner
+- proxy
+- docs
+- api
+
+—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+
+> nx run docs:serve
+
+> astro dev --host
+
+
+> nx run dashboard:serve
+
+> vite
+
+
+> nx run proxy:serve
+
+
+> nx run runner-api-client:build  [existing outputs match the cache, left as is]
+
+Compiling TypeScript files for project "runner-api-client"...
+Done compiling TypeScript files for project "runner-api-client".
+
+> nx run api:build  [existing outputs match the cache, left as is]
+
+chunk (runtime: main) main.js (main) 1.05 MiB [entry] [rendered]
+webpack compiled successfully (24d703c078d8f591)
+
+> nx run api:serve:development
+
+Executing command: go run apps/proxy/cmd/proxy/main.go run
+
+> nx run daemon:prepare
+
+Executing command: go run apps/daemon/tools/xterm.go
+File xterm.js already exists, skipping download
+File xterm.css already exists, skipping download
+File xterm-addon-fit.js already exists, skipping download
+All xterm files downloaded successfully!
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+[GIN-debug] GET    /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] POST   /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] PUT    /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] PATCH  /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] HEAD   /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] OPTIONS /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] DELETE /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] CONNECT /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+[GIN-debug] TRACE  /*path                    --> github.com/daytonaio/proxy/pkg/proxy.StartProxy.func3 (4 handlers)
+time="2025-07-27T16:43:38+08:00" level=info msg="Proxy server is running on port 4000"
+
+> nx run daemon:build-amd64
+
+Executing command: go build -o dist/apps/daemon-amd64 -ldflags "-X 'github.com/daytonaio/daemon/internal.Version=${npm_package_version}'" apps/daemon/cmd/daemon/main.go
+
+  VITE v7.0.0  ready in 75425 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://172.19.0.8:3000/
+  ➜  Network: http://172.18.0.1:3000/
+
+> nx run daemon:build
+
+Executing command: go build -o dist/apps/daemon -ldflags "-X 'github.com/daytonaio/daemon/internal.Version=${npm_package_version}'" apps/daemon/cmd/daemon/main.go
+
+> nx run runner:copy-daemon-bin
+
+> node scripts/utils/copy-file.js dist/apps/daemon-amd64 apps/runner/pkg/daemon/static/daemon-amd64
+
+Successfully copied /workspaces/daytona/dist/apps/daemon-amd64 to /workspaces/daytona/apps/runner/pkg/daemon/static/daemon-amd64
+
+> nx run runner:serve
+
+16:45:03 [types] Generated 43ms
+16:45:04 [vite] Re-optimizing dependencies because vite config has changed
+
+ astro  v4.16.18 ready in 26240 ms
+
+┃ Local    http://localhost:4321/docs
+┃ Network  http://172.19.0.8:4321/docs
+           http://172.18.0.1:4321/docs
+
+Executing command: go run apps/runner/cmd/runner/main.go run
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+[GIN-debug] GET    /                         --> github.com/daytonaio/runner/pkg/api/controllers.HealthCheck (4 handlers)
+[GIN-debug] GET    /metrics                  --> github.com/daytonaio/runner/pkg/api.(*ApiServer).Start.WrapH.func4 (4 handlers)
+[GIN-debug] GET    /api/*any                 --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (4 handlers)
+[GIN-debug] POST   /sandboxes                --> github.com/daytonaio/runner/pkg/api/controllers.Create (5 handlers)
+[GIN-debug] GET    /sandboxes/:sandboxId     --> github.com/daytonaio/runner/pkg/api/controllers.Info (5 handlers)
+[GIN-debug] POST   /sandboxes/:sandboxId/destroy --> github.com/daytonaio/runner/pkg/api/controllers.Destroy (5 handlers)
+[GIN-debug] POST   /sandboxes/:sandboxId/start --> github.com/daytonaio/runner/pkg/api/controllers.Start (5 handlers)
+[GIN-debug] POST   /sandboxes/:sandboxId/stop --> github.com/daytonaio/runner/pkg/api/controllers.Stop (5 handlers)
+[GIN-debug] POST   /sandboxes/:sandboxId/backup --> github.com/daytonaio/runner/pkg/api/controllers.CreateBackup (5 handlers)
+[GIN-debug] POST   /sandboxes/:sandboxId/resize --> github.com/daytonaio/runner/pkg/api/controllers.Resize (5 handlers)
+[GIN-debug] DELETE /sandboxes/:sandboxId     --> github.com/daytonaio/runner/pkg/api/controllers.RemoveDestroyed (5 handlers)
+[GIN-debug] GET    /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] POST   /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] PUT    /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] PATCH  /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] HEAD   /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] OPTIONS /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] DELETE /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] CONNECT /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] TRACE  /sandboxes/:sandboxId/toolbox/*path --> github.com/daytonaio/runner/pkg/api/controllers.ProxyRequest (5 handlers)
+[GIN-debug] POST   /snapshots/pull           --> github.com/daytonaio/runner/pkg/api/controllers.PullSnapshot (5 handlers)
+[GIN-debug] POST   /snapshots/build          --> github.com/daytonaio/runner/pkg/api/controllers.BuildSnapshot (5 handlers)
+[GIN-debug] GET    /snapshots/exists         --> github.com/daytonaio/runner/pkg/api/controllers.SnapshotExists (5 handlers)
+[GIN-debug] POST   /snapshots/remove         --> github.com/daytonaio/runner/pkg/api/controllers.RemoveSnapshot (5 handlers)
+[GIN-debug] GET    /snapshots/logs           --> github.com/daytonaio/runner/pkg/api/controllers.GetBuildLogs (5 handlers)
+16:45:15 watching for file changes...
+chunk (runtime: main) main.js (main) 1.05 MiB [entry]
+webpack compiled successfully (24d703c078d8f591)
+Type-checking in progress...
+Debugger listening on ws://localhost:9229/c2a2ab3a-64e5-43f0-835d-3ce0c3e61ddf
+Debugger listening on ws://localhost:9229/c2a2ab3a-64e5-43f0-835d-3ce0c3e61ddf
+For help, see: https://nodejs.org/en/docs/inspector
+
+[Nest] 34501  - 2025/07/27 16:46:40     LOG [OpenTelemetry] OpenTelemetry disabled in development for faster startup
+[Nest] 34501  - 2025/07/27 16:46:40     LOG [OpenTelemetry] Use FORCE_OTEL_DEV=true to enable OpenTelemetry in development
+[API] 34501  - 2025/07/27 16:48:22     LOG [NestFactory] Starting Nest application...
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] RedisModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] PassportModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] AnalyticsModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] RedisModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ThrottlerModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] HttpModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ConfigHostModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] DiscoveryModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ServeStaticModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ConfigModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ConfigModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ConfigModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] ScheduleModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] EventEmitterModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] TypedConfigModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:22     LOG [InstanceLoader] TypedConfigModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] RedisCoreModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] EmailModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmCoreModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] TypeOrmModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] UsageModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [ApiKeyStrategy] ApiKeyStrategy constructor called
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] ObjectStorageModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] DockerRegistryModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] AppModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] UserModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] ApiKeyModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] SandboxModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] OrganizationModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] AuthModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [InstanceLoader] NotificationModule dependencies initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] ApiKeyController {/api/api-keys}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/api-keys, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/api-keys, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/api-keys/current, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/api-keys/:name, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/api-keys/:name, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] OrganizationController {/api/organizations}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/invitations, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/invitations/count, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/invitations/:invitationId/accept, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/invitations/:invitationId/decline, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/usage, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/quota, PATCH} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/leave, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/suspend, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/unsuspend, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] OrganizationRoleController {/api/organizations/:organizationId/roles}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/roles, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/roles, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/roles/:roleId, PUT} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/roles/:roleId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] OrganizationUserController {/api/organizations/:organizationId/users}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/users, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/users/:userId/role, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/users/:userId/assigned-roles, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/users/:userId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] OrganizationInvitationController {/api/organizations/:organizationId/invitations}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/invitations, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/invitations/:invitationId, PUT} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/invitations, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/organizations/:organizationId/invitations/:invitationId/cancel, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] UserController {/api/users}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users/me, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users/:id/regenerate-key-pair, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users/account-providers, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users/linked-accounts, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users/linked-accounts/:provider/:providerUserId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/users/:id, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] SandboxController {/api/sandbox}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/start, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/stop, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/labels, PUT} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/backup, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/public/:isPublic, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/autostop/:interval, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/autoarchive/:interval, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/archive, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/ports/:port/preview-url, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/sandbox/:sandboxId/build-logs, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] RunnerController {/api/runners}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/runners, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/runners, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/runners/:id/scheduling, PATCH} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/runners/by-sandbox/:sandboxId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/runners/by-snapshot, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] ToolboxController {/api/toolbox}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/project-dir, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/download, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/find, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/folder, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/info, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/move, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/permissions, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/replace, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/search, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/upload, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/files/bulk-upload, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/add, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/branches, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/branches, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/branches, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/clone, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/commit, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/history, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/pull, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/push, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/checkout, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/git/status, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/execute, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId/exec, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId/command/:commandId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId/command/:commandId/logs, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/completions, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/did-close, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/did-open, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/document-symbols, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/start, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/stop, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/toolbox/:sandboxId/toolbox/lsp/workspace-symbols, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] SnapshotController {/api/snapshots}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots/:id, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots/:id/toggle, PATCH} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots/:id, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots/:id/general, PATCH} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots/:id/build-logs, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/snapshots/:id/activate, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] WorkspaceController {/api/workspace}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/start, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/stop, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/labels, PUT} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/backup, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/public/:isPublic, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/autostop/:interval, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/autoarchive/:interval, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/archive, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/ports/:port/preview-url, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/workspace/:workspaceId/build-logs, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] PreviewController {/api/preview}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/preview/:sandboxId/public, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/preview/:sandboxId/validate/:authToken, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/preview/:sandboxId/access, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] VolumeController {/api/volumes}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/volumes, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/volumes, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/volumes/:volumeId, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/volumes/:volumeId, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/volumes/by-name/:name, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] DockerRegistryController {/api/docker-registry}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry/registry-push-access, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry/:id, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry/:id, PATCH} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry/:id, DELETE} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/docker-registry/:id/set-default, POST} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [RoutesResolver] ObjectStorageController {/api/object-storage}:
+[API] 34501  - 2025/07/27 16:48:23     LOG [RouterExplorer] Mapped {/api/object-storage/push-access, GET} route
+[API] 34501  - 2025/07/27 16:48:23     LOG [ApiKeyStrategy] ApiKeyStrategy initialized
+[API] 34501  - 2025/07/27 16:48:23     LOG [NestApplication] Nest application successfully started
+[API] 34501  - 2025/07/27 16:48:23     LOG 🚀 Daytona API is running on: http://0.0.0.0:3001/api
+No errors found.
