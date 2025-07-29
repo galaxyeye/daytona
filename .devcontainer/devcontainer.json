@@ -67,9 +67,12 @@
     // "install-deps": "git config --global --add safe.directory ${containerWorkspaceFolder} && yarn",
     "env": "test -f .env.local || touch .env.local",
     "fix-scripts": "find ${containerWorkspaceFolder} -type f -name \"*.sh\" 2>/dev/null -exec dos2unix {} \\; -exec chmod +x {} \\; || true",
-    "setup-git": "git config --global --add safe.directory ${containerWorkspaceFolder} && ${containerWorkspaceFolder}/.devcontainer/setup-git-proxy.sh"
+    "setup-git": "git config --global --add safe.directory ${containerWorkspaceFolder} && ${containerWorkspaceFolder}/.devcontainer/setup-git-proxy.sh",
+    "fix-file-limit": "echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p"
   },
-  "postStartCommand": "yarn && poetry lock && poetry install",
+  "postStartCommand": {
+    "install-dependency": "yarn && poetry lock && poetry install"
+  },
   "postAttachCommand": "",
   "forwardPorts": [5556, "pgadmin:80", "registry-ui:5100", "maildev:1080", "minio:9000", "minio:9001", "jaeger:16686"],
   // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
