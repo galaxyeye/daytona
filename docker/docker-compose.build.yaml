@@ -1,97 +1,100 @@
+name: daytona-dev
 services:
-  daytona-all:
+  api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: docker/Dockerfile
+      target: daytona
+    privileged: true
     ports:
-      - "3000:3000"
-      - "3001:3001"
-    volumes:
-      - .:/workspaces/daytona
-    depends_on:
-      - db
-      - redis
-    networks:
-      - daytona-network
+      - 3000:3000
+      - 3003:3003
+      - 4000:4000
+      - 6000:6000
+      - 5556:5556
+      - 5100:5100
+  proxy:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      target: proxy
+    network_mode: service:api
+
+  runner:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+      target: runner
+    privileged: true
+    network_mode: service:api
 
   dex:
     image: dexidp/dex:v2.42.0
-    ports:
-      - "5556:5556"
     volumes:
-      - ./config/dex/config.yaml:/etc/dex/config.yaml
-      - ./tmp/dex:/tmp
+      - ./dex/config.yaml:/etc/dex/config.yaml
     command: ['dex', 'serve', '/etc/dex/config.yaml']
-    networks:
-      - daytona-network
+    network_mode: service:api
 
   db:
-    image: postgres:13-alpine
+    image: postgres:11.9
     environment:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_USER=user
-      - POSTGRES_DB=application_ctx
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - daytona-network
+      - POSTGRES_DB=daytona
 
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:9.2.0
+    entrypoint: ['sh', '-c', 'chmod 600 /pgpass && exec /entrypoint.sh']
     environment:
       PGADMIN_DEFAULT_EMAIL: dev@daytona.io
       PGADMIN_DEFAULT_PASSWORD: pgadmin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    user: root
+    volumes:
+      - ./pgadmin4/servers.json:/pgadmin4/servers.json
+      - ./pgadmin4/pgpass:/pgpass
     depends_on:
       - db
-    networks:
-      - daytona-network
+    ports:
+      - 5050:80
 
   redis:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
-    networks:
-      - daytona-network
+    image: redis:latest
 
   registry-ui:
     image: joxit/docker-registry-ui:main
+    restart: always
     environment:
       - SINGLE_REGISTRY=true
       - REGISTRY_TITLE=Docker Registry UI
       - DELETE_IMAGES=true
       - SHOW_CONTENT_DIGEST=true
-      - NGINX_PROXY_PASS_URL=http://registry:5000
+      - NGINX_PROXY_PASS_URL=http://localhost:6000
       - SHOW_CATALOG_NB_TAGS=true
       - CATALOG_MIN_BRANCHES=1
       - CATALOG_MAX_BRANCHES=1
       - TAGLIST_PAGE_SIZE=100
       - REGISTRY_SECURED=false
       - CATALOG_ELEMENTS_LIMIT=1000
-    depends_on:
-      - registry
-    networks:
-      - daytona-network
-
+    network_mode: service:api
   registry:
     image: registry:2.8.2
+    restart: always
     environment:
-      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[http://registry-ui:5100]'
+      REGISTRY_HTTP_HEADERS_Access-Control-Allow-Origin: '[http://registry-ui.example.com]'
       REGISTRY_HTTP_HEADERS_Access-Control-Allow-Methods: '[HEAD,GET,OPTIONS,DELETE]'
       REGISTRY_HTTP_HEADERS_Access-Control-Allow-Credentials: '[true]'
       REGISTRY_HTTP_HEADERS_Access-Control-Allow-Headers: '[Authorization,Accept,Cache-Control]'
       REGISTRY_HTTP_HEADERS_Access-Control-Expose-Headers: '[Docker-Content-Digest]'
       REGISTRY_STORAGE_DELETE_ENABLED: 'true'
+      REGISTRY_HTTP_ADDR: localhost:6000
     volumes:
       - registry:/var/lib/registry
-    networks:
-      - daytona-network
+    network_mode: service:api
 
   maildev:
     image: maildev/maildev
-    networks:
-      - daytona-network
 
   minio:
     image: minio/minio:latest
@@ -102,20 +105,10 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
-    networks:
-      - daytona-network
 
   jaeger:
     image: jaegertracing/all-in-one:1.67.0
-    networks:
-      - daytona-network
 
 volumes:
   registry: {}
   minio_data: {}
-  postgres_data: {}
-  redis_data: {}
-
-networks:
-  daytona-network:
-    driver: bridge
