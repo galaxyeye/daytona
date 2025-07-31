@@ -1,11 +1,7 @@
 FROM docker:28.2.2-dind-alpine3.22 AS daytona
 
-RUN apk --update add --no-cache nodejs=22.16.0-r2 npm bash curl
-
-# Install mise
-RUN curl https://mise.run | sh
-ENV PATH="/root/.local/bin:${PATH}"
-
+# Install nodejs
+RUN apk --update add --no-cache nodejs=22.16.0-r2 npm bash
 RUN npm install -g corepack && corepack enable
 
 COPY --from=golang:1.23.5-alpine /usr/local/go/ /usr/local/go/
@@ -15,11 +11,6 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 WORKDIR /daytona
 
 COPY . .
-
-# Trust mise configuration and install tools
-RUN mise trust
-RUN mise install
-RUN mise run install
 
 # Docs build arguments
 ENV PUBLIC_WEB_URL=https://daytona.io
@@ -31,7 +22,8 @@ ENV PUBLIC_ALGOLIA_API_KEY=${PUBLIC_ALGOLIA_API_KEY}
 ARG VERSION=0.0.1
 ENV VERSION=${VERSION}
 
-RUN mise run build
+RUN yarn && \
+  SKIP_COMPUTER_USE_BUILD=true yarn build:production-skip-computer-use --nxBail=true
 
 RUN mkdir -p /etc/docker && echo '{"iptables": false, "ip-forward": false, "ip-masq": false, "userland-proxy": false,"insecure-registries": ["localhost:6000"]}' > /etc/docker/daemon.json
 
