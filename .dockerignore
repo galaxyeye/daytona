@@ -22,3 +22,39 @@ libs/sdk-python
 libs/sdk-typescript
 libs/api-client-python
 libs/api-client-python-async
+
+# Python virtual environments
+.venv/
+venv/
+env/
+.env/
+
+# Node.js dependencies
+node_modules/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Build artifacts
+dist/
+build/
+target/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
