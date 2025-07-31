@@ -22,8 +22,7 @@ ENV PUBLIC_ALGOLIA_API_KEY=${PUBLIC_ALGOLIA_API_KEY}
 ARG VERSION=0.0.1
 ENV VERSION=${VERSION}
 
-RUN yarn && \
-  SKIP_COMPUTER_USE_BUILD=true yarn build:production-skip-computer-use --nxBail=true
+RUN yarn && yarn build:production --nxBail=true
 
 RUN mkdir -p /etc/docker && echo '{"iptables": false, "ip-forward": false, "ip-masq": false, "userland-proxy": false,"insecure-registries": ["localhost:6000"]}' > /etc/docker/daemon.json
 
@@ -104,7 +103,7 @@ ENV DEFAULT_RUNNER_DISK=50
 ENV DEFAULT_RUNNER_GPU=0
 ENV DEFAULT_RUNNER_GPU_TYPE=none
 ENV DEFAULT_RUNNER_CAPACITY=100
-ENV DEFAULT_RUNNER_REGION=us
+ENV DEFAULT_RUNNER_REGION=cn
 ENV DEFAULT_RUNNER_CLASS=small
 
 ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & node dist/apps/api/main.js"]
@@ -161,15 +160,3 @@ ENV AWS_SECRET_ACCESS_KEY=minioadmin
 ENV AWS_DEFAULT_BUCKET=daytona
 
 ENTRYPOINT ["sh", "-c", "dockerd & daytona-runner"]
-
-FROM node:22-alpine AS docs
-
-WORKDIR /daytona
-
-COPY --from=daytona /daytona/node_modules node_modules
-COPY --from=daytona /daytona/dist/apps/docs dist/apps/docs
-COPY --from=daytona /daytona/apps/docs/server dist/apps/docs/server
-
-WORKDIR /daytona/dist/apps/docs
-
-ENTRYPOINT ["sh", "-c", "node server/index.mjs"]
