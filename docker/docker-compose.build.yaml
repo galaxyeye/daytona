@@ -10,9 +10,15 @@ services:
       - 3000:3000
       - 3003:3003
       - 4000:4000
-      - 6000:6000
       - 5556:5556
+      - 6000:6000
       - 5100:5100
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   proxy:
     build:
       context: ../
@@ -34,6 +40,14 @@ services:
       - ./dex/config.yaml:/etc/dex/config.yaml
     command: ['dex', 'serve', '/etc/dex/config.yaml']
     network_mode: service:api
+    depends_on:
+      - db
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5556/dex/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
   db:
     image: postgres:11.9
@@ -41,6 +55,11 @@ services:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_USER=user
       - POSTGRES_DB=daytona
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d daytona"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     image: dpage/pgadmin4:9.2.0

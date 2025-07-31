@@ -106,7 +106,8 @@ ENV DEFAULT_RUNNER_CAPACITY=100
 ENV DEFAULT_RUNNER_REGION=cn
 ENV DEFAULT_RUNNER_CLASS=small
 
-ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & node dist/apps/api/main.js"]
+# ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & node dist/apps/api/main.js"]
+ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & yarn migration:run && node dist/apps/api/main.js"]
 
 FROM alpine:3.18 AS proxy
 
