@@ -12,6 +12,7 @@ elif [ -f ".venv/Scripts/activate.bat" ]; then
     cmd //c ".venv/Scripts/activate.bat"
 elif [ -f ".venv/Scripts/Activate.ps1" ]; then
     # For PowerShell
+    echo "Activating virtual environment in PowerShell..."
     powershell -ExecutionPolicy Bypass -File ".venv/Scripts/Activate.ps1"
 fi
 
