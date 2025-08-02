@@ -72,3 +72,6 @@ examples/**/*.png
 **/poetry.lock
 !/poetry.lock
 .astro
+cache
+vendor
+go
