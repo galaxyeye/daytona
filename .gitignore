@@ -77,3 +77,4 @@ vendor/
 daemon
 proxy
 runner
+cache
