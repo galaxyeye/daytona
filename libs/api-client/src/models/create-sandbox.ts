@@ -66,7 +66,7 @@ export interface CreateSandbox {
    * @type {string}
    * @memberof CreateSandbox
    */
-  target?: CreateSandboxTargetEnum
+  target?: string
   /**
    * CPU cores allocated to the sandbox
    * @type {number}
@@ -104,6 +104,12 @@ export interface CreateSandbox {
    */
   autoArchiveInterval?: number
   /**
+   * Auto-delete interval in minutes (negative value means disabled, 0 means delete immediately upon stopping)
+   * @type {number}
+   * @memberof CreateSandbox
+   */
+  autoDeleteInterval?: number
+  /**
    * Array of volumes to attach to the sandbox
    * @type {Array<SandboxVolume>}
    * @memberof CreateSandbox
@@ -124,10 +130,3 @@ export const CreateSandboxClassEnum = {
 } as const
 
 export type CreateSandboxClassEnum = (typeof CreateSandboxClassEnum)[keyof typeof CreateSandboxClassEnum]
-export const CreateSandboxTargetEnum = {
-  EU: 'eu',
-  US: 'us',
-  ASIA: 'asia',
-} as const
-
-export type CreateSandboxTargetEnum = (typeof CreateSandboxTargetEnum)[keyof typeof CreateSandboxTargetEnum]

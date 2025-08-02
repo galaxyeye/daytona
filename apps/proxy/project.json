@@ -38,6 +38,12 @@
     },
     "lint": {
       "executor": "@nx-go/nx-go:lint"
+    },
+    "check-version-env": {},
+    "docker": {
+      "options": {
+        "target": "proxy"
+      }
     }
   }
 }

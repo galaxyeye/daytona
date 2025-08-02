@@ -35,6 +35,7 @@ import { CreateVolumeDto } from '../sandbox/dto/create-volume.dto'
 import { VolumeDto } from '../sandbox/dto/volume.dto'
 import { CreateWorkspaceDto } from '../sandbox/dto/create-workspace.deprecated.dto'
 import { WorkspaceDto } from '../sandbox/dto/workspace.deprecated.dto'
+import { TypedConfigService } from '../config/typed-config.service'
 
 type RequestWithUser = Request & { user?: { userId: string; organizationId: string } }
 type CommonCaptureProps = {
@@ -47,6 +48,7 @@ type CommonCaptureProps = {
   source: string
   isDeprecated?: boolean
   sdkVersion?: string
+  environment?: string
 }
 
 @Injectable()
@@ -54,21 +56,21 @@ export class MetricsInterceptor implements NestInterceptor, OnApplicationShutdow
   private readonly posthog?: PostHog
   private readonly logger = new Logger(MetricsInterceptor.name)
 
-  constructor() {
-    if (!process.env.POSTHOG_API_KEY) {
+  constructor(private readonly configService: TypedConfigService) {
+    if (!this.configService.get('posthog.apiKey')) {
       this.logger.warn('POSTHOG_API_KEY is not set, metrics will not be recorded')
       return
     }
 
-    if (!process.env.POSTHOG_HOST) {
+    if (!this.configService.get('posthog.host')) {
       this.logger.warn('POSTHOG_HOST is not set, metrics will not be recorded')
       return
     }
 
     // Initialize PostHog client
     // Make sure to set POSTHOG_API_KEY in your environment variables
-    this.posthog = new PostHog(process.env.POSTHOG_API_KEY, {
-      host: process.env.POSTHOG_HOST,
+    this.posthog = new PostHog(this.configService.getOrThrow('posthog.apiKey'), {
+      host: this.configService.getOrThrow('posthog.host'),
     })
   }
 
@@ -117,6 +119,7 @@ export class MetricsInterceptor implements NestInterceptor, OnApplicationShutdow
       source: Array.isArray(source) ? source[0] : source,
       isDeprecated: request.route.path.includes('/workspace') || request.route.path.includes('/images'),
       sdkVersion,
+      environment: this.configService.get('posthog.environment'),
     }
 
     switch (request.method) {
@@ -159,6 +162,9 @@ export class MetricsInterceptor implements NestInterceptor, OnApplicationShutdow
           case '/api/sandbox/:sandboxId/autoarchive/:interval':
           case '/api/workspace/:workspaceId/autoarchive/:interval':
             this.captureSetAutoArchiveInterval(props, request.params.sandboxId, parseInt(request.params.interval))
+            break
+          case '/api/sandbox/:sandboxId/autodelete/:interval':
+            this.captureSetAutoDeleteInterval(props, request.params.sandboxId, parseInt(request.params.interval))
             break
           case '/api/organizations/invitations/:invitationId/accept':
             this.captureAcceptInvitation(props, request.params.invitationId)
@@ -484,6 +490,8 @@ export class MetricsInterceptor implements NestInterceptor, OnApplicationShutdow
       sandbox_auto_stop_interval_min: response.autoStopInterval,
       sandbox_auto_archive_interval_min_request: request.autoArchiveInterval,
       sandbox_auto_archive_interval_min: response.autoArchiveInterval,
+      sandbox_auto_delete_interval_min_request: request.autoDeleteInterval,
+      sandbox_auto_delete_interval_min: response.autoDeleteInterval,
       sandbox_public_request: request.public,
       sandbox_public: response.public,
       sandbox_labels_request: request.labels,
@@ -587,6 +595,13 @@ export class MetricsInterceptor implements NestInterceptor, OnApplicationShutdow
     this.capture('api_sandbox_autoarchive_interval_updated', props, 'api_sandbox_autoarchive_interval_update_failed', {
       sandbox_id: sandboxId,
       sandbox_autoarchive_interval: interval,
+    })
+  }
+
+  private captureSetAutoDeleteInterval(props: CommonCaptureProps, sandboxId: string, interval: number) {
+    this.capture('api_sandbox_autodelete_interval_updated', props, 'api_sandbox_autodelete_interval_update_failed', {
+      sandbox_id: sandboxId,
+      sandbox_autodelete_interval: interval,
     })
   }
 
@@ -822,6 +837,7 @@ export class MetricsInterceptor implements NestInterceptor, OnApplicationShutdow
       source: props.source,
       is_deprecated: props.isDeprecated,
       sdk_version: props.sdkVersion,
+      environment: props.environment,
     }
   }
 

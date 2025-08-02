@@ -245,8 +245,12 @@ export class DockerRegistryService {
 
   getRegistryUrl(registry: DockerRegistry): string {
     // Dev mode
-    if (registry.url === 'registry:5000') {
-      return 'http://registry:5000'
+    if (registry.url.startsWith('localhost:') || registry.url.startsWith('registry:')) {
+      return `http://${registry.url}`
+    }
+
+    if (registry.url.startsWith('localhost') || registry.url.startsWith('127.0.0.1')) {
+      return `http://${registry.url}`
     }
 
     return registry.url.startsWith('http') ? registry.url : `https://${registry.url}`

@@ -6,7 +6,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User, UserSSHKeyPair } from './user.entity'
-import { DataSource, In, Repository } from 'typeorm'
+import { DataSource, ILike, In, Repository } from 'typeorm'
 import { CreateUserDto } from './dto/create-user.dto'
 import * as crypto from 'crypto'
 import * as forge from 'node-forge'
@@ -47,13 +47,7 @@ export class UserService {
       user = await em.save(user)
       await this.eventEmitter.emitAsync(
         UserEvents.CREATED,
-        new UserCreatedEvent(
-          em,
-          user.id,
-          createUserDto.email,
-          createUserDto.personalOrganizationQuota,
-          createUserDto.emailVerified,
-        ),
+        new UserCreatedEvent(em, user, createUserDto.personalOrganizationQuota),
       )
     })
 
@@ -84,8 +78,12 @@ export class UserService {
     return this.userRepository.findOneOrFail({ where: { id } })
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { email } })
+  async findOneByEmail(email: string, ignoreCase = false): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: {
+        email: ignoreCase ? ILike(email) : email,
+      },
+    })
   }
 
   async remove(id: string): Promise<void> {

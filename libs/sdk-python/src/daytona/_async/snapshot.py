@@ -188,6 +188,15 @@ class AsyncSnapshotService:
 
         return created_snapshot if isinstance(created_snapshot, Snapshot) else Snapshot.from_dto(created_snapshot)
 
+    async def activate(self, snapshot: Snapshot) -> Snapshot:
+        """Activate a snapshot.
+        Args:
+            snapshot (Snapshot): The Snapshot instance.
+        Returns:
+            Snapshot: The activated Snapshot instance.
+        """
+        return Snapshot.from_dto(await self.__snapshots_api.activate_snapshot(snapshot.id))
+
     @staticmethod
     async def process_image_context(object_storage_api: ObjectStorageApi, image: Image) -> List[str]:
         """Processes the image context by uploading it to object storage.
@@ -201,18 +210,18 @@ class AsyncSnapshotService:
 
         push_access_creds = await object_storage_api.get_push_access()
 
-        async with AsyncObjectStorage(
+        object_storage = AsyncObjectStorage(
             push_access_creds.storage_url,
             push_access_creds.access_key,
             push_access_creds.secret,
             push_access_creds.session_token,
             push_access_creds.bucket,
-        ) as object_storage:
-            context_hashes = []
-            for context in image._context_list:  # pylint: disable=protected-access
-                context_hash = await object_storage.upload(
-                    context.source_path, push_access_creds.organization_id, context.archive_path
-                )
-                context_hashes.append(context_hash)
+        )
+        context_hashes = []
+        for context in image._context_list:  # pylint: disable=protected-access
+            context_hash = await object_storage.upload(
+                context.source_path, push_access_creds.organization_id, context.archive_path
+            )
+            context_hashes.append(context_hash)
 
         return context_hashes

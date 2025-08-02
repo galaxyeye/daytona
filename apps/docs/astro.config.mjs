@@ -57,7 +57,7 @@ export default defineConfig({
         ExploreMore: './src/components/ExploreMore.astro',
       },
       expressiveCode: {
-        minSyntaxHighlightingColorContrast: 0,
+        minSyntaxHighlightingColorContrast: 3.0,
         themes: [myThemeDark, myThemeLight],
       },
     }),
@@ -66,6 +66,7 @@ export default defineConfig({
   adapter: node({
     mode: 'middleware',
   }),
+  outDir: '../../dist/apps/docs',
   vite: {
     ssr: {
       noExternal: ['path-to-regexp'],

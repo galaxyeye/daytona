@@ -1,4 +1,3 @@
-name: daytona-dev
 services:
   api:
     build:
@@ -10,8 +9,8 @@ services:
       - 3000:3000
       - 3003:3003
       - 4000:4000
-      - 5556:5556
       - 6000:6000
+      - 5556:5556
       - 5100:5100
     depends_on:
       db:

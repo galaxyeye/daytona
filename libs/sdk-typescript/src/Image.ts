@@ -3,14 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as fs from 'fs'
-import * as fg from 'fast-glob'
-import * as _path from 'path'
+import * as pathe from 'pathe'
 import { quote, parse as parseShellQuote } from 'shell-quote'
-import untildify from 'untildify'
 import { DaytonaError } from './errors/DaytonaError'
-import { ObjectStorage } from './ObjectStorage'
-import { parse as parseToml } from '@iarna/toml'
+import { dynamicImport } from './utils/Import'
 
 const SUPPORTED_PYTHON_SERIES = ['3.9', '3.10', '3.11', '3.12', '3.13'] as const
 type SupportedPythonSeries = (typeof SUPPORTED_PYTHON_SERIES)[number]
@@ -114,8 +110,12 @@ export class Image {
    * const image = Image.debianSlim('3.12')
    * image.pipInstallFromRequirements('requirements.txt', { findLinks: ['https://pypi.org/simple'] })
    */
-  pipInstallFromRequirements(requirementsTxt: string, options?: PipInstallOptions): Image {
-    const expandedPath = untildify(requirementsTxt)
+  async pipInstallFromRequirements(requirementsTxt: string, options?: PipInstallOptions): Promise<Image> {
+    const importErrorPrefix = '"pipInstallFromRequirements" is not supported: '
+    const expandTilde = await dynamicImport('expand-tilde', importErrorPrefix)
+    const fs = await dynamicImport('fs', importErrorPrefix)
+
+    const expandedPath = expandTilde(requirementsTxt)
     if (!fs.existsSync(expandedPath)) {
       throw new Error(`Requirements file ${requirementsTxt} does not exist`)
     }
@@ -140,8 +140,13 @@ export class Image {
    * const image = Image.debianSlim('3.12')
    * image.pipInstallFromPyproject('pyproject.toml', { optionalDependencies: ['dev'] })
    */
-  pipInstallFromPyproject(pyprojectToml: string, options?: PyprojectOptions): Image {
-    const tomlData = parseToml(fs.readFileSync(untildify(pyprojectToml), 'utf-8')) as any
+  async pipInstallFromPyproject(pyprojectToml: string, options?: PyprojectOptions): Promise<Image> {
+    const importErrorPrefix = '"pipInstallFromPyproject" is not supported: '
+    const expandTilde = await dynamicImport('expand-tilde', importErrorPrefix)
+    const toml = await dynamicImport('@iarna/toml', importErrorPrefix)
+    const fs = await dynamicImport('fs', importErrorPrefix)
+
+    const tomlData = toml.parse(fs.readFileSync(expandTilde(pyprojectToml), 'utf-8')) as any
     const dependencies: string[] = []
 
     if (!tomlData || !tomlData.project || !Array.isArray(tomlData.project.dependencies)) {
@@ -179,12 +184,14 @@ export class Image {
    *  .debianSlim('3.12')
    *  .addLocalFile('requirements.txt', '/home/daytona/requirements.txt')
    */
-  addLocalFile(localPath: string, remotePath: string): Image {
+  async addLocalFile(localPath: string, remotePath: string): Promise<Image> {
+    const expandTilde = await dynamicImport('expand-tilde', '"addLocalFile" is not supported: ')
+
     if (remotePath.endsWith('/')) {
-      remotePath = remotePath + _path.basename(localPath)
+      remotePath = remotePath + pathe.basename(localPath)
     }
 
-    const expandedPath = untildify(localPath)
+    const expandedPath = expandTilde(localPath)
     this._contextList.push({ sourcePath: expandedPath, archivePath: expandedPath })
     this._dockerfile += `COPY ${expandedPath} ${remotePath}\n`
 
@@ -203,8 +210,10 @@ export class Image {
    *  .debianSlim('3.12')
    *  .addLocalDir('src', '/home/daytona/src')
    */
-  addLocalDir(localPath: string, remotePath: string): Image {
-    const expandedPath = untildify(localPath)
+  async addLocalDir(localPath: string, remotePath: string): Promise<Image> {
+    const expandTilde = await dynamicImport('expand-tilde', '"addLocalDir" is not supported: ')
+
+    const expandedPath = expandTilde(localPath)
 
     this._contextList.push({ sourcePath: expandedPath, archivePath: expandedPath })
     this._dockerfile += `COPY ${expandedPath} ${remotePath}\n`
@@ -337,15 +346,19 @@ export class Image {
    *  .debianSlim('3.12')
    *  .dockerfileCommands(['RUN echo "Hello, world!"'])
    */
-  dockerfileCommands(dockerfileCommands: string[], contextDir?: string): Image {
+  async dockerfileCommands(dockerfileCommands: string[], contextDir?: string): Promise<Image> {
     if (contextDir) {
-      const expandedPath = untildify(contextDir)
+      const importErrorPrefix = '"dockerfileCommands" with contextDir is not supported: '
+      const expandTilde = await dynamicImport('expand-tilde', importErrorPrefix)
+      const fs = await dynamicImport('fs', importErrorPrefix)
+
+      const expandedPath = expandTilde(contextDir)
       if (!fs.existsSync(expandedPath) || !fs.statSync(expandedPath).isDirectory()) {
         throw new Error(`Context directory ${contextDir} does not exist`)
       }
     }
 
-    for (const [contextPath, originalPath] of Image.extractCopySources(
+    for (const [contextPath, originalPath] of await Image.extractCopySources(
       dockerfileCommands.join('\n'),
       contextDir || '',
     )) {
@@ -372,8 +385,12 @@ export class Image {
    * @example
    * const image = Image.fromDockerfile('Dockerfile')
    */
-  static fromDockerfile(path: string): Image {
-    const expandedPath = _path.resolve(untildify(path))
+  static async fromDockerfile(path: string): Promise<Image> {
+    const importErrorPrefix = '"fromDockerfile" is not supported: '
+    const expandTilde = await dynamicImport('expand-tilde', importErrorPrefix)
+    const fs = await dynamicImport('fs', importErrorPrefix)
+
+    const expandedPath = pathe.resolve(expandTilde(path))
     if (!fs.existsSync(expandedPath)) {
       throw new Error(`Dockerfile ${path} does not exist`)
     }
@@ -383,9 +400,9 @@ export class Image {
     img._dockerfile = dockerfileContent
 
     // Remove dockerfile filename from path to get the path prefix
-    const pathPrefix = _path.dirname(expandedPath) + _path.sep
+    const pathPrefix = pathe.dirname(expandedPath) + pathe.sep
 
-    for (const [contextPath, originalPath] of Image.extractCopySources(dockerfileContent, pathPrefix)) {
+    for (const [contextPath, originalPath] of await Image.extractCopySources(dockerfileContent, pathPrefix)) {
       let archiveBasePath = contextPath
       if (!originalPath.startsWith(pathPrefix)) {
         // Remove the path prefix from the context path to get the archive path
@@ -545,7 +562,10 @@ export class Image {
    * @param {string} pathPrefix - The path prefix to use for the sources.
    * @returns {Array<[string, string]>} The list of the actual file path and its corresponding COPY-command source path.
    */
-  private static extractCopySources(dockerfileContent: string, pathPrefix = ''): Array<[string, string]> {
+  private static async extractCopySources(
+    dockerfileContent: string,
+    pathPrefix = '',
+  ): Promise<Array<[string, string]>> {
     const sources: Array<[string, string]> = []
     const lines = dockerfileContent.split('\n')
 
@@ -557,13 +577,14 @@ export class Image {
 
       // Check if the line contains a COPY command
       if (/^\s*COPY\s/.test(line)) {
-        const commandParts = this.parseCopyCommand(line)
+        const fg = await dynamicImport('fast-glob', '"COPY" dockerfile command is not supported: ')
 
+        const commandParts = this.parseCopyCommand(line)
         if (commandParts) {
           // Get source paths from the parsed command parts
           for (const source of commandParts.sources) {
             // Handle absolute and relative paths differently
-            const fullPathPattern = _path.isAbsolute(source) ? source : _path.join(pathPrefix, source)
+            const fullPathPattern = pathe.isAbsolute(source) ? source : pathe.join(pathPrefix, source)
 
             const matchingFiles = fg.sync([fullPathPattern], { dot: true })
             if (matchingFiles.length > 0) {

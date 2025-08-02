@@ -3,21 +3,23 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import { Sidebar } from '@/components/Sidebar'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 import { useSelectedOrganization } from '@/hooks/useSelectedOrganization'
 import { VerifyEmailDialog } from '@/components/VerifyEmailDialog'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { LocalStorageKey } from '@/enums/LocalStorageKey'
 import { cn } from '@/lib/utils'
+import { useConfig } from '@/hooks/useConfig'
 
 const Dashboard: React.FC = () => {
   const { selectedOrganization } = useSelectedOrganization()
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false)
+  const config = useConfig()
 
   useEffect(() => {
     if (
@@ -28,8 +30,14 @@ const Dashboard: React.FC = () => {
     }
   }, [selectedOrganization])
 
-  const bannerText = import.meta.env.VITE_ANNOUNCEMENT_BANNER_TEXT
-  const bannerLearnMoreUrl = import.meta.env.VITE_ANNOUNCEMENT_BANNER_LEARN_MORE_URL
+  const [bannerText, bannerLearnMoreUrl] = useMemo(() => {
+    if (!config.announcements || Object.entries(config.announcements).length === 0) {
+      return [null, null]
+    }
+
+    return [Object.values(config.announcements)[0].text, Object.values(config.announcements)[0].learnMoreUrl]
+  }, [config.announcements])
+
   const [isBannerVisible, setIsBannerVisible] = useState(false)
 
   useEffect(() => {
@@ -58,12 +66,21 @@ const Dashboard: React.FC = () => {
       {isBannerVisible && bannerText && (
         <AnnouncementBanner text={bannerText} onDismiss={handleDismissBanner} learnMoreUrl={bannerLearnMoreUrl} />
       )}
-      <SidebarProvider isBannerVisible={isBannerVisible}>
-        <Sidebar isBannerVisible={isBannerVisible} />
-        <SidebarTrigger className="md:hidden" />
-        <div className={cn('w-full', isBannerVisible ? 'md:pt-12' : '')}>
-          <Outlet />
-        </div>
+      <SidebarProvider isBannerVisible={isBannerVisible} defaultOpen={true}>
+        <Sidebar
+          isBannerVisible={isBannerVisible}
+          billingEnabled={!!config.billingApiUrl}
+          linkedAccountsEnabled={config.linkedAccountsEnabled}
+        />
+        <SidebarInset className="overflow-hidden">
+          <div className="relative md:hidden px-6 pt-4">
+            <SidebarTrigger className="[&_svg]:size-5" />
+          </div>
+          <div className={cn('w-full min-h-screen overscroll-none', isBannerVisible ? 'md:pt-12' : '')}>
+            <Outlet />
+          </div>
+        </SidebarInset>
+
         <Toaster />
         <VerifyEmailDialog open={showVerifyEmailDialog} onOpenChange={setShowVerifyEmailDialog} />
       </SidebarProvider>

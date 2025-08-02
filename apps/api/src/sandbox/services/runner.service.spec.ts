@@ -11,75 +11,48 @@ import { Repository } from 'typeorm'
 import { UserService } from '../../user/user.service'
 import { User } from '../../user/user.entity'
 import { SandboxClass } from '../enums/sandbox-class.enum'
-import { RunnerRegion } from '../enums/runner-region.enum'
-import { RunnerState } from '../enums/runner-state.enum'
-import { RunnerApiFactory } from '../runner-api/runnerApi'
-import { Sandbox } from '../entities/sandbox.entity'
-import { SnapshotRunner } from '../entities/snapshot-runner.entity'
-import { Snapshot } from '../entities/snapshot.entity'
 
 const runnerArray: Runner[] = [
   {
     id: '1',
     class: SandboxClass.SMALL,
-    region: RunnerRegion.US,
+    region: 'us',
     cpu: 1,
-    disk: 1,
-    memory: 1,
+    diskGiB: 1,
+    memoryGiB: 1,
     gpu: 1,
     gpuType: 'test',
-    apiKey: 'test',
-    apiUrl: 'https://test.com',
+    key: 'test',
     domain: 'test',
-    capacity: 1,
-    used: 0,
-    state: RunnerState.INITIALIZING,
-    unschedulable: false,
-    lastChecked: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    limit: 1,
   },
   {
     id: '2',
     class: SandboxClass.SMALL,
-    region: RunnerRegion.US,
+    region: 'us',
     cpu: 1,
-    disk: 1,
-    memory: 1,
+    diskGiB: 1,
+    memoryGiB: 1,
     gpu: 1,
     gpuType: 'test',
-    apiKey: 'test',
-    apiUrl: 'https://test.com',
+    key: 'test',
     domain: 'test',
-    capacity: 1,
-    used: 0,
-    state: RunnerState.INITIALIZING,
-    unschedulable: false,
-    lastChecked: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    limit: 1,
   },
 ]
 
 const oneRunner: Runner = {
   id: '1',
   class: SandboxClass.SMALL,
-  region: RunnerRegion.US,
+  region: 'us',
   cpu: 1,
-  disk: 1,
-  memory: 1,
+  diskGiB: 1,
+  memoryGiB: 1,
   gpu: 1,
   gpuType: 'test',
-  apiKey: 'test',
-  apiUrl: 'https://test.com',
+  key: 'test',
   domain: 'test',
-  capacity: 1,
-  used: 0,
-  state: RunnerState.INITIALIZING,
-  unschedulable: false,
-  lastChecked: null,
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  limit: 1,
 }
 
 describe('RunnerService', () => {
@@ -94,51 +67,8 @@ describe('RunnerService', () => {
           provide: getRepositoryToken(Runner),
           useValue: {
             find: jest.fn().mockResolvedValue(runnerArray),
-            findOne: jest.fn().mockResolvedValue(oneRunner),
             findOneBy: jest.fn().mockResolvedValue(oneRunner),
             save: jest.fn().mockResolvedValue(oneRunner),
-            remove: jest.fn(),
-            delete: jest.fn(),
-            update: jest.fn(),
-          },
-        },
-        {
-          provide: RunnerApiFactory,
-          useValue: {
-            createRunnerApi: jest.fn().mockReturnValue({
-              healthCheck: jest.fn().mockResolvedValue(true),
-            }),
-          },
-        },
-        {
-          provide: getRepositoryToken(Sandbox),
-          useValue: {
-            find: jest.fn().mockResolvedValue([]),
-            findOne: jest.fn().mockResolvedValue(null),
-            findOneBy: jest.fn().mockResolvedValue(null),
-            save: jest.fn(),
-            remove: jest.fn(),
-            delete: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(SnapshotRunner),
-          useValue: {
-            find: jest.fn().mockResolvedValue([]),
-            findOne: jest.fn().mockResolvedValue(null),
-            findOneBy: jest.fn().mockResolvedValue(null),
-            save: jest.fn(),
-            remove: jest.fn(),
-            delete: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(Snapshot),
-          useValue: {
-            find: jest.fn().mockResolvedValue([]),
-            findOne: jest.fn().mockResolvedValue(null),
-            findOneBy: jest.fn().mockResolvedValue(null),
-            save: jest.fn(),
             remove: jest.fn(),
             delete: jest.fn(),
           },
@@ -161,41 +91,35 @@ describe('RunnerService', () => {
   })
 
   describe('create()', () => {
-    it('should successfully insert a runner', async () => {
-      const result = await service.create({
-        class: SandboxClass.SMALL,
-        region: RunnerRegion.US,
-        cpu: 1,
-        disk: 1,
-        memory: 1,
-        gpu: 1,
-        gpuType: 'test',
-        apiKey: 'test',
-        apiUrl: 'https://test.com',
-        domain: 'test',
-        capacity: 1,
-      })
-
-      expect(result).toMatchObject({
+    it('should successfully insert a runner', () => {
+      const oneRunner: Runner = {
         id: '1',
         class: SandboxClass.SMALL,
-        region: RunnerRegion.US,
+        region: 'us',
         cpu: 1,
-        disk: 1,
-        memory: 1,
+        diskGiB: 1,
+        memoryGiB: 1,
         gpu: 1,
         gpuType: 'test',
-        apiKey: 'test',
-        apiUrl: 'https://test.com',
+        key: 'test',
         domain: 'test',
-        capacity: 1,
-        used: 0,
-        state: RunnerState.INITIALIZING,
-        unschedulable: false,
-        lastChecked: null,
-      })
-      expect(result.createdAt).toBeInstanceOf(Date)
-      expect(result.updatedAt).toBeInstanceOf(Date)
+        limit: 1,
+      }
+
+      expect(
+        service.create({
+          class: SandboxClass.SMALL,
+          region: 'us',
+          cpu: 1,
+          diskGiB: 1,
+          memoryGiB: 1,
+          gpu: 1,
+          gpuType: 'test',
+          key: 'test',
+          domain: 'test',
+          limit: 1,
+        }),
+      ).resolves.toEqual(oneRunner)
     })
   })
 

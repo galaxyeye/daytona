@@ -10,7 +10,6 @@ import { Sandbox } from '../entities/sandbox.entity'
 import { CreateSandboxDto } from '../dto/create-sandbox.dto'
 import { SandboxState } from '../enums/sandbox-state.enum'
 import { SandboxClass } from '../enums/sandbox-class.enum'
-import { RunnerRegion } from '../enums/runner-region.enum'
 import { SandboxDesiredState } from '../enums/sandbox-desired-state.enum'
 import { RunnerService } from './runner.service'
 import { SandboxError } from '../../exceptions/sandbox-error.exception'
@@ -277,21 +276,23 @@ export class SandboxService {
 
     await this.validateOrganizationQuotas(organization, cpu, mem, disk)
 
-    const warmPoolSandbox = await this.warmPoolService.fetchWarmPoolSandbox({
-      organizationId: organization.id,
-      snapshot: snapshotIdOrName,
-      target: createSandboxDto.target,
-      class: createSandboxDto.class,
-      cpu: cpu,
-      mem: mem,
-      disk: disk,
-      osUser: createSandboxDto.user,
-      env: createSandboxDto.env,
-      state: SandboxState.STARTED,
-    })
+    if (!createSandboxDto.volumes || createSandboxDto.volumes.length === 0) {
+      const warmPoolSandbox = await this.warmPoolService.fetchWarmPoolSandbox({
+        organizationId: organization.id,
+        snapshot: snapshotIdOrName,
+        target: createSandboxDto.target,
+        class: createSandboxDto.class,
+        cpu: cpu,
+        mem: mem,
+        disk: disk,
+        osUser: createSandboxDto.user,
+        env: createSandboxDto.env,
+        state: SandboxState.STARTED,
+      })
 
-    if (warmPoolSandbox) {
-      return await this.assignWarmPoolSandbox(warmPoolSandbox, createSandboxDto, organization.id)
+      if (warmPoolSandbox) {
+        return await this.assignWarmPoolSandbox(warmPoolSandbox, createSandboxDto, organization.id)
+      }
     }
 
     const runner = await this.runnerService.getRandomAvailableRunner({
@@ -322,11 +323,15 @@ export class SandboxService {
     sandbox.public = createSandboxDto.public || false
 
     if (createSandboxDto.autoStopInterval !== undefined) {
-      sandbox.autoStopInterval = createSandboxDto.autoStopInterval
+      sandbox.autoStopInterval = this.resolveAutoStopInterval(createSandboxDto.autoStopInterval)
     }
 
     if (createSandboxDto.autoArchiveInterval !== undefined) {
       sandbox.autoArchiveInterval = this.resolveAutoArchiveInterval(createSandboxDto.autoArchiveInterval)
+    }
+
+    if (createSandboxDto.autoDeleteInterval !== undefined) {
+      sandbox.autoDeleteInterval = createSandboxDto.autoDeleteInterval
     }
 
     sandbox.runnerId = runner.id
@@ -346,11 +351,15 @@ export class SandboxService {
     warmPoolSandbox.createdAt = new Date()
 
     if (createSandboxDto.autoStopInterval !== undefined) {
-      warmPoolSandbox.autoStopInterval = createSandboxDto.autoStopInterval
+      warmPoolSandbox.autoStopInterval = this.resolveAutoStopInterval(createSandboxDto.autoStopInterval)
     }
 
     if (createSandboxDto.autoArchiveInterval !== undefined) {
       warmPoolSandbox.autoArchiveInterval = this.resolveAutoArchiveInterval(createSandboxDto.autoArchiveInterval)
+    }
+
+    if (createSandboxDto.autoDeleteInterval !== undefined) {
+      warmPoolSandbox.autoDeleteInterval = createSandboxDto.autoDeleteInterval
     }
 
     const runner = await this.runnerService.findOne(warmPoolSandbox.runnerId)
@@ -398,11 +407,15 @@ export class SandboxService {
     sandbox.public = createSandboxDto.public || false
 
     if (createSandboxDto.autoStopInterval !== undefined) {
-      sandbox.autoStopInterval = createSandboxDto.autoStopInterval
+      sandbox.autoStopInterval = this.resolveAutoStopInterval(createSandboxDto.autoStopInterval)
     }
 
     if (createSandboxDto.autoArchiveInterval !== undefined) {
       sandbox.autoArchiveInterval = this.resolveAutoArchiveInterval(createSandboxDto.autoArchiveInterval)
+    }
+
+    if (createSandboxDto.autoDeleteInterval !== undefined) {
+      sandbox.autoDeleteInterval = createSandboxDto.autoDeleteInterval
     }
 
     const buildInfoSnapshotRef = generateBuildSnapshotRef(
@@ -630,11 +643,22 @@ export class SandboxService {
     if (sandbox.pending) {
       throw new SandboxError('Sandbox state change in progress')
     }
+
     sandbox.pending = true
-    sandbox.desiredState = SandboxDesiredState.STOPPED
+    //  if auto-delete interval is 0, delete the sandbox immediately
+    if (sandbox.autoDeleteInterval === 0) {
+      sandbox.desiredState = SandboxDesiredState.DESTROYED
+    } else {
+      sandbox.desiredState = SandboxDesiredState.STOPPED
+    }
+
     await this.sandboxRepository.save(sandbox)
 
-    this.eventEmitter.emit(SandboxEvents.STOPPED, new SandboxStoppedEvent(sandbox))
+    if (sandbox.autoDeleteInterval === 0) {
+      this.eventEmitter.emit(SandboxEvents.DESTROYED, new SandboxDestroyedEvent(sandbox))
+    } else {
+      this.eventEmitter.emit(SandboxEvents.STOPPED, new SandboxStoppedEvent(sandbox))
+    }
   }
 
   async updatePublicStatus(sandboxId: string, isPublic: boolean): Promise<void> {
@@ -650,16 +674,12 @@ export class SandboxService {
     await this.sandboxRepository.save(sandbox)
   }
 
-  private getValidatedOrDefaultRegion(region: RunnerRegion): RunnerRegion {
-    if (!region) {
-      return RunnerRegion.US
+  private getValidatedOrDefaultRegion(region?: string): string {
+    if (!region || region.trim().length === 0) {
+      return 'us'
     }
 
-    if (Object.values(RunnerRegion).includes(region)) {
-      return region
-    } else {
-      throw new BadRequestError('Invalid region')
-    }
+    return region.trim()
   }
 
   private getValidatedOrDefaultClass(sandboxClass: SandboxClass): SandboxClass {
@@ -701,7 +721,7 @@ export class SandboxService {
     })
 
     if (destroyedSandboxs.affected > 0) {
-      this.logger.debug(`Cleaned up ${destroyedSandboxs.affected} destroyed sandboxs`)
+      this.logger.debug(`Cleaned up ${destroyedSandboxs.affected} destroyed sandboxes`)
     }
   }
 
@@ -714,12 +734,7 @@ export class SandboxService {
       throw new NotFoundException(`Sandbox with ID ${sandboxId} not found`)
     }
 
-    // Validate interval is non-negative
-    if (interval < 0) {
-      throw new BadRequestError('Auto-stop interval must be non-negative')
-    }
-
-    sandbox.autoStopInterval = interval
+    sandbox.autoStopInterval = this.resolveAutoStopInterval(interval)
     await this.sandboxRepository.save(sandbox)
   }
 
@@ -736,6 +751,19 @@ export class SandboxService {
     await this.sandboxRepository.save(sandbox)
   }
 
+  async setAutoDeleteInterval(sandboxId: string, interval: number): Promise<void> {
+    const sandbox = await this.sandboxRepository.findOne({
+      where: { id: sandboxId },
+    })
+
+    if (!sandbox) {
+      throw new NotFoundException(`Sandbox with ID ${sandboxId} not found`)
+    }
+
+    sandbox.autoDeleteInterval = interval
+    await this.sandboxRepository.save(sandbox)
+  }
+
   @OnEvent(WarmPoolEvents.TOPUP_REQUESTED)
   private async createWarmPoolSandbox(event: WarmPoolTopUpRequested) {
     await this.createForWarmPool(event.warmPool)
@@ -749,8 +777,8 @@ export class SandboxService {
       return
     }
 
-    //  find all sandboxs that are using the unschedulable runners and have organizationId = '00000000-0000-0000-0000-000000000000'
-    const sandboxs = await this.sandboxRepository.find({
+    //  find all sandboxes that are using the unschedulable runners and have organizationId = '00000000-0000-0000-0000-000000000000'
+    const sandboxes = await this.sandboxRepository.find({
       where: {
         runnerId: In(runners.map((runner) => runner.id)),
         organizationId: '00000000-0000-0000-0000-000000000000',
@@ -759,17 +787,17 @@ export class SandboxService {
       },
     })
 
-    if (sandboxs.length === 0) {
+    if (sandboxes.length === 0) {
       return
     }
 
-    const destroyPromises = sandboxs.map((sandbox) => this.destroy(sandbox.id))
+    const destroyPromises = sandboxes.map((sandbox) => this.destroy(sandbox.id))
     const results = await Promise.allSettled(destroyPromises)
 
     // Log any failed sandbox destructions
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
-        this.logger.error(`Failed to destroy sandbox ${sandboxs[index].id}: ${result.reason}`)
+        this.logger.error(`Failed to destroy sandbox ${sandboxes[index].id}: ${result.reason}`)
       }
     })
   }
@@ -792,6 +820,14 @@ export class SandboxService {
       //  log the error for now, but don't throw it as it will be retried
       this.logger.error(`Error stopping sandbox from suspended organization. SandboxId: ${event.sandboxId}: `, error)
     })
+  }
+
+  private resolveAutoStopInterval(autoStopInterval: number): number {
+    if (autoStopInterval < 0) {
+      throw new BadRequestError('Auto-stop interval must be non-negative')
+    }
+
+    return autoStopInterval
   }
 
   private resolveAutoArchiveInterval(autoArchiveInterval: number): number {
