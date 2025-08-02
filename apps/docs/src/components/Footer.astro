@@ -9,7 +9,7 @@ const version = import.meta.env.VERSION || '0.0.1'
 const [maj, min] = [major(version), minor(version)]
 const release = `${maj}.${min}`
 // TODO: switch to SDK
-const releaseLink = `https://github.com/daytonaio/daytona/releases/tag/v${release}.0`
+const releaseLink = `https://github.com/galaxyeye/daytona/releases/tag/v${release}.0`
 ---
 
 <Default {...Astro.props}>
@@ -24,7 +24,7 @@ const releaseLink = `https://github.com/daytonaio/daytona/releases/tag/v${releas
     </p>
     <p>
       <Fragment set:html={textArrowIcon} />Latest project updates? - <a
-        href="https://github.com/daytonaio/daytona/commits/main/"
+        href="https://github.com/galaxyeye/daytona/commits/main/"
         >View Changelog</a
       >
     </p>

@@ -5,7 +5,7 @@ description = "Daytona"
 authors = ["Daytona Platforms Inc. <support@daytona.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/daytonaio/daytona"
+repository = "https://github.com/galaxyeye/daytona"
 keywords = ["OpenAPI", "OpenAPI-Generator", "Daytona"]
 include = ["daytona_api_client_async/py.typed"]
 

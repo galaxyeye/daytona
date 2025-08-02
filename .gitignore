@@ -72,3 +72,8 @@ examples/**/*.png
 **/poetry.lock
 !/poetry.lock
 .astro
+vendor/
+
+daemon
+proxy
+runner

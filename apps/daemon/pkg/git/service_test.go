@@ -22,7 +22,7 @@ var repoHttp = &gitprovider.GitRepository{
 
 var repoHttps = &gitprovider.GitRepository{
 	Id:     "123",
-	Url:    "https://github.com/daytonaio/daytona",
+	Url:    "https://github.com/galaxyeye/daytona",
 	Name:   "daytona",
 	Branch: "main",
 	Target: gitprovider.CloneTargetBranch,
@@ -38,7 +38,7 @@ var repoWithoutProtocol = &gitprovider.GitRepository{
 
 var repoWithCloneTargetCommit = &gitprovider.GitRepository{
 	Id:     "123",
-	Url:    "https://github.com/daytonaio/daytona",
+	Url:    "https://github.com/galaxyeye/daytona",
 	Name:   "daytona",
 	Branch: "main",
 	Sha:    "1234567890",
@@ -85,14 +85,14 @@ func (s *GitServiceTestSuite) TestCloneRepositoryCmd_WithCreds() {
 
 func (s *GitServiceTestSuite) TestCloneRepositoryCmd_WithoutCreds() {
 	cloneCmd := s.gitService.CloneRepositoryCmd(repoHttps, nil)
-	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "https://github.com/daytonaio/daytona", "/workdir"}, cloneCmd)
+	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "https://github.com/galaxyeye/daytona", "/workdir"}, cloneCmd)
 
 	cloneCmd = s.gitService.CloneRepositoryCmd(repoHttp, nil)
 	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "http://localhost:3000/daytonaio/daytona", "/workdir"}, cloneCmd)
 
 	cloneCmd = s.gitService.CloneRepositoryCmd(repoWithoutProtocol, nil)
-	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "https://github.com/daytonaio/daytona", "/workdir"}, cloneCmd)
+	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "https://github.com/galaxyeye/daytona", "/workdir"}, cloneCmd)
 
 	cloneCmd = s.gitService.CloneRepositoryCmd(repoWithCloneTargetCommit, nil)
-	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "https://github.com/daytonaio/daytona", "/workdir", "&&", "cd", "/workdir", "&&", "git", "checkout", "1234567890"}, cloneCmd)
+	s.Require().Equal([]string{"git", "clone", "--single-branch", "--branch", "\"main\"", "https://github.com/galaxyeye/daytona", "/workdir", "&&", "cd", "/workdir", "&&", "git", "checkout", "1234567890"}, cloneCmd)
 }
