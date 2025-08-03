@@ -67,22 +67,22 @@ func main() {
 		return
 	}
 
-	pluginPath, err := daemon.WriteStaticBinary("daytona-computer-use")
-	if err != nil {
-		log.Error(err)
-		return
-	}
+	// pluginPath, err := daemon.WriteStaticBinary("daytona-computer-use")
+	// if err != nil {
+	// 	log.Error(err)
+	// 	return
+	// }
 
 	dockerClient := docker.NewDockerClient(docker.DockerClientConfig{
-		ApiClient:              cli,
-		Cache:                  runnerCache,
-		LogWriter:              os.Stdout,
-		AWSRegion:              cfg.AWSRegion,
-		AWSEndpointUrl:         cfg.AWSEndpointUrl,
-		AWSAccessKeyId:         cfg.AWSAccessKeyId,
-		AWSSecretAccessKey:     cfg.AWSSecretAccessKey,
-		DaemonPath:             daemonPath,
-		ComputerUsePluginPath:  pluginPath,
+		ApiClient:          cli,
+		Cache:              runnerCache,
+		LogWriter:          os.Stdout,
+		AWSRegion:          cfg.AWSRegion,
+		AWSEndpointUrl:     cfg.AWSEndpointUrl,
+		AWSAccessKeyId:     cfg.AWSAccessKeyId,
+		AWSSecretAccessKey: cfg.AWSSecretAccessKey,
+		DaemonPath:         daemonPath,
+		// ComputerUsePluginPath:  pluginPath,
 		ResourceLimitsDisabled: cfg.ResourceLimitsDisabled,
 	})
 
