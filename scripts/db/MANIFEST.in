@@ -1,0 +1,12 @@
+include README.md
+include PROJECT_OVERVIEW.md
+include maintenance_config.env
+include Makefile
+include *.py
+recursive-include logs *
+recursive-include backups *
+recursive-include reports *
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.egg-info

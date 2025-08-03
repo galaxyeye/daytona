@@ -78,9 +78,9 @@ def check_env_file():
     if env_file.exists():
         print("✅ 环境配置文件存在")
         return True
-    else:
-        print("⚠️  环境配置文件不存在，请确保 ../../.env.local 文件已配置")
-        return False
+    
+    print("⚠️  环境配置文件不存在，请确保 ../../.env.local 文件已配置")
+    return False
 
 def main():
     """主初始化函数"""

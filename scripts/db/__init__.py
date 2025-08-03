@@ -1,12 +1,33 @@
 """
-Daytona 数据维护脚本
-版本信息和元数据
+Daytona Database Maintenance Tools
+
+This package provides comprehensive database maintenance utilities for the Daytona project,
+including audit log cleanup, session management, workspace cleanup, and database optimization.
 """
 
 __version__ = "1.0.0"
-__author__ = "Daytona Development Team"
-__email__ = "dev@daytona.io"
-__description__ = "Daytona 项目数据库维护工具集"
+__author__ = "Daytona Platforms Inc."
+__email__ = "support@daytona.io"
+__description__ = "Database maintenance tools for Daytona project"
+__license__ = "Apache-2.0"
+__url__ = "https://github.com/daytonaio/daytona"
+
+# Package metadata
+__all__ = [
+    "__version__",
+    "__author__", 
+    "__email__",
+    "__description__",
+    "__license__",
+    "__url__",
+    "SUPPORTED_DATABASES",
+    "SUPPORTED_CACHE", 
+    "MAINTENANCE_TASKS",
+    "DEFAULT_CONFIG",
+    "get_version",
+    "get_description",
+    "get_supported_tasks"
+]
 
 # 支持的数据库类型
 SUPPORTED_DATABASES = ["PostgreSQL"]

@@ -1,18 +1,50 @@
-# Daytona 数据维护脚本
+# Daytona Database Maintenance Tools
 
-这个 Python 脚本集提供了一套完整的数据库维护工具，用于 Daytona 项目的日常数据维护任务。
+A comprehensive Python package providing database maintenance utilities for the Daytona project. This toolkit includes audit log cleanup, session management, workspace cleanup, and database optimization tools.
 
-## 目录结构
+## Installation
+
+### Using Poetry (Recommended)
+
+```bash
+cd scripts/db
+poetry install
+```
+
+### Using pip
+
+```bash
+cd scripts/db
+pip install -e .
+```
+
+### Using Make
+
+```bash
+cd scripts/db
+make install
+```
+
+## Project Structure
 
 ```
 scripts/db/
-├── data_maintenance.py          # 主维护脚本
-├── maintenance_example.py       # 使用示例脚本
-├── check_maintenance_config.py  # 配置检查脚本
-├── init.py                     # 初始化脚本
-├── requirements.txt            # Python依赖
-├── maintenance_config.env      # 维护配置
-└── README.md                   # 说明文档
+├── pyproject.toml               # Modern Python project configuration
+├── setup.cfg                   # Additional configuration
+├── MANIFEST.in                 # Package inclusion rules
+├── Makefile                    # Build and maintenance commands
+├── data_maintenance.py         # Main maintenance script
+├── maintenance_example.py      # Usage example script
+├── check_maintenance_config.py # Configuration checker
+├── init.py                     # Initialization script
+├── maintenance_config.env      # Maintenance configuration
+├── tests/                      # Test suite
+│   ├── __init__.py
+│   └── test_basic.py
+├── logs/                       # Log files
+├── backups/                    # Database backups
+├── reports/                    # Generated reports
+└── README.md                   # This documentation
 ```
 
 ## 功能特性
@@ -38,38 +70,90 @@ scripts/db/
 
 ## 快速开始
 
-### 1. 初始化环境
+## Quick Start
+
+### 1. Initialize Environment
 
 ```bash
 cd scripts/db
-python init.py
+make init
 ```
 
-### 2. 安装依赖
+### 2. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+make install
 ```
 
-### 3. 检查配置
+### 3. Check Configuration
 
 ```bash
+make check
+```
+
+### 4. Run Maintenance Tasks
+
+```bash
+make report
+```
+
+## Development Setup
+
+### Install Development Dependencies
+
+```bash
+make install-dev
+```
+
+### Run Tests
+
+```bash
+make test
+```
+
+### Code Formatting
+
+```bash
+make format
+```
+
+### Linting
+
+```bash
+make lint
+```
+
+## Command Line Usage
+
+### Using the Package Scripts
+
+After installation, you can use the command-line tools:
+
+```bash
+# Check configuration
+daytona-check-maintenance-config
+
+# Run maintenance tasks
+daytona-db-maintenance --tasks generate_report
+
+# Initialize database
+daytona-db-init
+```
+
+### Using Python Modules Directly
+
+```bash
+# Generate report
+python data_maintenance.py --tasks generate_report
+
+# Clean old data
+python data_maintenance.py --tasks clean_sessions clean_audit_logs
+
+# Check configuration
 python check_maintenance_config.py
 ```
 
-### 4. 运行维护任务
-
-```bash
-python data_maintenance.py --tasks generate_report
-```
-
-## 安装依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-## 配置
+## Configuration
 
 脚本会自动读取项目根目录的 `.env.local` 文件中的数据库和 Redis 配置：
 

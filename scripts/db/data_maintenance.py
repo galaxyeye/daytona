@@ -13,7 +13,6 @@ import csv
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 import psycopg2
-import pandas as pd
 import redis
 from dotenv import load_dotenv
 
@@ -64,7 +63,7 @@ class DataMaintenance:
             self.db_conn.autocommit = True
             logger.info("成功连接到 PostgreSQL 数据库")
         except Exception as e:
-            raise DatabaseMaintenanceError(f"数据库连接失败: {e}")
+            raise DatabaseMaintenanceError(f"数据库连接失败: {e}") from e
     
     def connect_redis(self):
         """连接到 Redis"""
@@ -113,7 +112,7 @@ class DataMaintenance:
             return tables
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"获取表信息失败: {e}")
+            raise DatabaseMaintenanceError(f"获取表信息失败: {e}") from e
     
     def get_table_row_count(self, table_name: str, schema: str = 'public') -> int:
         """获取表的行数"""
@@ -160,7 +159,7 @@ class DataMaintenance:
             return deleted_count
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"清理审计日志失败: {e}")
+            raise DatabaseMaintenanceError(f"清理审计日志失败: {e}") from e
     
     def clean_expired_sessions(self) -> int:
         """清理过期的会话"""
@@ -194,7 +193,7 @@ class DataMaintenance:
             return deleted_count
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"清理过期会话失败: {e}")
+            raise DatabaseMaintenanceError(f"清理过期会话失败: {e}") from e
     
     def clean_orphaned_workspaces(self) -> int:
         """清理孤儿工作空间记录"""
@@ -229,7 +228,7 @@ class DataMaintenance:
             return deleted_count
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"清理孤儿工作空间失败: {e}")
+            raise DatabaseMaintenanceError(f"清理孤儿工作空间失败: {e}") from e
     
     def vacuum_analyze_tables(self, tables: Optional[List[str]] = None):
         """对表执行 VACUUM ANALYZE 优化"""
@@ -255,7 +254,7 @@ class DataMaintenance:
             cursor.close()
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"表优化失败: {e}")
+            raise DatabaseMaintenanceError(f"表优化失败: {e}") from e
     
     def check_database_connections(self) -> Dict[str, Any]:
         """检查数据库连接数"""
@@ -281,7 +280,7 @@ class DataMaintenance:
             return connections_info
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"检查数据库连接失败: {e}")
+            raise DatabaseMaintenanceError(f"检查数据库连接失败: {e}") from e
     
     def backup_table_to_csv(self, table_name: str, output_dir: str = "backups"):
         """将表数据备份为 CSV 文件"""
@@ -309,7 +308,7 @@ class DataMaintenance:
             return filename
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"备份表 {table_name} 失败: {e}")
+            raise DatabaseMaintenanceError(f"备份表 {table_name} 失败: {e}") from e
     
     def generate_data_report(self) -> Dict[str, Any]:
         """生成数据报告"""
@@ -347,7 +346,7 @@ class DataMaintenance:
             return report
             
         except Exception as e:
-            raise DatabaseMaintenanceError(f"生成数据报告失败: {e}")
+            raise DatabaseMaintenanceError(f"生成数据报告失败: {e}") from e
     
     def clean_redis_cache(self, pattern: str = "*temp*") -> int:
         """清理 Redis 缓存"""
