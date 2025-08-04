@@ -1,0 +1,13 @@
+2025-08-04 01:47:27,326 - ERROR - 维护脚本执行失败: 数据库连接失败: connection to server at "localhost" (::1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+
+2025-08-04 01:57:29,503 - INFO - 成功连接到 PostgreSQL 数据库
+2025-08-04 01:57:29,507 - INFO - 成功连接到 Redis
+2025-08-04 01:57:29,507 - INFO - 开始执行数据维护任务...
+2025-08-04 01:57:29,521 - INFO - 数据报告已保存到 data_report_20250804_015729.json
+2025-08-04 01:57:29,522 - INFO - 维护任务执行完成:
+2025-08-04 01:57:29,522 - INFO -   generate_report: report saved to data_report_20250804_015729.json
+2025-08-04 01:57:29,523 - INFO - 数据库连接已关闭
+2025-08-04 01:57:29,524 - INFO - Redis 连接已关闭

@@ -17,14 +17,37 @@ import psycopg2
 import redis
 from dotenv import load_dotenv
 
-# 加载环境变量
-load_dotenv("../../.env.local")
+# 获取脚本所在目录的绝对路径
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.join(script_dir, "..", "..")
+
+# 尝试加载多个可能的环境文件
+env_files = [
+    os.path.join(project_root, ".env.local"),
+    os.path.join(project_root, ".env"),
+    os.path.join(project_root, "apps", "api", ".env"),
+]
+
+for env_file in env_files:
+    if os.path.exists(env_file):
+        load_dotenv(env_file)
+        print(f"已加载环境文件: {env_file}")
+        break
+else:
+    print("警告: 未找到任何环境文件，将使用默认配置")
+
+# 确保项目根目录下的 logs 目录存在
+logs_dir = os.path.join(project_root, "logs")
+os.makedirs(logs_dir, exist_ok=True)
 
 # 配置日志
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("data_maintenance.log"), logging.StreamHandler(sys.stdout)],
+    handlers=[
+        logging.FileHandler(os.path.join(logs_dir, "data_maintenance.log")),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -284,7 +307,11 @@ class DataMaintenance:
             )
 
             result = cursor.fetchone()
-            connections_info = {"total": result[0], "active": result[1], "idle": result[2]}
+            connections_info = {
+                "total": result[0],
+                "active": result[1],
+                "idle": result[2],
+            }
 
             cursor.close()
             return connections_info
@@ -292,7 +319,7 @@ class DataMaintenance:
         except Exception as e:
             raise DatabaseMaintenanceError(f"检查数据库连接失败: {e}") from e
 
-    def backup_table_to_csv(self, table_name: str, output_dir: str = "backups"):
+    def backup_table_to_csv(self, table_name: str, output_dir: str = "reports/backups"):
         """将表数据备份为 CSV 文件"""
         try:
             os.makedirs(output_dir, exist_ok=True)
@@ -325,7 +352,10 @@ class DataMaintenance:
         try:
             report = {
                 "timestamp": datetime.now().isoformat(),
-                "database_info": {"host": self.db_config["host"], "database": self.db_config["database"]},
+                "database_info": {
+                    "host": self.db_config["host"],
+                    "database": self.db_config["database"],
+                },
                 "tables": [],
                 "connections": self.check_database_connections(),
                 "redis_info": None,
@@ -396,9 +426,12 @@ class DataMaintenance:
                     results[task] = self.clean_redis_cache()
                 elif task == "generate_report":
                     report = self.generate_data_report()
+                    # 确保 reports 目录存在
+                    reports_dir = "reports"
+                    os.makedirs(reports_dir, exist_ok=True)
                     # 保存报告
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    report_file = f"data_report_{timestamp}.json"
+                    report_file = os.path.join(reports_dir, f"data_report_{timestamp}.json")
                     with open(report_file, "w", encoding="utf-8") as f:
                         json.dump(report, f, ensure_ascii=False, indent=2)
                     results[task] = f"report saved to {report_file}"

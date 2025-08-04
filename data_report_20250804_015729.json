@@ -1,0 +1,153 @@
+{
+  "timestamp": "2025-08-04T01:57:29.507725",
+  "database_info": {
+    "host": "db",
+    "database": "application_ctx"
+  },
+  "tables": [
+    {
+      "schema": "public",
+      "table": "user",
+      "owner": "user",
+      "size": "80 kB",
+      "row_count": 3
+    },
+    {
+      "schema": "public",
+      "table": "sandbox",
+      "owner": "user",
+      "size": "80 kB",
+      "row_count": 2
+    },
+    {
+      "schema": "public",
+      "table": "audit_log",
+      "owner": "user",
+      "size": "64 kB",
+      "row_count": 14
+    },
+    {
+      "schema": "public",
+      "table": "runner",
+      "owner": "user",
+      "size": "48 kB",
+      "row_count": 2
+    },
+    {
+      "schema": "public",
+      "table": "api_key",
+      "owner": "user",
+      "size": "48 kB",
+      "row_count": 4
+    },
+    {
+      "schema": "public",
+      "table": "snapshot",
+      "owner": "user",
+      "size": "48 kB",
+      "row_count": 1
+    },
+    {
+      "schema": "public",
+      "table": "organization_role_assignment",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 0
+    },
+    {
+      "schema": "public",
+      "table": "sandbox_usage_periods",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 12
+    },
+    {
+      "schema": "public",
+      "table": "snapshot_runner",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 1
+    },
+    {
+      "schema": "public",
+      "table": "docker_registry",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 2
+    },
+    {
+      "schema": "public",
+      "table": "organization_user",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 3
+    },
+    {
+      "schema": "public",
+      "table": "organization",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 3
+    },
+    {
+      "schema": "public",
+      "table": "organization_role",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 7
+    },
+    {
+      "schema": "public",
+      "table": "build_info",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 1
+    },
+    {
+      "schema": "public",
+      "table": "migrations",
+      "owner": "user",
+      "size": "32 kB",
+      "row_count": 41
+    },
+    {
+      "schema": "public",
+      "table": "volume",
+      "owner": "user",
+      "size": "24 kB",
+      "row_count": 0
+    },
+    {
+      "schema": "public",
+      "table": "organization_role_assignment_invitation",
+      "owner": "user",
+      "size": "24 kB",
+      "row_count": 0
+    },
+    {
+      "schema": "public",
+      "table": "warm_pool",
+      "owner": "user",
+      "size": "16 kB",
+      "row_count": 0
+    },
+    {
+      "schema": "public",
+      "table": "organization_invitation",
+      "owner": "user",
+      "size": "16 kB",
+      "row_count": 0
+    }
+  ],
+  "connections": {
+    "total": 1,
+    "active": 1,
+    "idle": 0
+  },
+  "redis_info": {
+    "version": "8.0.2",
+    "memory_used": "1.03M",
+    "connected_clients": 1,
+    "keys": 1
+  }
+}

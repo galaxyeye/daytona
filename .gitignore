@@ -72,3 +72,8 @@ examples/**/*.png
 **/poetry.lock
 !/poetry.lock
 .astro
+
+# Database maintenance scripts output
+logs/
+reports/
+scripts/db/reports/

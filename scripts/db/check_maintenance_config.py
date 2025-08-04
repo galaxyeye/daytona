@@ -17,19 +17,52 @@ def check_env_file():
     """检查环境配置文件"""
     print("🔍 检查环境配置...")
 
-    env_file = "../../.env.local"
-    if not os.path.exists(env_file):
-        print(f"❌ 环境文件 {env_file} 不存在")
+    # 获取脚本所在目录的绝对路径
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.join(script_dir, "..", "..")
+
+    # 尝试加载多个可能的环境文件
+    env_files = [
+        os.path.join(project_root, ".env.local"),
+        os.path.join(project_root, ".env"),
+        os.path.join(project_root, "apps", "api", ".env"),
+    ]
+
+    env_loaded = False
+    for env_file in env_files:
+        if os.path.exists(env_file):
+            load_dotenv(env_file)
+            print(f"✅ 已加载环境文件: {env_file}")
+            env_loaded = True
+            break
+
+    if not env_loaded:
+        print("❌ 未找到任何环境文件")
         return False
 
-    required_vars = ["DB_HOST", "DB_PORT", "DB_USERNAME", "DB_PASSWORD", "DB_DATABASE", "REDIS_HOST", "REDIS_PORT"]
+    required_vars = [
+        "DB_HOST",
+        "DB_PORT",
+        "DB_USERNAME",
+        "DB_PASSWORD",
+        "DB_DATABASE",
+        "REDIS_HOST",
+        "REDIS_PORT",
+    ]
 
     missing_vars = []
-    with open(env_file, "r") as f:
-        content = f.read()
-        for var in required_vars:
-            if f"{var}=" not in content:
-                missing_vars.append(var)
+    loaded_env_file = None
+    for env_file in env_files:
+        if os.path.exists(env_file):
+            loaded_env_file = env_file
+            break
+
+    if loaded_env_file:
+        with open(loaded_env_file, "r") as f:
+            content = f.read()
+            for var in required_vars:
+                if f"{var}=" not in content:
+                    missing_vars.append(var)
 
     if missing_vars:
         print(f"❌ 缺少环境变量: {', '.join(missing_vars)}")

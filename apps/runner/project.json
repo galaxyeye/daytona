@@ -17,18 +17,6 @@
         }
       ]
     },
-    "copy-computeruse-plugin": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cp dist/libs/computer-use-amd64 {projectRoot}/pkg/daemon/static/daytona-computer-use"
-      },
-      "dependsOn": [
-        {
-          "target": "build-amd64",
-          "projects": "computer-use"
-        }
-      ]
-    },
     "build": {
       "executor": "@nx-go/nx-go:build",
       "options": {
@@ -38,7 +26,7 @@
       "configurations": {
         "production": {}
       },
-      "dependsOn": ["copy-daemon-bin", "copy-computeruse-plugin"]
+      "dependsOn": ["copy-daemon-bin"]
     },
     "build-amd64": {
       "executor": "@nx-go/nx-go:build",
@@ -49,7 +37,7 @@
           "GOARCH": "amd64"
         }
       },
-      "dependsOn": ["copy-daemon-bin", "copy-computeruse-plugin"]
+      "dependsOn": ["copy-daemon-bin"]
     },
     "serve": {
       "executor": "@nx-go/nx-go:serve",
@@ -66,8 +54,7 @@
           "target": "build",
           "projects": "daemon"
         },
-        "copy-daemon-bin",
-        "copy-computeruse-plugin"
+        "copy-daemon-bin"
       ]
     },
     "format": {
@@ -96,5 +83,5 @@
       }
     }
   },
-  "implicitDependencies": ["computer-use", "daemon"]
+  "implicitDependencies": ["daemon"]
 }
