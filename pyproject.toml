@@ -41,6 +41,7 @@ line-length = 120
 max-line-length = 120
 disable = [
     "C0111",  # missing-docstring
+    "C0415",  # import-outside-toplevel
     "R0903",  # too-few-public-methods
     "R0902",  # too-many-instance-attributes
     "W0702",  # no-exception-type-specified (bare-except)
