@@ -1,4 +1,4 @@
-FROM docker:28.2.2-dind-alpine3.22 AS daytona
+FROM docker:28.2.2-dind-alpine3.22 AS builder
 
 # Install nodejs
 RUN --mount=type=cache,target=/var/cache/apk \
@@ -17,11 +17,10 @@ COPY apps/*/package.json apps/*/
 COPY libs/*/package.json libs/*/
 
 # Install dependencies
-RUN yarn install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --frozen-lockfile
 
 COPY . .
-
-
 
 # Build arguments
 ARG PUBLIC_WEB_URL=https://daytona.io
@@ -34,8 +33,44 @@ ENV PUBLIC_ALGOLIA_APP_ID=${PUBLIC_ALGOLIA_APP_ID}
 ENV PUBLIC_ALGOLIA_API_KEY=${PUBLIC_ALGOLIA_API_KEY}
 ENV VERSION=${VERSION}
 
-RUN yarn && \
-  SKIP_COMPUTER_USE_BUILD=true yarn build:production-skip-computer-use --nxBail=true
+# Build with optimal cache strategy - hybrid approach
+# Step 0: Ensure all dependencies are available (critical step)
+RUN --mount=type=cache,target=/root/.yarn \
+    yarn install --immutable
+
+# Step 1: Build fast JS/TS components together (better parallelization)
+RUN --mount=type=cache,target=/root/.cache/nx \
+    NX_DAEMON=false yarn nx run-many --target=build --projects=api,dashboard,tag:lib --parallel --configuration=production
+
+# Step 2: Build docs separately (independent, often changed) - Skip due to Nx daemon issues
+RUN --mount=type=cache,target=/root/.cache/nx \
+    NX_DAEMON=false yarn nx build docs --configuration=production
+
+# Step 3: Build Go Runner separately (largest, most cache-sensitive)
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    NX_DAEMON=false yarn nx build runner --configuration=production
+
+# Step 4: Build remaining Go components together (similar dependencies)
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    NX_DAEMON=false yarn nx run-many --target=build --projects=proxy,daemon,cli --parallel --configuration=production
+
+# Runtime stage
+FROM docker:28.2.2-dind-alpine3.22 AS daytona
+
+# Install only runtime dependencies
+RUN --mount=type=cache,target=/var/cache/apk \
+  apk --update add nodejs=22.16.0-r2 npm bash
+RUN npm install -g corepack && corepack enable
+
+WORKDIR /daytona
+
+# Copy only built artifacts from builder stage
+COPY --from=builder /daytona/dist ./dist
+COPY --from=builder /daytona/package.json ./package.json
+COPY --from=builder /daytona/yarn.lock ./yarn.lock
+COPY --from=builder /daytona/node_modules ./node_modules
 
 RUN mkdir -p /etc/docker && echo '{"iptables": false, "ip-forward": false, "ip-masq": false, "userland-proxy": false,"insecure-registries": ["localhost:6000"]}' > /etc/docker/daemon.json
 
