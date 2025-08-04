@@ -70,7 +70,13 @@ WORKDIR /daytona
 COPY --from=builder /daytona/dist ./dist
 COPY --from=builder /daytona/package.json ./package.json
 COPY --from=builder /daytona/yarn.lock ./yarn.lock
+COPY --from=builder /daytona/.yarnrc.yml ./.yarnrc.yml
+COPY --from=builder /daytona/nx.json ./nx.json
 COPY --from=builder /daytona/node_modules ./node_modules
+# Copy apps/api directory for migrations
+COPY --from=builder /daytona/apps/api ./apps/api
+# Copy TypeScript config files for migrations
+COPY --from=builder /daytona/tsconfig.base.json ./tsconfig.base.json
 
 RUN mkdir -p /etc/docker && echo '{"iptables": false, "ip-forward": false, "ip-masq": false, "userland-proxy": false,"insecure-registries": ["localhost:6000"]}' > /etc/docker/daemon.json
 
