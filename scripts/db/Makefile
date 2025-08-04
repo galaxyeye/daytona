@@ -3,7 +3,7 @@
 .PHONY: help init install install-dev check test lint format report clean backup all build install-package
 
 # Python virtual environment
-VENV := .venv
+VENV := ./../../.venv
 PYTHON := $(VENV)/bin/python
 PIP := $(VENV)/bin/pip
 

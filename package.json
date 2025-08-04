@@ -250,14 +250,14 @@
       "markdownlint-cli2 --fix"
     ],
     "!(libs/api-client-python/**/*|libs/api-client-python-async/**/*)*.py": [
-      "isort",
-      "black --config pyproject.toml",
-      "pylint -sn"
+      "poetry run isort",
+      "poetry run black --config pyproject.toml",
+      "poetry run pylint -sn"
     ],
     "*.ipynb": [
-      "nbqa isort",
-      "black --config pyproject.toml",
-      "nbqa pylint -sn"
+      "poetry run nbqa isort",
+      "poetry run black --config pyproject.toml",
+      "poetry run nbqa pylint -sn"
     ]
   }
 }
