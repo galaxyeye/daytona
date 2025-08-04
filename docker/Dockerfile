@@ -1,7 +1,8 @@
 FROM docker:28.2.2-dind-alpine3.22 AS daytona
 
 # Install nodejs
-RUN apk --update add --no-cache nodejs=22.16.0-r2 npm bash
+RUN --mount=type=cache,target=/var/cache/apk \
+  apk --update add nodejs=22.16.0-r2 npm bash
 RUN npm install -g corepack && corepack enable
 
 COPY --from=golang:1.23.5-alpine /usr/local/go/ /usr/local/go/
@@ -10,16 +11,27 @@ ENV PATH="/usr/local/go/bin:${PATH}"
 
 WORKDIR /daytona
 
+# Copy package files first for better caching
+COPY package.json yarn.lock ./
+COPY apps/*/package.json apps/*/
+COPY libs/*/package.json libs/*/
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
 COPY . .
 
-# Docs build arguments
-ENV PUBLIC_WEB_URL=https://daytona.io
-ARG PUBLIC_ALGOLIA_APP_ID
-ENV PUBLIC_ALGOLIA_APP_ID=${PUBLIC_ALGOLIA_APP_ID}
-ARG PUBLIC_ALGOLIA_API_KEY
-ENV PUBLIC_ALGOLIA_API_KEY=${PUBLIC_ALGOLIA_API_KEY}
 
+
+# Build arguments
+ARG PUBLIC_WEB_URL=https://daytona.io
+ARG PUBLIC_ALGOLIA_APP_ID
+ARG PUBLIC_ALGOLIA_API_KEY
 ARG VERSION=0.0.1
+
+ENV PUBLIC_WEB_URL=${PUBLIC_WEB_URL}
+ENV PUBLIC_ALGOLIA_APP_ID=${PUBLIC_ALGOLIA_APP_ID}
+ENV PUBLIC_ALGOLIA_API_KEY=${PUBLIC_ALGOLIA_API_KEY}
 ENV VERSION=${VERSION}
 
 RUN yarn && \
@@ -38,8 +50,9 @@ ENV DB_DATABASE=daytona
 ENV REDIS_HOST=redis
 ENV REDIS_PORT=6379
 
-ENV OIDC_CLIENT_ID=daytona
+# OIDC Configuration (using local dex)
 ENV OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
+ENV OIDC_CLIENT_ID=daytona
 ENV OIDC_AUDIENCE=daytona
 
 ENV OIDC_MANAGEMENT_API_ENABLED=
@@ -107,8 +120,8 @@ ENV DEFAULT_RUNNER_CAPACITY=100
 ENV DEFAULT_RUNNER_REGION=us
 ENV DEFAULT_RUNNER_CLASS=small
 
-ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & node dist/apps/api/main.js"]
-# ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & yarn migration:run && node dist/apps/api/main.js"]
+# ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & node dist/apps/api/main.js"]
+ENTRYPOINT ["sh", "-c", "dockerd-entrypoint.sh & yarn migration:run && node dist/apps/api/main.js"]
 
 FROM alpine:3.18 AS proxy
 
@@ -127,6 +140,7 @@ ENV PROXY_PROTOCOL=http
 
 ENV OIDC_CLIENT_ID=daytona
 ENV OIDC_CLIENT_SECRET=
+ENV OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
 ENV OIDC_DOMAIN=http://localhost:5556/dex
 ENV OIDC_AUDIENCE=daytona
 
