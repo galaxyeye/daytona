@@ -1,4 +1,4 @@
-name: daytona-dev
+name: spacedock
 services:
   api:
     build:

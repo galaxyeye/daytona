@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$HELP" = true ]; then
-    echo "🚀 Daytona Docker构建脚本"
+    echo "🚀 Spacedock Docker构建脚本"
     echo ""
     echo "用法: $0 [选项]"
     echo ""
@@ -83,7 +83,7 @@ case $CACHE_TYPE in
         cp docker/docker-compose.build.yaml docker/docker-compose.build-local-cache.yaml
         
         # 添加本地缓存配置（临时）
-        sed -i '/target: daytona/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
+        sed -i '/target: Spacedock/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         sed -i '/target: proxy/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         sed -i '/target: runner/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         
@@ -111,7 +111,7 @@ echo "✅ Build completed successfully!"
 
 # 显示镜像大小
 echo "📊 Image sizes:"
-docker images | grep daytona-dev | head -10
+docker images | grep Spacedock-dev | head -10
 
 # 显示构建性能信息
 echo ""

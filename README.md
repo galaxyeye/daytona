@@ -133,6 +133,43 @@ main().catch(console.error)
 
 ---
 
+## Docker Images
+
+Daytona provides Docker images for all its services. You can use pre-built images from Docker Hub or build your own.
+
+### Using Pre-built Images
+
+```bash
+# Use the official images
+docker run -d --name daytona-api daytona/daytona-api:latest
+docker run -d --name daytona-proxy daytona/daytona-proxy:latest
+docker run -d --name daytona-runner daytona/daytona-runner:latest
+```
+
+### Building Images
+
+To build Docker images from source, use the build tools in `docker/publish/`:
+
+```bash
+# Enter the build directory
+cd docker/publish
+
+# Quick development build
+./build.bat dev          # Windows
+make build-dev          # Linux/macOS
+
+# Production build with push
+./build.bat push         # Windows  
+make build-push         # Linux/macOS
+
+# Custom build
+./build-and-push.sh --version v1.0.0 --services api,proxy
+```
+
+For detailed build instructions, see [`docker/publish/README.md`](docker/publish/README.md).
+
+---
+
 ## Contributing
 
 Daytona is Open Source under the [GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE), and is the [copyright of its contributors](NOTICE). If you would like to contribute to the software, read the Developer Certificate of Origin Version 1.1 (https://developercertificate.org/). Afterwards, navigate to the [contributing guide](CONTRIBUTING.md) to get started.

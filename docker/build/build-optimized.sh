@@ -41,7 +41,7 @@ echo ""
 
 # 显示镜像信息
 echo "� 构建结果:"
-docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedAt}}" | grep -E "(REPOSITORY|daytona|proxy|runner|docs)"
+docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedAt}}" | grep -E "(REPOSITORY|Spacedock|proxy|runner|docs)"
 
 echo ""
 echo "🎯 性能分析:"

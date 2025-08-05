@@ -1,7 +1,7 @@
-name: daytona
+name: spacedock
 services:
   api:
-    image: daytonaio/daytona-api:0.2.4
+    image: galaxyeye88/spacedock-api:latest
     privileged: true
     ports:
       - 3000:3000
@@ -11,11 +11,11 @@ services:
       - 5556:5556
       - 5100:5100
   proxy:
-    image: daytonaio/daytona-proxy:0.2.13
+    image: galaxyeye88/spacedock-proxy:latest
     network_mode: service:api
 
   runner:
-    image: daytonaio/daytona-runner:0.2.3
+    image: galaxyeye88/spacedock-runner:latest
     privileged: true
     network_mode: service:api
 

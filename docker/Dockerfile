@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/root/.yarn \
 COPY . .
 
 # Build arguments
-ARG PUBLIC_WEB_URL=https://daytona.io
+ARG PUBLIC_WEB_URL=https://platon.ai
 ARG PUBLIC_ALGOLIA_APP_ID
 ARG PUBLIC_ALGOLIA_API_KEY
 ARG VERSION=0.0.1
