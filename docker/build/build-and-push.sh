@@ -1,11 +1,12 @@
 #!/bin/bash
-# 构建并发布 Daytona 项目的 Docker 镜像
+# 构建并发布 Spacedock 项目的 Docker 镜像
+#
 
 set -euo pipefail
 
 # 默认配置
 REGISTRY="${REGISTRY:-docker.io}"
-NAMESPACE="${NAMESPACE:-daytona}"
+NAMESPACE="${NAMESPACE:-galaxyeye88}"
 VERSION="${VERSION:-latest}"
 PLATFORM="${PLATFORM:-linux/amd64,linux/arm64}"
 SERVICES="${SERVICES:-api,proxy,runner,docs}"
@@ -49,13 +50,13 @@ log() {
 # 显示帮助信息
 show_help() {
     cat << EOF
-构建并发布 Daytona 项目的 Docker 镜像
+构建并发布 Spacedock 项目的 Docker 镜像
 
 用法: $0 [选项]
 
 选项:
     -r, --registry REGISTRY     Docker 镜像仓库地址 (默认: docker.io)
-    -n, --namespace NAMESPACE   镜像命名空间 (默认: daytona)
+    -n, --namespace NAMESPACE   镜像命名空间 (默认: galaxyeye88)
     -v, --version VERSION       镜像版本标签 (默认: latest)
     -p, --platform PLATFORM    目标平台 (默认: linux/amd64,linux/arm64)
     -s, --services SERVICES     要构建的服务列表，逗号分隔 (默认: api,proxy,runner,docs)
@@ -79,13 +80,13 @@ show_help() {
     $0 --version v1.0.0
 
     # 构建并推送到 GitHub Container Registry
-    $0 --registry ghcr.io --namespace myorg --version latest --push
+    $0 --registry ghcr.io --namespace galaxyeye88 --version latest --push
 
     # 只构建 API 和 Proxy 服务
     $0 --services api,proxy --version dev
 
     # 使用环境变量
-    REGISTRY=ghcr.io NAMESPACE=myorg VERSION=v1.0.0 PUSH=true $0
+    REGISTRY=ghcr.io NAMESPACE=galaxyeye88 VERSION=v1.0.0 PUSH=true $0
 EOF
 }
 
@@ -167,7 +168,7 @@ check_buildx() {
 
 # 创建 buildx builder
 setup_builder() {
-    local builder_name="daytona-builder"
+    local builder_name="spacedock-builder"
     
     # 检查 builder 是否已存在
     if ! docker buildx ls | grep -q "$builder_name"; then
@@ -192,15 +193,15 @@ build_service_image() {
     # 构建镜像名称
     local image_name
     if [[ "$REGISTRY" == "docker.io" ]]; then
-        image_name="$NAMESPACE/daytona-$service:$VERSION"
+        image_name="$NAMESPACE/spacedock-$service:$VERSION"
     else
-        image_name="$REGISTRY/$NAMESPACE/daytona-$service:$VERSION"
+        image_name="$REGISTRY/$NAMESPACE/spacedock-$service:$VERSION"
     fi
     
-    # 对于 API 服务，使用 "daytona" 作为目标名称
+    # 对于 API 服务，使用 "spacedock" 作为目标名称
     local target_name="$service"
     if [[ "$service" == "api" ]]; then
-        target_name="daytona"
+        target_name="spacedock"
     fi
     
     # 准备构建参数
@@ -264,7 +265,7 @@ build_service_image() {
 
 # 主函数
 main() {
-    log "INFO" "开始构建 Daytona Docker 镜像"
+    log "INFO" "开始构建 Spacedock Docker 镜像"
     log "INFO" "Registry: $REGISTRY"
     log "INFO" "Namespace: $NAMESPACE"
     log "INFO" "Version: $VERSION"
@@ -331,9 +332,9 @@ main() {
             service=$(echo "$service" | xargs)
             local image_name
             if [[ "$REGISTRY" == "docker.io" ]]; then
-                image_name="$NAMESPACE/daytona-$service:$VERSION"
+                image_name="$NAMESPACE/spacedock-$service:$VERSION"
             else
-                image_name="$REGISTRY/$NAMESPACE/daytona-$service:$VERSION"
+                image_name="$REGISTRY/$NAMESPACE/spacedock-$service:$VERSION"
             fi
             log "INFO" "  - $image_name"
         done

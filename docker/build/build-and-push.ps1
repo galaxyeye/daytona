@@ -1,11 +1,11 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-构建并发布 Daytona 项目的 Docker 镜像
+构建并发布 Spacedock 项目的 Docker 镜像
 
 .DESCRIPTION
-此脚本用于构建和发布 Daytona 项目的所有 Docker 镜像，包括：
-- daytona (主 API 服务)
+此脚本用于构建和发布 Spacedock 项目的所有 Docker 镜像，包括：
+- Spacedock (主 API 服务)
 - proxy (代理服务)
 - runner (运行器服务)
 - docs (文档服务)
@@ -14,7 +14,7 @@
 Docker 镜像仓库地址，默认为 docker.io
 
 .PARAMETER Namespace
-镜像命名空间，默认为 daytona
+镜像命名空间，默认为 Spacedock
 
 .PARAMETER Version
 镜像版本标签，默认为 latest
@@ -38,12 +38,12 @@ Docker 镜像仓库地址，默认为 docker.io
 .\build-and-push.ps1 -Registry "ghcr.io" -Namespace "myorg" -Version "latest" -Services "api,proxy" -Push
 
 .EXAMPLE
-.\build-and-push.ps1 -Version "dev" -Platform "linux/amd64" -BuildArgs @{"PUBLIC_WEB_URL"="https://dev.daytona.io"}
+.\build-and-push.ps1 -Version "dev" -Platform "linux/amd64" -BuildArgs @{"PUBLIC_WEB_URL"="https://dev.spacedock.io"}
 #>
 
 param(
     [string]$Registry = "docker.io",
-    [string]$Namespace = "daytona",
+    [string]$Namespace = "spacedock",
     [string]$Version = "latest",
     [string]$Platform = "linux/amd64,linux/arm64",
     [string]$Services = "api,proxy,runner,docs",
@@ -102,7 +102,7 @@ function Test-DockerBuildx {
 
 # 创建 buildx builder
 function Initialize-Builder {
-    param([string]$BuilderName = "daytona-builder")
+    param([string]$BuilderName = "spacedock-builder")
     
     try {
         # 检查 builder 是否已存在
@@ -142,9 +142,9 @@ function Build-ServiceImage {
     
     # 构建镜像名称
     $FullImageName = if ($Registry -eq "docker.io") {
-        "$Namespace/daytona-$Service`:$Version"
+        "$Namespace/Spacedock-$Service`:$Version"
     } else {
-        "$Registry/$Namespace/daytona-$Service`:$Version"
+        "$Registry/$Namespace/Spacedock-$Service`:$Version"
     }
     
     # 准备构建参数
@@ -225,7 +225,7 @@ function Build-ServiceImage {
 
 # 主函数
 function Main {
-    Write-Log "开始构建 Daytona Docker 镜像"
+    Write-Log "开始构建 Spacedock Docker 镜像"
     Write-Log "Registry: $Registry"
     Write-Log "Namespace: $Namespace"
     Write-Log "Version: $Version"
@@ -277,8 +277,8 @@ function Main {
     $totalCount = $serviceList.Count
     
     foreach ($service in $serviceList) {
-        # 对于 API 服务，使用 "daytona" 作为目标名称
-        $targetName = if ($service -eq "api") { "daytona" } else { $service }
+        # 对于 API 服务，使用 "Spacedock" 作为目标名称
+        $targetName = if ($service -eq "api") { "Spacedock" } else { $service }
         
         if (Build-ServiceImage -Service $targetName -ImageTag $Version -BuildArguments $allBuildArgs -UseBuildx $useBuildx -ShouldPush $Push) {
             $successCount++
@@ -295,9 +295,9 @@ function Main {
         Write-Log "构建的镜像:"
         foreach ($service in $serviceList) {
             $imageName = if ($Registry -eq "docker.io") {
-                "$Namespace/daytona-$service`:$Version"
+                "$Namespace/Spacedock-$service`:$Version"
             } else {
-                "$Registry/$Namespace/daytona-$service`:$Version"
+                "$Registry/$Namespace/Spacedock-$service`:$Version"
             }
             Write-Log "  - $imageName"
         }

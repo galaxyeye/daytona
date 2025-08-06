@@ -1,10 +1,14 @@
-# Daytona Docker 镜像构建 Makefile
+# Spacedock Docker 镜像构建 Makefile
 
 # 默认配置
 REGISTRY ?= docker.io
-NAMESPACE ?= daytona
-VERSION ?= latest
-PLATFORM ?= linux/amd64,linux/arm64
+NAMESPACE ?= galaxyeye88
+VERSION ?= 0.0.1
+# 构建平台配置 (可选: linux/amd64, linux/arm64, linux/amd64,linux/arm64)
+PLATFORM ?= linux/amd64
+
+# 要构建的服务列表 (可选: api, proxy, runner, docs 或其组合，用逗号分隔)
+# 示例: api,proxy 或 runner 或 api,proxy,runner,docs
 SERVICES ?= api,proxy,runner,docs
 
 # 脚本路径
@@ -17,11 +21,11 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help build build-push build-dev build-prod build-single clean test-build docker-compose-build
+.PHONY: help build build-push build-dev build-prod build-single clean test-build docker-compose-build clean-all github dockerhub api proxy runner docs quick
 
 # 默认目标
 help: ## 显示帮助信息
-	@echo "Daytona Docker 镜像构建工具"
+	@echo "Spacedock Docker 镜像构建工具"
 	@echo ""
 	@echo "用法: make [目标] [变量=值]"
 	@echo ""
@@ -37,7 +41,7 @@ help: ## 显示帮助信息
 	@echo ""
 	@echo "示例:"
 	@echo "  make build VERSION=v1.0.0"
-	@echo "  make build-push REGISTRY=ghcr.io NAMESPACE=myorg"
+	@echo "  make build-push REGISTRY=ghcr.io NAMESPACE=galaxyeye88"
 	@echo "  make build-dev SERVICES=api,proxy"
 
 build: ## 构建镜像到本地
@@ -151,7 +155,7 @@ quick: ## 快速构建所有服务（单平台，无缓存）
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
 		--namespace "$(NAMESPACE)" \
-		--version "dev" \
+		--version "0.0.1" \
 		--platform "linux/amd64" \
 		--services "$(SERVICES)" \
 		--no-cache

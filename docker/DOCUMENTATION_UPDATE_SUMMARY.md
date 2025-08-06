@@ -2,7 +2,7 @@
 
 ## 更新的文件
 
-### 1. `/workspaces/daytona/docker/README.md`
+### 1. `/workspaces/spacedock/docker/README.md`
 
 **主要更新内容**：
 
@@ -18,7 +18,7 @@
 - 详细的脚本功能特性说明
 - 准确的构建时间目标描述 (35-38s)
 
-### 2. `/workspaces/daytona/docker/OPTIMIZATION.md`
+### 2. `/workspaces/spacedock/docker/OPTIMIZATION.md`
 
 **主要更新内容**：
 

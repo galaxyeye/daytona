@@ -4,7 +4,7 @@
 
 ## 目录位置
 
-这些构建工具位于 `docker/publish/` 目录下，与 Dockerfile 在同一个 docker 目录中，便于管理。
+这些构建工具位于 `docker/build/` 目录下，与 Dockerfile 在同一个 docker 目录中，便于管理。
 
 ## 文件说明
 
@@ -36,7 +36,7 @@ make help
 make build
 
 # 构建并推送到仓库
-make build-push VERSION=v1.0.0
+make build-push VERSION=0.0.1
 
 # 快速开发构建（单平台，无缓存）
 make quick
@@ -54,48 +54,48 @@ make docs
 
 ```bash
 # 进入构建目录
-cd docker/publish
+cd docker/build
 
 # 基本构建
-./build-and-push.sh --version v1.0.0
+./build-and-push.sh --version 0.0.1
 
 # 构建并推送到 GitHub Container Registry
 ./build-and-push.sh \
   --registry ghcr.io \
   --namespace myorg \
-  --version v1.0.0 \
+  --version 0.0.1 \
   --push
 
 # 只构建 API 和 Proxy 服务
 ./build-and-push.sh \
   --services api,proxy \
-  --version dev
+  --version 0.0.1
 ```
 
 #### Windows PowerShell
 
 ```powershell
 # 进入构建目录
-cd docker\publish
+cd docker\build
 
 # 基本构建
-.\build-and-push.ps1 -Version "v1.0.0"
+.\build-and-push.ps1 -Version "0.0.1"
 
 # 构建并推送
-.\build-and-push.ps1 -Registry "ghcr.io" -Namespace "myorg" -Version "v1.0.0" -Push
+.\build-and-push.ps1 -Registry "ghcr.io" -Namespace "myorg" -Version "0.0.1" -Push
 
 # 使用构建参数
-.\build-and-push.ps1 -Version "dev" -BuildArgs @{"PUBLIC_WEB_URL"="https://dev.Spacedock.io"}
+.\build-and-push.ps1 -Version "0.0.1" -BuildArgs @{"PUBLIC_WEB_URL"="https://dev.platon.ai"}
 ```
 
 ### 3. 使用 Docker Compose
 
 ```bash
 # 进入构建目录
-cd docker/publish
+cd docker/build
 
 # 设置环境变量
-export VERSION=dev
+export VERSION=0.0.1
 export REGISTRY=myregistry
 
 # 构建所有镜像
@@ -131,7 +131,7 @@ vim .env
 | 变量名 | 默认值 | 说明 |
 |--------|--------|------|
 | `REGISTRY` | `docker.io` | Docker 镜像仓库地址 |
-| `NAMESPACE` | `Spacedock` | 镜像命名空间 |
+| `NAMESPACE` | `galaxyeye88` | 镜像命名空间 |
 | `VERSION` | `latest` | 镜像版本标签 |
 | `PLATFORM` | `linux/amd64,linux/arm64` | 构建平台 |
 | `SERVICES` | `api,proxy,runner,docs` | 要构建的服务 |
@@ -180,23 +180,23 @@ vim .env
 make build-dev
 
 # 或者
-./build-and-push.sh --version dev --platform linux/amd64
+./build-and-push.sh --version 0.0.1 --platform linux/amd64
 ```
 
 ### 生产环境
 
 ```bash
 # 多平台构建并推送到 Docker Hub
-make build-prod VERSION=v1.0.0
+make build-prod VERSION=0.0.1
 
 # 推送到 GitHub Container Registry
-make github VERSION=v1.0.0
+make github VERSION=0.0.1
 
 # 推送到私有仓库
 make build-push \
   REGISTRY=myregistry.com \
-  NAMESPACE=myorg \
-  VERSION=v1.0.0
+  NAMESPACE=galaxyeye88 \
+  VERSION=0.0.1
 ```
 
 ### CI/CD 环境
@@ -215,10 +215,10 @@ export PUSH=true
 
 ```bash
 # 只构建 API 服务
-make build-single SERVICE=api VERSION=v1.0.0
+make build-single SERVICE=api VERSION=0.0.1
 
 # 构建多个但不是全部服务
-./build-and-push.sh --services api,proxy --version v1.0.0
+./build-and-push.sh --services api,proxy --version 0.0.1
 ```
 
 ## 构建优化
@@ -289,7 +289,7 @@ make clean-all
 
 ## 最佳实践
 
-1. **版本管理**: 使用语义化版本号（如 v1.0.0）
+1. **版本管理**: 使用语义化版本号（如 0.0.1）
 2. **标签策略**: 为不同环境使用不同标签（dev, staging, prod）
 3. **缓存利用**: 在 CI/CD 中配置适当的缓存策略
 4. **安全扫描**: 在推送前对镜像进行安全扫描

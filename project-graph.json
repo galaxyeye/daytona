@@ -1,0 +1,2492 @@
+{
+  "graph": {
+    "nodes": {
+      "api-client-python-async": {
+        "name": "api-client-python-async",
+        "type": "lib",
+        "data": {
+          "root": "libs/api-client-python-async",
+          "name": "api-client-python-async",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/api-client-python-async/src",
+          "projectType": "library",
+          "tags": [],
+          "targets": {
+            "generate:api-client": {
+              "executor": "nx:run-commands",
+              "options": {
+                "commands": [
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i dist/apps/api/openapi.json -g python --additional-properties=packageName=daytona_api_client_async,projectName=daytona_api_client_async,packageVersion=$DEFAULT_PACKAGE_VERSION,pythonPackageName=daytona_api_client_async,disallowAdditionalPropertiesIfNotPresent=false,library=asyncio -o libs/api-client-python-async",
+                  "sed -i 's/^license = \".*\"/license = \"Apache-2.0\"/' libs/api-client-python-async/pyproject.toml"
+                ],
+                "parallel": false
+              },
+              "dependsOn": [
+                {
+                  "target": "openapi",
+                  "projects": "api"
+                }
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/api-client-python-async",
+                "commands": [
+                  "rm -rf dist",
+                  "if [ -n \"$PYPI_PKG_VERSION\" ] || [ -n \"$DEFAULT_PACKAGE_VERSION\" ]; then VER=${PYPI_PKG_VERSION:-$DEFAULT_PACKAGE_VERSION}; sed -i \"s/^VERSION = \\\".*\\\"$/VERSION = \\\"$VER\\\"/\" setup.py && poetry version \"$VER\"; fi && poetry build"
+                ],
+                "parallel": false,
+                "dependsOn": [
+                  "deps-check"
+                ]
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "publish": {
+              "executor": "nx:run-commands",
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "cwd": "libs/api-client-python-async",
+                "commands": [
+                  "poetry publish --username __token__ --password $PYPI_TOKEN --no-interaction",
+                  "for i in $(seq 1 20); do if pip download daytona_api_client_async==${PYPI_PKG_VERSION} -q -d /tmp; then echo \"daytona_api_client_async==${PYPI_PKG_VERSION} is now downloadable from PyPI\" && sleep 5 && exit 0; else printf '.\n' && sleep 5; fi; done; echo \"Timeout waiting for daytona_api_client_async==${PYPI_PKG_VERSION} on PyPI\" >&2; exit 1"
+                ],
+                "parallel": false
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "deps-check": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/api-client-python-async",
+                "commands": [
+                  "poetry run deptry .",
+                  "poetry lock --regenerate"
+                ]
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "api-client-python": {
+        "name": "api-client-python",
+        "type": "lib",
+        "data": {
+          "root": "libs/api-client-python",
+          "name": "api-client-python",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/api-client-python/src",
+          "projectType": "library",
+          "tags": [],
+          "targets": {
+            "generate:api-client": {
+              "executor": "nx:run-commands",
+              "options": {
+                "commands": [
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i dist/apps/api/openapi.json -g python --additional-properties=packageName=daytona_api_client,projectName=daytona_api_client,packageVersion=$DEFAULT_PACKAGE_VERSION,pythonPackageName=daytona_api_client,disallowAdditionalPropertiesIfNotPresent=false -o libs/api-client-python",
+                  "sed -i 's/^license = \".*\"/license = \"Apache-2.0\"/' libs/api-client-python/pyproject.toml"
+                ],
+                "parallel": false
+              },
+              "dependsOn": [
+                {
+                  "target": "openapi",
+                  "projects": "api"
+                }
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/api-client-python",
+                "commands": [
+                  "rm -rf dist",
+                  "if [ -n \"$PYPI_PKG_VERSION\" ] || [ -n \"$DEFAULT_PACKAGE_VERSION\" ]; then VER=${PYPI_PKG_VERSION:-$DEFAULT_PACKAGE_VERSION}; sed -i \"s/^VERSION = \\\".*\\\"$/VERSION = \\\"$VER\\\"/\" setup.py && poetry version \"$VER\"; fi && poetry build"
+                ],
+                "parallel": false,
+                "dependsOn": [
+                  "deps-check"
+                ]
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "publish": {
+              "executor": "nx:run-commands",
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "cwd": "libs/api-client-python",
+                "commands": [
+                  "poetry publish --username __token__ --password $PYPI_TOKEN --no-interaction",
+                  "for i in $(seq 1 20); do if pip download daytona_api_client==${PYPI_PKG_VERSION} -q -d /tmp; then echo \"daytona_api_client==${PYPI_PKG_VERSION} is now downloadable from PyPI\" && sleep 5 && exit 0; else printf '.\n' && sleep 5; fi; done; echo \"Timeout waiting for daytona_api_client==${PYPI_PKG_VERSION} on PyPI\" >&2; exit 1"
+                ],
+                "parallel": false
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "deps-check": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/api-client-python",
+                "commands": [
+                  "poetry run deptry .",
+                  "poetry lock --regenerate"
+                ]
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "runner-api-client": {
+        "name": "runner-api-client",
+        "type": "lib",
+        "data": {
+          "root": "libs/runner-api-client",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "options": {
+                "cwd": "libs/runner-api-client",
+                "command": "eslint ."
+              },
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "yarn eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "prepare": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "prepare"
+              },
+              "metadata": {
+                "scriptContent": "npm run build",
+                "runCommand": "yarn prepare"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "nx-release-publish": {
+              "executor": "@nx/js:release-publish",
+              "dependsOn": [
+                "^nx-release-publish"
+              ],
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "@nx/js:tsc",
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/libs/runner-api-client",
+                "tsConfig": "libs/runner-api-client/tsconfig.lib.json",
+                "packageJson": "libs/runner-api-client/package.json",
+                "main": "libs/runner-api-client/index.ts",
+                "updateBuildableProjectDepsInPackageJson": true
+              },
+              "configurations": {},
+              "parallelism": true,
+              "cache": true,
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production"
+              ]
+            },
+            "generate:api-client": {
+              "executor": "nx:run-commands",
+              "options": {
+                "commands": [
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i apps/runner/pkg/api/docs/swagger.json -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true,withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,useTags=true,enumPropertyNaming=UPPERCASE --type-mappings=DateTime=Date -o libs/runner-api-client/src",
+                  "yarn nx format runner-api-client"
+                ],
+                "parallel": false
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd libs/runner-api-client && prettier --write \"**/*.{ts,json}\" --config ../../.prettierrc"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "runner-api-client",
+          "tags": [
+            "npm:public",
+            "npm:axios",
+            "npm:typescript",
+            "npm:openapi-client",
+            "npm:openapi-generator",
+            "npm:@daytonaio/runner-api-client"
+          ],
+          "metadata": {
+            "targetGroups": {
+              "NPM Scripts": [
+                "prepare"
+              ]
+            },
+            "description": "OpenAPI client for @daytonaio/runner-api-client",
+            "js": {
+              "packageName": "@daytonaio/runner-api-client",
+              "packageMain": "./src/index.js",
+              "isInPackageManagerWorkspaces": false
+            }
+          },
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/runner-api-client",
+          "projectType": "library",
+          "implicitDependencies": []
+        }
+      },
+      "sdk-typescript": {
+        "name": "sdk-typescript",
+        "type": "lib",
+        "data": {
+          "root": "libs/sdk-typescript",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "options": {
+                "cwd": "libs/sdk-typescript",
+                "command": "eslint ."
+              },
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "yarn eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "options": {
+                "cwd": "libs/sdk-typescript",
+                "env": {
+                  "TS_NODE_COMPILER_OPTIONS": "{\"moduleResolution\":\"node10\"}"
+                },
+                "command": "jest"
+              },
+              "metadata": {
+                "technologies": [
+                  "jest"
+                ],
+                "description": "Run Jest Tests",
+                "help": {
+                  "command": "yarn jest --help",
+                  "example": {
+                    "options": {
+                      "coverage": true
+                    }
+                  }
+                }
+              },
+              "cache": true,
+              "inputs": [
+                "default",
+                "^production",
+                {
+                  "externalDependencies": [
+                    "jest",
+                    "ts-jest"
+                  ]
+                }
+              ],
+              "outputs": [],
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "nx-release-publish": {
+              "executor": "@nx/js:release-publish",
+              "dependsOn": [
+                "^nx-release-publish"
+              ],
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-typescript",
+                "command": "npm run docs"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "@nx/js:tsc",
+              "inputs": [
+                "default",
+                "{projectRoot}/package.json"
+              ],
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/libs/sdk-typescript",
+                "tsConfig": "libs/sdk-typescript/tsconfig.lib.json",
+                "packageJson": "libs/sdk-typescript/package.json",
+                "main": "libs/sdk-typescript/src/index.ts",
+                "updateBuildableProjectDepsInPackageJson": true,
+                "assets": [
+                  "libs/sdk-typescript/README.md"
+                ]
+              },
+              "dependsOn": [
+                {
+                  "target": "build",
+                  "projects": [
+                    "api-client"
+                  ]
+                },
+                "set-version"
+              ],
+              "configurations": {},
+              "parallelism": true,
+              "cache": true
+            },
+            "set-version": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-typescript",
+                "command": "if [ -n \"$NPM_PKG_VERSION\" ] || [ -n \"$DEFAULT_PACKAGE_VERSION\" ]; then VER=${NPM_PKG_VERSION:-$DEFAULT_PACKAGE_VERSION}; npm version \"$VER\" --allow-same-version && echo \"Changed version to $VER\"; else echo \"Using version from package.json\"; fi"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "publish": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "dist/libs/sdk-typescript",
+                "command": "npm publish --tag $NPM_TAG --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=$NPM_TOKEN",
+                "parallel": false
+              },
+              "dependsOn": [
+                "build",
+                {
+                  "target": "publish",
+                  "projects": [
+                    "api-client"
+                  ]
+                }
+              ],
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "sdk-typescript",
+          "tags": [
+            "npm:public"
+          ],
+          "metadata": {
+            "targetGroups": {},
+            "description": "TypeScript SDK for Daytona",
+            "js": {
+              "packageName": "@daytonaio/sdk",
+              "packageMain": "./src/index.js",
+              "isInPackageManagerWorkspaces": false
+            }
+          },
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/sdk-typescript",
+          "implicitDependencies": []
+        }
+      },
+      "api-client-go": {
+        "name": "api-client-go",
+        "type": "lib",
+        "data": {
+          "root": "libs/api-client-go",
+          "name": "api-client-go",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/api-client-go",
+          "tags": [],
+          "targets": {
+            "test": {
+              "executor": "@nx-go/nx-go:test",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "./libs/api-client-go",
+                "outputPath": "dist/libs/api-client-go"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "lint": {
+              "executor": "@nx-go/nx-go:lint",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "generate:api-client": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "yarn run openapi-generator-cli generate --git-repo-id=apiclient --git-user-id=daytonaio -i dist/apps/api/openapi.json -g go --additional-properties=packageName=apiclient,moduleVersion=$DEFAULT_PACKAGE_VERSION,generateInterfaces=true,enumClassPrefix=true,structPrefix=true -o libs/api-client-go"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "tidy": {
+              "executor": "@nx-go/nx-go:tidy",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd libs/api-client-go && go fmt ./... && prettier --write \"**/*.yaml\""
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "computer-use": {
+        "name": "computer-use",
+        "type": "app",
+        "data": {
+          "root": "libs/computer-use",
+          "name": "computer-use",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "libs/computer-use",
+          "tags": [],
+          "targets": {
+            "build": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "libs/computer-use/main.go",
+                "outputPath": "dist/libs/computer-use"
+              },
+              "configurations": {
+                "production": {}
+              },
+              "dependsOn": [
+                "build-amd64"
+              ],
+              "outputs": [
+                "{workspaceRoot}/dist/libs/computer-use"
+              ],
+              "cache": true,
+              "parallelism": true
+            },
+            "build-amd64": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "./hack/computer-use/build-computer-use-amd64.sh"
+              },
+              "outputs": [
+                "{workspaceRoot}/dist/libs/computer-use-amd64"
+              ],
+              "cache": true,
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd libs/computer-use && go fmt ./..."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@nx-go/nx-go:test",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "lint": {
+              "executor": "@nx-go/nx-go:lint",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "daytona-e2e": {
+        "name": "daytona-e2e",
+        "type": "e2e",
+        "data": {
+          "root": "apps/daytona-e2e",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "options": {
+                "cwd": "apps/daytona-e2e",
+                "command": "eslint ."
+              },
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{projectRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "yarn eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "e2e": {
+              "executor": "@nx/jest:jest",
+              "outputs": [
+                "{workspaceRoot}/coverage/{e2eProjectRoot}"
+              ],
+              "options": {
+                "jestConfig": "apps/daytona-e2e/jest.config.ts",
+                "passWithNoTests": true
+              },
+              "dependsOn": [
+                "api:build"
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/daytona-e2e && prettier --write \"**/*.{ts,json,mjs}\" --config ../../.prettierrc"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "daytona-e2e",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "implicitDependencies": [
+            "api"
+          ],
+          "tags": []
+        }
+      },
+      "api-client": {
+        "name": "api-client",
+        "type": "lib",
+        "data": {
+          "root": "libs/api-client",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "options": {
+                "cwd": "libs/api-client",
+                "command": "eslint ."
+              },
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "yarn eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "nx-release-publish": {
+              "executor": "@nx/js:release-publish",
+              "dependsOn": [
+                "^nx-release-publish"
+              ],
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "@nx/js:tsc",
+              "inputs": [
+                "default",
+                "{projectRoot}/package.json"
+              ],
+              "outputs": [
+                "{options.outputPath}"
+              ],
+              "options": {
+                "outputPath": "dist/libs/api-client",
+                "tsConfig": "libs/api-client/tsconfig.lib.json",
+                "packageJson": "libs/api-client/package.json",
+                "main": "libs/api-client/src/index.ts",
+                "updateBuildableProjectDepsInPackageJson": true
+              },
+              "dependsOn": [
+                "set-version"
+              ],
+              "configurations": {},
+              "parallelism": true,
+              "cache": true
+            },
+            "generate:api-client": {
+              "executor": "nx:run-commands",
+              "options": {
+                "commands": [
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i dist/apps/api/openapi.json -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true,withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,useTags=true,enumPropertyNaming=UPPERCASE --type-mappings=DateTime=Date -o libs/api-client/src",
+                  "yarn nx format api-client"
+                ],
+                "parallel": false
+              },
+              "dependsOn": [
+                {
+                  "target": "openapi",
+                  "projects": "api"
+                }
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd libs/api-client && prettier --write \"**/*.{ts,json}\" --config ../../.prettierrc"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "set-version": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/api-client",
+                "command": "if [ -n \"$NPM_PKG_VERSION\" ] || [ -n \"$DEFAULT_PACKAGE_VERSION\" ]; then VER=${NPM_PKG_VERSION:-$DEFAULT_PACKAGE_VERSION}; npm version \"$VER\" --allow-same-version && echo \"Changed version to $VER\"; else echo \"Using version from package.json\"; fi"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "publish": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "dist/libs/api-client",
+                "command": "npm publish --tag $NPM_TAG --access public --registry https://registry.npmjs.org/ --//registry.npmjs.org/:_authToken=$NPM_TOKEN",
+                "parallel": false
+              },
+              "dependsOn": [
+                "build"
+              ],
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "api-client",
+          "tags": [
+            "npm:public",
+            "npm:axios",
+            "npm:typescript",
+            "npm:openapi-client",
+            "npm:openapi-generator",
+            "npm:@daytonaio/api-client"
+          ],
+          "metadata": {
+            "targetGroups": {},
+            "description": "OpenAPI client for @daytonaio/api-client",
+            "js": {
+              "packageName": "@daytonaio/api-client",
+              "packageMain": "./src/index.js",
+              "isInPackageManagerWorkspaces": false
+            }
+          },
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "libs/api-client",
+          "projectType": "library",
+          "implicitDependencies": []
+        }
+      },
+      "sdk-python": {
+        "name": "sdk-python",
+        "type": "lib",
+        "data": {
+          "root": "libs/sdk-python",
+          "name": "sdk-python",
+          "tags": [
+            "npm:public"
+          ],
+          "metadata": {
+            "targetGroups": {
+              "NPM Scripts": [
+                "docs:common",
+                "docs:sync",
+                "docs:async",
+                "docs:errors",
+                "docs:charts",
+                "docs:image",
+                "docs:daytona",
+                "docs:sandbox",
+                "docs:filesystem",
+                "docs:git",
+                "docs:process",
+                "docs:lsp",
+                "docs:volume",
+                "docs:object_storage",
+                "docs:snapshot",
+                "docs:computer_use",
+                "docs:async-daytona",
+                "docs:async-sandbox",
+                "docs:async-filesystem",
+                "docs:async-git",
+                "docs:async-process",
+                "docs:async-lsp",
+                "docs:async-volume",
+                "docs:async-object_storage",
+                "docs:async-snapshot",
+                "docs:async-computer_use"
+              ]
+            },
+            "js": {
+              "isInPackageManagerWorkspaces": false
+            }
+          },
+          "targets": {
+            "docs:common": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:common"
+              },
+              "metadata": {
+                "scriptContent": "bash -O extglob -c 'rm -rf $npm_package_config_docsDir/common' && npm run docs:errors && npm run docs:charts && npm run docs:image",
+                "runCommand": "yarn docs:common"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:sync": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:sync"
+              },
+              "metadata": {
+                "scriptContent": "bash -O extglob -c 'rm -rf $npm_package_config_docsDir/sync' && npm run docs:daytona && npm run docs:sandbox && npm run docs:filesystem && npm run docs:git && npm run docs:process && npm run docs:lsp && npm run docs:volume && npm run docs:object_storage && npm run docs:snapshot && npm run docs:computer_use",
+                "runCommand": "yarn docs:sync"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async"
+              },
+              "metadata": {
+                "scriptContent": "bash -O extglob -c 'rm -rf $npm_package_config_docsDir/async' && npm run docs:async-daytona && npm run docs:async-sandbox && npm run docs:async-filesystem && npm run docs:async-git && npm run docs:async-lsp && npm run docs:async-volume && npm run docs:async-object_storage && npm run docs:async-snapshot && npm run docs:async-computer_use",
+                "runCommand": "yarn docs:async"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:errors": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:errors"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='DaytonaError' OUTPUT_FILE=\"$npm_package_config_docsDir/common/errors.mdx\" pydoc-markdown -m daytona.common.errors pydoc-markdown.yml",
+                "runCommand": "yarn docs:errors"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:charts": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:charts"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Chart' OUTPUT_FILE=\"$npm_package_config_docsDir/common/charts.mdx\" pydoc-markdown -m daytona.common.charts pydoc-markdown.yml",
+                "runCommand": "yarn docs:charts"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:image": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:image"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Image' OUTPUT_FILE=\"$npm_package_config_docsDir/common/image.mdx\" pydoc-markdown -m daytona.common.image pydoc-markdown.yml",
+                "runCommand": "yarn docs:image"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:daytona": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:daytona"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Daytona' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/daytona.mdx\" pydoc-markdown -m daytona._sync.daytona -m daytona.common.daytona pydoc-markdown.yml",
+                "runCommand": "yarn docs:daytona"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:sandbox": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:sandbox"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Sandbox' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/sandbox.mdx\" pydoc-markdown -m daytona._sync.sandbox -m daytona.common.sandbox pydoc-markdown.yml",
+                "runCommand": "yarn docs:sandbox"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:filesystem": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:filesystem"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='FileSystem' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/file-system.mdx\" pydoc-markdown -m daytona._sync.filesystem -m daytona.common.filesystem pydoc-markdown.yml",
+                "runCommand": "yarn docs:filesystem"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:git": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:git"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Git' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/git.mdx\" pydoc-markdown -m daytona._sync.git -m daytona.common.git pydoc-markdown.yml",
+                "runCommand": "yarn docs:git"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:process": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:process"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Process' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/process.mdx\" pydoc-markdown -m daytona._sync.process -m daytona.common.process pydoc-markdown.yml",
+                "runCommand": "yarn docs:process"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:lsp": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:lsp"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='LspServer' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/lsp-server.mdx\" pydoc-markdown -m daytona._sync.lsp_server -m daytona.common.lsp_server pydoc-markdown.yml",
+                "runCommand": "yarn docs:lsp"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:volume": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:volume"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Volume' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/volume.mdx\" pydoc-markdown -m daytona._sync.volume -m daytona.common.volume pydoc-markdown.yml",
+                "runCommand": "yarn docs:volume"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:object_storage": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:object_storage"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='ObjectStorage' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/object-storage.mdx\" pydoc-markdown -m daytona._sync.object_storage pydoc-markdown.yml",
+                "runCommand": "yarn docs:object_storage"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:snapshot": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:snapshot"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Snapshot' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/snapshot.mdx\" pydoc-markdown -m daytona._sync.snapshot -m daytona.common.snapshot pydoc-markdown.yml",
+                "runCommand": "yarn docs:snapshot"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:computer_use": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:computer_use"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='ComputerUse' OUTPUT_FILE=\"$npm_package_config_docsDir/sync/computer-use.mdx\" pydoc-markdown -m daytona._sync.computer_use -m daytona.common.computer_use pydoc-markdown.yml",
+                "runCommand": "yarn docs:computer_use"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-daytona": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-daytona"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncDaytona' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-daytona.mdx\" pydoc-markdown -m daytona._async.daytona -m daytona.common.daytona pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-daytona"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-sandbox": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-sandbox"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncSandbox' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-sandbox.mdx\" pydoc-markdown -m daytona._async.sandbox -m daytona.common.sandbox pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-sandbox"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-filesystem": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-filesystem"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncFileSystem' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-file-system.mdx\" pydoc-markdown -m daytona._async.filesystem -m daytona.common.filesystem pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-filesystem"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-git": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-git"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncGit' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-git.mdx\" pydoc-markdown -m daytona._async.git -m daytona.common.git pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-git"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-process": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-process"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncProcess' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-process.mdx\" pydoc-markdown -m daytona._async.process -m daytona.common.process pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-process"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-lsp": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-lsp"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncLspServer' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-lsp-server.mdx\" pydoc-markdown -m daytona._async.lsp_server -m daytona.common.lsp_server pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-lsp"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-volume": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-volume"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Volume' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-volume.mdx\" pydoc-markdown -m daytona._async.volume -m daytona.common.volume pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-volume"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-object_storage": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-object_storage"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncObjectStorage' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-object-storage.mdx\" pydoc-markdown -m daytona._async.object_storage pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-object_storage"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-snapshot": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-snapshot"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='Snapshot' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-snapshot.mdx\" pydoc-markdown -m daytona._async.snapshot -m daytona.common.snapshot pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-snapshot"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs:async-computer_use": {
+              "executor": "nx:run-script",
+              "options": {
+                "script": "docs:async-computer_use"
+              },
+              "metadata": {
+                "scriptContent": "FIRST_SECTION='AsyncComputerUse' OUTPUT_FILE=\"$npm_package_config_docsDir/async/async-computer-use.mdx\" pydoc-markdown -m daytona._async.computer_use -m daytona.common.computer_use pydoc-markdown.yml",
+                "runCommand": "yarn docs:async-computer_use"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "nx-release-publish": {
+              "executor": "@nx/js:release-publish",
+              "dependsOn": [
+                "^nx-release-publish"
+              ],
+              "options": {},
+              "configurations": {},
+              "parallelism": true
+            },
+            "docs": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-python",
+                "command": "npm run docs"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "generate-sync": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-python",
+                "command": "python scripts/sync_generator.py"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "add-api-clients": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-python",
+                "command": "./scripts/add-api-clients.sh"
+              },
+              "dependsOn": [
+                {
+                  "target": "publish",
+                  "projects": [
+                    "api-client-python",
+                    "api-client-python-async"
+                  ]
+                }
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-python",
+                "commands": [
+                  "rm -rf dist",
+                  "./scripts/build-sdk.sh"
+                ],
+                "parallel": false
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build:_publish": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "yarn nx run sdk-python:build"
+              },
+              "dependsOn": [
+                "deps-check"
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "publish": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-python",
+                "commands": [
+                  "poetry publish --username __token__ --password $PYPI_TOKEN --no-interaction",
+                  "sed -i 's/^name = \"[^\"]*\"/name = \"daytona_sdk\"/' pyproject.toml",
+                  "poetry publish --username __token__ --password $PYPI_TOKEN --no-interaction",
+                  "sed -i 's/^name = \"[^\"]*\"/name = \"daytona\"/' pyproject.toml"
+                ],
+                "parallel": false
+              },
+              "dependsOn": [
+                "build:_publish"
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "deps-check": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "libs/sdk-python",
+                "commands": [
+                  "poetry run deptry .",
+                  "poetry lock --regenerate"
+                ]
+              },
+              "dependsOn": [
+                "add-api-clients"
+              ],
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "library",
+          "sourceRoot": "libs/sdk-python",
+          "implicitDependencies": []
+        }
+      },
+      "dashboard": {
+        "name": "dashboard",
+        "type": "app",
+        "data": {
+          "root": "apps/dashboard",
+          "targets": {
+            "lint": {
+              "cache": true,
+              "options": {
+                "cwd": "apps/dashboard",
+                "command": "eslint ."
+              },
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{projectRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "yarn eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "cache": true,
+              "dependsOn": [
+                "^build"
+              ],
+              "inputs": [
+                "production",
+                "^production",
+                {
+                  "externalDependencies": [
+                    "vite"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{workspaceRoot}/dist/apps/dashboard"
+              ],
+              "metadata": {
+                "technologies": [
+                  "vite"
+                ],
+                "description": "Run Vite build",
+                "help": {
+                  "command": "yarn vite build --help",
+                  "example": {
+                    "options": {
+                      "sourcemap": true,
+                      "manifest": "manifest.json"
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {
+                "production": {
+                  "mode": "production"
+                }
+              },
+              "options": {
+                "cwd": "apps/dashboard",
+                "command": "vite build"
+              },
+              "parallelism": true
+            },
+            "serve": {
+              "options": {
+                "cwd": "apps/dashboard",
+                "command": "vite"
+              },
+              "metadata": {
+                "technologies": [
+                  "vite"
+                ],
+                "description": "Starts Vite dev server",
+                "help": {
+                  "command": "yarn vite --help",
+                  "example": {
+                    "options": {
+                      "port": 3000
+                    }
+                  }
+                },
+                "deprecated": "Use devTargetName instead. This option will be removed in Nx 22."
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "dev": {
+              "options": {
+                "cwd": "apps/dashboard",
+                "command": "vite"
+              },
+              "metadata": {
+                "technologies": [
+                  "vite"
+                ],
+                "description": "Starts Vite dev server",
+                "help": {
+                  "command": "yarn vite --help",
+                  "example": {
+                    "options": {
+                      "port": 3000
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "preview": {
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "cwd": "apps/dashboard",
+                "command": "vite preview"
+              },
+              "metadata": {
+                "technologies": [
+                  "vite"
+                ],
+                "description": "Locally preview Vite production build",
+                "help": {
+                  "command": "yarn vite preview --help",
+                  "example": {
+                    "options": {
+                      "port": 3000
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve-static": {
+              "executor": "@nx/web:file-server",
+              "options": {
+                "buildTarget": "build",
+                "spa": true
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "typecheck": {
+              "cache": true,
+              "inputs": [
+                "production",
+                "^production",
+                {
+                  "externalDependencies": [
+                    "typescript"
+                  ]
+                }
+              ],
+              "options": {
+                "cwd": "apps/dashboard",
+                "command": "tsc --noEmit -p tsconfig.app.json"
+              },
+              "metadata": {
+                "description": "Runs type-checking for the project.",
+                "technologies": [
+                  "typescript"
+                ],
+                "help": {
+                  "command": "yarn tsc -p tsconfig.app.json --help",
+                  "example": {
+                    "options": {
+                      "noEmit": true
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "build-deps": {
+              "dependsOn": [
+                "^build"
+              ],
+              "configurations": {},
+              "options": {},
+              "parallelism": true,
+              "executor": "nx:noop"
+            },
+            "watch-deps": {
+              "dependsOn": [
+                "build-deps"
+              ],
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "yarn nx watch --projects dashboard --includeDependentProjects -- yarn nx build-deps dashboard"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/dashboard && prettier --write \"**/*.{ts,tsx,js,jsx,json,css,mjs,html}\" --config ../../.prettierrc"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "projectType": "application",
+          "metadata": {},
+          "name": "dashboard",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "apps/dashboard/src",
+          "tags": [],
+          "implicitDependencies": []
+        }
+      },
+      "daemon": {
+        "name": "daemon",
+        "type": "app",
+        "data": {
+          "root": "apps/daemon",
+          "name": "daemon",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/daemon",
+          "tags": [],
+          "targets": {
+            "prepare": {
+              "executor": "@nx-go/nx-go:serve",
+              "options": {
+                "cwd": ".",
+                "main": "apps/daemon/tools/xterm.go"
+              },
+              "inputs": [
+                "{projectRoot}/tools/xterm.go"
+              ],
+              "outputs": [
+                "{projectRoot}/pkg/terminal/static/*"
+              ],
+              "configurations": {
+                "production": {}
+              },
+              "parallelism": true
+            },
+            "build": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "apps/daemon/cmd/daemon/main.go",
+                "outputPath": "dist/apps/daemon",
+                "flags": [
+                  "-ldflags \"-X 'github.com/daytonaio/daemon/internal.Version=${npm_package_version}'\""
+                ]
+              },
+              "configurations": {
+                "production": {}
+              },
+              "dependsOn": [
+                "build-amd64"
+              ],
+              "parallelism": true
+            },
+            "build-amd64": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "apps/daemon/cmd/daemon/main.go",
+                "outputPath": "dist/apps/daemon-amd64",
+                "env": {
+                  "GOARCH": "amd64",
+                  "GOOS": "linux"
+                },
+                "flags": [
+                  "-ldflags \"-X 'github.com/daytonaio/daemon/internal.Version=${npm_package_version}'\""
+                ]
+              },
+              "dependsOn": [
+                "prepare"
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx-go/nx-go:serve",
+              "options": {
+                "cmd": "gow",
+                "cwd": ".",
+                "main": "apps/daemon/cmd/daemon/main.go"
+              },
+              "configurations": {
+                "production": {}
+              },
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/daemon && go fmt ./... && prettier --write \"**/*.{yaml,html}\""
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@nx-go/nx-go:test",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "lint": {
+              "executor": "@nx-go/nx-go:lint",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "runner": {
+        "name": "runner",
+        "type": "app",
+        "data": {
+          "root": "apps/runner",
+          "name": "runner",
+          "$schema": "../../runner_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/runner",
+          "tags": [],
+          "implicitDependencies": [
+            "daemon"
+          ],
+          "targets": {
+            "copy-daemon-bin": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cp dist/apps/daemon-amd64 apps/runner/pkg/daemon/static/daemon-amd64"
+              },
+              "dependsOn": [
+                {
+                  "target": "build-amd64",
+                  "projects": "daemon"
+                }
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "apps/runner/cmd/runner/main.go",
+                "outputPath": "dist/apps/runner"
+              },
+              "configurations": {
+                "production": {}
+              },
+              "dependsOn": [
+                "copy-daemon-bin"
+              ],
+              "parallelism": true
+            },
+            "build-amd64": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "apps/runner/cmd/runner/main.go",
+                "outputPath": "dist/apps/runner-amd64",
+                "env": {
+                  "GOARCH": "amd64"
+                }
+              },
+              "dependsOn": [
+                "copy-daemon-bin"
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx-go/nx-go:serve",
+              "options": {
+                "cmd": "gow",
+                "cwd": ".",
+                "main": "apps/runner/cmd/runner/main.go"
+              },
+              "configurations": {
+                "production": {}
+              },
+              "dependsOn": [
+                {
+                  "target": "build",
+                  "projects": "daemon"
+                },
+                "copy-daemon-bin"
+              ],
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/runner && go fmt ./... && prettier --write \"**/*.{yaml,json}\""
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@nx-go/nx-go:test",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "lint": {
+              "executor": "@nx-go/nx-go:lint",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "openapi": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/runner/pkg/api",
+                "command": "swag fmt && swag init --parseDependency --parseInternal --parseDepth 1 -o docs -g server.go"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "check-version-env": {
+              "configurations": {},
+              "options": {
+                "command": "if [ -z \"$VERSION\" ]; then echo \"VERSION is not set\" && exit 1; else echo \"VERSION is set to: $VERSION\"; fi"
+              },
+              "parallelism": true,
+              "executor": "nx:run-commands"
+            },
+            "docker": {
+              "options": {
+                "target": "runner",
+                "context": "",
+                "platforms": [
+                  "linux/amd64",
+                  "linux/arm64"
+                ],
+                "file": "docker/Dockerfile",
+                "tags": [
+                  "daytonaio/daytona-runner:$VERSION"
+                ],
+                "build-args": [
+                  "VERSION=$VERSION",
+                  "PUBLIC_ALGOLIA_APP_ID=$PUBLIC_ALGOLIA_APP_ID",
+                  "PUBLIC_ALGOLIA_API_KEY=$PUBLIC_ALGOLIA_API_KEY"
+                ]
+              },
+              "configurations": {
+                "production": {
+                  "push": true
+                },
+                "local-registry": {
+                  "push": true,
+                  "tags": [
+                    "registry:5000/daytonaio/daytona-runner:$VERSION"
+                  ]
+                }
+              },
+              "parallelism": true,
+              "executor": "@nx-tools/nx-container:build",
+              "dependsOn": [
+                "check-version-env",
+                {
+                  "target": "build-amd64",
+                  "projects": "computer-use"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "proxy": {
+        "name": "proxy",
+        "type": "app",
+        "data": {
+          "root": "apps/proxy",
+          "name": "proxy",
+          "$schema": "../../runner_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/proxy",
+          "tags": [],
+          "targets": {
+            "build": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "apps/proxy/cmd/proxy/main.go",
+                "outputPath": "dist/apps/proxy"
+              },
+              "configurations": {
+                "production": {}
+              },
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx-go/nx-go:serve",
+              "options": {
+                "cmd": "gow",
+                "cwd": ".",
+                "main": "apps/proxy/cmd/proxy/main.go"
+              },
+              "configurations": {
+                "production": {}
+              },
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/proxy && go fmt ./..."
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@nx-go/nx-go:test",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "lint": {
+              "executor": "@nx-go/nx-go:lint",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "check-version-env": {
+              "configurations": {},
+              "options": {
+                "command": "if [ -z \"$VERSION\" ]; then echo \"VERSION is not set\" && exit 1; else echo \"VERSION is set to: $VERSION\"; fi"
+              },
+              "parallelism": true,
+              "executor": "nx:run-commands"
+            },
+            "docker": {
+              "options": {
+                "target": "proxy",
+                "context": "",
+                "platforms": [
+                  "linux/amd64",
+                  "linux/arm64"
+                ],
+                "file": "docker/Dockerfile",
+                "tags": [
+                  "daytonaio/daytona-proxy:$VERSION"
+                ],
+                "build-args": [
+                  "VERSION=$VERSION",
+                  "PUBLIC_ALGOLIA_APP_ID=$PUBLIC_ALGOLIA_APP_ID",
+                  "PUBLIC_ALGOLIA_API_KEY=$PUBLIC_ALGOLIA_API_KEY"
+                ]
+              },
+              "configurations": {
+                "production": {
+                  "push": true
+                },
+                "local-registry": {
+                  "push": true,
+                  "tags": [
+                    "registry:5000/daytonaio/daytona-proxy:$VERSION"
+                  ]
+                }
+              },
+              "parallelism": true,
+              "executor": "@nx-tools/nx-container:build",
+              "dependsOn": [
+                "check-version-env",
+                {
+                  "target": "build-amd64",
+                  "projects": "computer-use"
+                }
+              ]
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "docs": {
+        "name": "docs",
+        "type": "app",
+        "data": {
+          "root": "apps/docs",
+          "metadata": {},
+          "targets": {
+            "typecheck": {
+              "cache": true,
+              "inputs": [
+                "production",
+                "^production",
+                {
+                  "externalDependencies": [
+                    "typescript"
+                  ]
+                }
+              ],
+              "options": {
+                "cwd": "apps/docs",
+                "command": "tsc --noEmit -p tsconfig.json"
+              },
+              "metadata": {
+                "description": "Runs type-checking for the project.",
+                "technologies": [
+                  "typescript"
+                ],
+                "help": {
+                  "command": "yarn tsc -p tsconfig.json --help",
+                  "example": {
+                    "options": {
+                      "noEmit": true
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "build-deps": {
+              "dependsOn": [
+                "^build"
+              ],
+              "configurations": {},
+              "options": {},
+              "parallelism": true,
+              "executor": "nx:noop"
+            },
+            "watch-deps": {
+              "dependsOn": [
+                "build-deps"
+              ],
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "yarn nx watch --projects docs --includeDependentProjects -- yarn nx build-deps docs"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/docs",
+                "command": "astro dev --host"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/docs",
+                "command": "astro build"
+              },
+              "configurations": {
+                "production": {
+                  "command": "astro build --prod"
+                }
+              },
+              "dependsOn": [
+                "update-llms",
+                "update-search"
+              ],
+              "parallelism": true
+            },
+            "update-cli-reference": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/docs/tools",
+                "command": "node ./update-cli-reference.js"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "update-api-reference": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/docs/tools",
+                "command": "node ./update-api-reference.js"
+              },
+              "dependsOn": [
+                "api:openapi"
+              ],
+              "configurations": {},
+              "parallelism": true
+            },
+            "update-llms": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/docs/tools",
+                "command": "node ./update-llms.js"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "update-search": {
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/docs/tools",
+                "command": "node ./update-search.js"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "check-version-env": {
+              "configurations": {},
+              "options": {
+                "command": "if [ -z \"$VERSION\" ]; then echo \"VERSION is not set\" && exit 1; else echo \"VERSION is set to: $VERSION\"; fi"
+              },
+              "parallelism": true,
+              "executor": "nx:run-commands"
+            },
+            "docker": {
+              "options": {
+                "target": "docs",
+                "context": "",
+                "platforms": [
+                  "linux/amd64",
+                  "linux/arm64"
+                ],
+                "file": "docker/Dockerfile",
+                "tags": [
+                  "daytonaio/daytona-docs:$VERSION"
+                ],
+                "build-args": [
+                  "VERSION=$VERSION",
+                  "PUBLIC_ALGOLIA_APP_ID=$PUBLIC_ALGOLIA_APP_ID",
+                  "PUBLIC_ALGOLIA_API_KEY=$PUBLIC_ALGOLIA_API_KEY"
+                ]
+              },
+              "configurations": {
+                "production": {
+                  "push": true
+                },
+                "local-registry": {
+                  "push": true,
+                  "tags": [
+                    "registry:5000/daytonaio/daytona-docs:$VERSION"
+                  ]
+                }
+              },
+              "parallelism": true,
+              "executor": "@nx-tools/nx-container:build",
+              "dependsOn": [
+                "check-version-env",
+                {
+                  "target": "build-amd64",
+                  "projects": "computer-use"
+                }
+              ]
+            }
+          },
+          "name": "docs",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/docs",
+          "implicitDependencies": [
+            "api"
+          ],
+          "tags": []
+        }
+      },
+      "api": {
+        "name": "api",
+        "type": "app",
+        "data": {
+          "root": "apps/api",
+          "projectType": "application",
+          "metadata": {},
+          "targets": {
+            "build": {
+              "executor": "@nx/webpack:webpack",
+              "options": {
+                "outputPath": "dist/apps/api",
+                "main": "apps/api/src/main.ts",
+                "tsConfig": "apps/api/tsconfig.app.json",
+                "generatePackageJson": true,
+                "target": "node",
+                "compiler": "tsc",
+                "sourceMap": true,
+                "webpackConfig": "apps/api/webpack.config.js",
+                "assets": [
+                  {
+                    "input": "apps/api/src/assets",
+                    "glob": "**/*",
+                    "output": "./assets/"
+                  }
+                ]
+              },
+              "configurations": {
+                "production": {
+                  "optimization": true,
+                  "extractLicenses": true,
+                  "inspect": false
+                }
+              },
+              "parallelism": true
+            },
+            "serve": {
+              "executor": "@nx/js:node",
+              "defaultConfiguration": "development",
+              "dependsOn": [
+                "build"
+              ],
+              "options": {
+                "buildTarget": "api:build",
+                "runBuildTargetDependencies": false,
+                "watch": true
+              },
+              "configurations": {
+                "development": {
+                  "buildTarget": "api:build:development"
+                },
+                "production": {
+                  "buildTarget": "api:build:production"
+                }
+              },
+              "parallelism": true
+            },
+            "preview": {
+              "options": {
+                "cwd": "apps/api",
+                "args": [
+                  "--node-env=production"
+                ],
+                "command": "webpack-cli serve"
+              },
+              "metadata": {
+                "technologies": [
+                  "webpack"
+                ],
+                "description": "Starts Webpack dev server in production mode",
+                "help": {
+                  "command": "yarn webpack-cli serve --help",
+                  "example": {
+                    "options": {
+                      "args": [
+                        "--client-progress",
+                        "--history-api-fallback "
+                      ]
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "serve-static": {
+              "dependsOn": [
+                "build"
+              ],
+              "executor": "@nx/web:file-server",
+              "options": {
+                "buildTarget": "build",
+                "spa": true
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "build-deps": {
+              "dependsOn": [
+                "^build"
+              ],
+              "configurations": {},
+              "options": {},
+              "parallelism": true,
+              "executor": "nx:noop"
+            },
+            "watch-deps": {
+              "dependsOn": [
+                "build-deps"
+              ],
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "yarn nx watch --projects api --includeDependentProjects -- yarn nx build-deps api"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "lint": {
+              "cache": true,
+              "options": {
+                "cwd": "apps/api",
+                "command": "eslint ."
+              },
+              "inputs": [
+                "default",
+                "^default",
+                "{workspaceRoot}/eslint.config.mjs",
+                "{projectRoot}/eslint.config.mjs",
+                "{workspaceRoot}/tools/eslint-rules/**/*",
+                {
+                  "externalDependencies": [
+                    "eslint"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{options.outputFile}"
+              ],
+              "metadata": {
+                "technologies": [
+                  "eslint"
+                ],
+                "description": "Runs ESLint on project",
+                "help": {
+                  "command": "yarn eslint --help",
+                  "example": {
+                    "options": {
+                      "max-warnings": 0
+                    }
+                  }
+                }
+              },
+              "executor": "nx:run-commands",
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "metadata": {
+                "technologies": [
+                  "jest"
+                ],
+                "description": "Run Jest Tests",
+                "help": {
+                  "command": "yarn jest --help",
+                  "example": {
+                    "options": {
+                      "coverage": true
+                    }
+                  }
+                }
+              },
+              "cache": true,
+              "inputs": [
+                "default",
+                "^production",
+                "{workspaceRoot}/jest.preset.js",
+                {
+                  "externalDependencies": [
+                    "jest"
+                  ]
+                }
+              ],
+              "outputs": [
+                "{workspaceRoot}/coverage/apps/daytona"
+              ],
+              "executor": "nx:run-commands",
+              "options": {
+                "cwd": "apps/api",
+                "env": {
+                  "TS_NODE_COMPILER_OPTIONS": "{\"moduleResolution\":\"node10\"}"
+                },
+                "command": "jest",
+                "passWithNoTests": true
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "openapi": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "yarn ts-node apps/api/src/generate-openapi.ts -o dist/apps/api/openapi.json",
+                "env": {
+                  "TS_NODE_PROJECT": "apps/api/tsconfig.app.json",
+                  "NODE_OPTIONS": "--require tsconfig-paths/register",
+                  "SKIP_CONNECTIONS": "true"
+                }
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/api && prettier --write \"**/*.{ts,json,mjs}\" --config ../../.prettierrc"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "check-version-env": {
+              "configurations": {},
+              "options": {
+                "command": "if [ -z \"$VERSION\" ]; then echo \"VERSION is not set\" && exit 1; else echo \"VERSION is set to: $VERSION\"; fi"
+              },
+              "parallelism": true,
+              "executor": "nx:run-commands"
+            },
+            "docker": {
+              "options": {
+                "target": "daytona",
+                "context": "",
+                "platforms": [
+                  "linux/amd64",
+                  "linux/arm64"
+                ],
+                "file": "docker/Dockerfile",
+                "tags": [
+                  "daytonaio/daytona-api:$VERSION"
+                ],
+                "build-args": [
+                  "VERSION=$VERSION",
+                  "PUBLIC_ALGOLIA_APP_ID=$PUBLIC_ALGOLIA_APP_ID",
+                  "PUBLIC_ALGOLIA_API_KEY=$PUBLIC_ALGOLIA_API_KEY"
+                ]
+              },
+              "configurations": {
+                "production": {
+                  "push": true
+                },
+                "local-registry": {
+                  "push": true,
+                  "tags": [
+                    "registry:5000/daytonaio/daytona-api:$VERSION"
+                  ]
+                }
+              },
+              "parallelism": true,
+              "executor": "@nx-tools/nx-container:build",
+              "dependsOn": [
+                "check-version-env",
+                {
+                  "target": "build-amd64",
+                  "projects": "computer-use"
+                }
+              ]
+            },
+            "migration:generate": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "npx ts-node -P ./tsconfig.json -r tsconfig-paths/register ../../node_modules/typeorm/cli.js migration:generate -d ./src/data-source.ts ./src/migrations/migration"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "name": "api",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "sourceRoot": "apps/api/src",
+          "tags": [],
+          "implicitDependencies": []
+        }
+      },
+      "cli": {
+        "name": "cli",
+        "type": "app",
+        "data": {
+          "root": "apps/cli",
+          "name": "cli",
+          "$schema": "../../node_modules/nx/schemas/project-schema.json",
+          "projectType": "application",
+          "sourceRoot": "apps/cli",
+          "tags": [],
+          "targets": {
+            "build": {
+              "executor": "@nx-go/nx-go:build",
+              "options": {
+                "main": "apps/cli/main.go",
+                "outputPath": "dist/apps/cli"
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "format": {
+              "executor": "nx:run-commands",
+              "options": {
+                "command": "cd apps/cli && go fmt ./... && prettier --write \"**/*.{yaml,html}\""
+              },
+              "configurations": {},
+              "parallelism": true
+            },
+            "test": {
+              "executor": "@nx-go/nx-go:test",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            },
+            "lint": {
+              "executor": "@nx-go/nx-go:lint",
+              "configurations": {},
+              "options": {},
+              "parallelism": true
+            }
+          },
+          "implicitDependencies": []
+        }
+      },
+      "@daytonaio/ai": {
+        "name": "@daytonaio/ai",
+        "type": "lib",
+        "data": {
+          "root": ".",
+          "name": "@daytonaio/ai",
+          "includedScripts": [],
+          "tags": [
+            "npm:private"
+          ],
+          "metadata": {
+            "targetGroups": {},
+            "js": {
+              "packageName": "daytona",
+              "isInPackageManagerWorkspaces": true
+            }
+          },
+          "targets": {
+            "local-registry": {
+              "executor": "@nx/js:verdaccio",
+              "options": {
+                "port": 4873,
+                "config": ".verdaccio/config.yml",
+                "storage": "tmp/local-registry/storage"
+              },
+              "configurations": {},
+              "parallelism": true
+            }
+          },
+          "$schema": "node_modules/nx/schemas/project-schema.json",
+          "implicitDependencies": []
+        }
+      }
+    },
+    "dependencies": {
+      "api-client-python-async": [],
+      "api-client-python": [],
+      "runner-api-client": [],
+      "sdk-typescript": [
+        {
+          "source": "sdk-typescript",
+          "target": "api-client",
+          "type": "static"
+        }
+      ],
+      "api-client-go": [],
+      "computer-use": [],
+      "daytona-e2e": [
+        {
+          "source": "daytona-e2e",
+          "target": "api",
+          "type": "implicit"
+        }
+      ],
+      "api-client": [],
+      "sdk-python": [],
+      "dashboard": [
+        {
+          "source": "dashboard",
+          "target": "api-client",
+          "type": "static"
+        }
+      ],
+      "daemon": [],
+      "runner": [
+        {
+          "source": "runner",
+          "target": "daemon",
+          "type": "implicit"
+        }
+      ],
+      "proxy": [],
+      "docs": [
+        {
+          "source": "docs",
+          "target": "api",
+          "type": "implicit"
+        }
+      ],
+      "api": [
+        {
+          "source": "api",
+          "target": "runner-api-client",
+          "type": "static"
+        }
+      ],
+      "cli": [],
+      "@daytonaio/ai": []
+    }
+  }
+}

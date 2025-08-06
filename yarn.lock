@@ -12251,6 +12251,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"array-ify@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "array-ify@npm:1.0.0"
+  checksum: 10c0/75c9c072faac47bd61779c0c595e912fe660d338504ac70d10e39e1b8a4a0c9c87658703d619b9d1b70d324177ae29dc8d07dda0d0a15d005597bc4c5a59c70c
+  languageName: node
+  linkType: hard
+
 "array-includes@npm:^3.1.6, array-includes@npm:^3.1.8":
   version: 3.1.9
   resolution: "array-includes@npm:3.1.9"
@@ -14169,6 +14176,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"compare-func@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "compare-func@npm:2.0.0"
+  dependencies:
+    array-ify: "npm:^1.0.0"
+    dot-prop: "npm:^5.1.0"
+  checksum: 10c0/78bd4dd4ed311a79bd264c9e13c36ed564cde657f1390e699e0f04b8eee1fc06ffb8698ce2dfb5fbe7342d509579c82d4e248f08915b708f77f7b72234086cc3
+  languageName: node
+  linkType: hard
+
 "compare-versions@npm:4.1.4":
   version: 4.1.4
   resolution: "compare-versions@npm:4.1.4"
@@ -14361,6 +14378,15 @@ __metadata:
   version: 1.0.5
   resolution: "content-type@npm:1.0.5"
   checksum: 10c0/b76ebed15c000aee4678c3707e0860cb6abd4e680a598c0a26e17f0bfae723ec9cc2802f0ff1bc6e4d80603719010431d2231018373d4dde10f9ccff9dadf5af
+  languageName: node
+  linkType: hard
+
+"conventional-changelog-angular@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "conventional-changelog-angular@npm:8.0.0"
+  dependencies:
+    compare-func: "npm:^2.0.0"
+  checksum: 10c0/743faceab876bb9b9656f2389830d0ccb7c5caf02a629cb495d75c65c43414274728d7059b716d0c7d66fd663f8b978f25d44657148b8bc64ece12952cbfd886
   languageName: node
   linkType: hard
 
@@ -15165,6 +15191,7 @@ __metadata:
     class-validator: "npm:^0.14.1"
     class-variance-authority: "npm:^0.7.1"
     cmdk: "npm:^1.1.1"
+    conventional-changelog-angular: "npm:^8.0.0"
     cookie-parser: "npm:^1.4.7"
     date-fns: "npm:^4.1.0"
     dockerode: "npm:^4.0.4"
@@ -15787,6 +15814,15 @@ __metadata:
     no-case: "npm:^3.0.4"
     tslib: "npm:^2.0.3"
   checksum: 10c0/5b859ea65097a7ea870e2c91b5768b72ddf7fa947223fd29e167bcdff58fe731d941c48e47a38ec8aa8e43044c8fbd15cd8fa21689a526bc34b6548197cd5b05
+  languageName: node
+  linkType: hard
+
+"dot-prop@npm:^5.1.0":
+  version: 5.3.0
+  resolution: "dot-prop@npm:5.3.0"
+  dependencies:
+    is-obj: "npm:^2.0.0"
+  checksum: 10c0/93f0d343ef87fe8869320e62f2459f7e70f49c6098d948cc47e060f4a3f827d0ad61e83cb82f2bd90cd5b9571b8d334289978a43c0f98fea4f0e99ee8faa0599
   languageName: node
   linkType: hard
 
@@ -19929,6 +19965,13 @@ __metadata:
   version: 1.0.1
   resolution: "is-obj@npm:1.0.1"
   checksum: 10c0/5003acba0af7aa47dfe0760e545a89bbac89af37c12092c3efadc755372cdaec034f130e7a3653a59eb3c1843cfc72ca71eaf1a6c3bafe5a0bab3611a47f9945
+  languageName: node
+  linkType: hard
+
+"is-obj@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "is-obj@npm:2.0.0"
+  checksum: 10c0/85044ed7ba8bd169e2c2af3a178cacb92a97aa75de9569d02efef7f443a824b5e153eba72b9ae3aca6f8ce81955271aa2dc7da67a8b720575d3e38104208cb4e
   languageName: node
   linkType: hard
 
