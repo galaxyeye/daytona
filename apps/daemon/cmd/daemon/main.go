@@ -83,14 +83,6 @@ func main() {
 	}
 
 	// Graceful shutdown
-	log.Info("Stopping computer use processes...")
-	if toolBoxServer.ComputerUse != nil {
-		_, err := toolBoxServer.ComputerUse.Stop()
-		if err != nil {
-			log.Errorf("Failed to stop computer use: %v", err)
-		}
-	}
-
 	log.Info("Shutdown complete")
 }
 

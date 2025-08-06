@@ -172,21 +172,6 @@ type ToolboxAPI interface {
 	FindInFilesExecute(r ToolboxAPIFindInFilesRequest) ([]Match, *http.Response, error)
 
 	/*
-		GetComputerUseStatus Get computer use status
-
-		Get status of all VNC desktop processes
-
-		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-		@param sandboxId
-		@return ToolboxAPIGetComputerUseStatusRequest
-	*/
-	GetComputerUseStatus(ctx context.Context, sandboxId string) ToolboxAPIGetComputerUseStatusRequest
-
-	// GetComputerUseStatusExecute executes the request
-	//  @return ComputerUseStatusResponse
-	GetComputerUseStatusExecute(r ToolboxAPIGetComputerUseStatusRequest) (*ComputerUseStatusResponse, *http.Response, error)
-
-	/*
 		GetDisplayInfo Get display info
 
 		Get information about displays

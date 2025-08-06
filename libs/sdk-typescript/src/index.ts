@@ -23,7 +23,6 @@ export { Image } from './Image'
 export { Sandbox } from './Sandbox'
 export type { SandboxCodeToolbox } from './Sandbox'
 export type { CreateSnapshotParams } from './Snapshot'
-export { ComputerUse, Mouse, Keyboard, Screenshot, Display } from './ComputerUse'
 
 // Chart and artifact types
 export { ChartType } from './types/Charts'
@@ -46,5 +45,3 @@ export type {
   ReplaceResult,
   SearchFilesResponse,
 } from '@daytonaio/api-client'
-
-export type { ScreenshotRegion, ScreenshotOptions } from './ComputerUse'

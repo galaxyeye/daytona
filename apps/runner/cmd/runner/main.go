@@ -67,12 +67,6 @@ func main() {
 		return
 	}
 
-	// pluginPath, err := daemon.WriteStaticBinary("daytona-computer-use")
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return
-	// }
-
 	dockerClient := docker.NewDockerClient(docker.DockerClientConfig{
 		ApiClient:          cli,
 		Cache:              runnerCache,

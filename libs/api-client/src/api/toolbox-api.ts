@@ -38,12 +38,6 @@ import type { CompletionList } from '../models'
 // @ts-ignore
 import type { CompressedScreenshotResponse } from '../models'
 // @ts-ignore
-import type { ComputerUseStartResponse } from '../models'
-// @ts-ignore
-import type { ComputerUseStatusResponse } from '../models'
-// @ts-ignore
-import type { ComputerUseStopResponse } from '../models'
-// @ts-ignore
 import type { CreateSessionRequest } from '../models'
 // @ts-ignore
 import type { DisplayInfoResponse } from '../models'

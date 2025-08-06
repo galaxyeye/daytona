@@ -14,7 +14,6 @@ from .._utils.path import prefix_relative_path
 from .._utils.timeout import with_timeout
 from ..common.errors import DaytonaError
 from ..common.protocols import SandboxCodeToolbox
-from .computer_use import AsyncComputerUse
 from .filesystem import AsyncFileSystem
 from .git import AsyncGit
 from .lsp_server import AsyncLspServer, LspLanguageId
@@ -28,7 +27,6 @@ class AsyncSandbox(SandboxDto):
         fs (AsyncFileSystem): File system operations interface.
         git (AsyncGit): Git operations interface.
         process (AsyncProcess): Process execution interface.
-        computer_use (AsyncComputerUse): Computer use operations interface for desktop automation.
         id (str): Unique identifier for the Sandbox.
         organization_id (str): Organization ID of the Sandbox.
         snapshot (str): Daytona snapshot used to create the Sandbox.
@@ -58,7 +56,6 @@ class AsyncSandbox(SandboxDto):
     _fs: AsyncFileSystem = PrivateAttr()
     _git: AsyncGit = PrivateAttr()
     _process: AsyncProcess = PrivateAttr()
-    _computer_use: AsyncComputerUse = PrivateAttr()
 
     # TODO: Remove model_config once everything is migrated to pydantic # pylint: disable=fixme
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -89,7 +86,6 @@ class AsyncSandbox(SandboxDto):
         self._fs = AsyncFileSystem(self.id, toolbox_api, self.__get_root_dir)
         self._git = AsyncGit(self.id, toolbox_api, self.__get_root_dir)
         self._process = AsyncProcess(self.id, code_toolbox, toolbox_api, self.__get_root_dir)
-        self._computer_use = AsyncComputerUse(self.id, toolbox_api)
 
     @property
     def fs(self) -> AsyncFileSystem:
@@ -102,10 +98,6 @@ class AsyncSandbox(SandboxDto):
     @property
     def process(self) -> AsyncProcess:
         return self._process
-
-    @property
-    def computer_use(self) -> AsyncComputerUse:
-        return self._computer_use
 
     async def refresh_data(self) -> None:
         """Refreshes the Sandbox data from the API.

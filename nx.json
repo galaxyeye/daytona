@@ -126,11 +126,7 @@
         }
       },
       "dependsOn": [
-        "check-version-env",
-        {
-          "target": "build-amd64",
-          "projects": "computer-use"
-        }
+        "check-version-env"
       ]
     }
   },
