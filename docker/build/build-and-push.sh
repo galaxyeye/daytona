@@ -72,21 +72,21 @@ show_help() {
     PLATFORM                    同 --platform
     SERVICES                    同 --services
     PUSH                        设置为 true 等同于 --push
-    NO_BUILD_CACHE             设置为 true 等同于 --no-cache
+    NO_BUILD_CACHE              设置为 true 等同于 --no-cache
     VERBOSE                     设置为 true 等同于 --verbose
 
 示例:
     # 构建所有服务的镜像
-    $0 --version v1.0.0
+    $0 --version 0.0.1
 
-    # 构建并推送到 GitHub Container Registry
-    $0 --registry ghcr.io --namespace galaxyeye88 --version latest --push
+    # 构建并推送到 GitHub Container Registry ('galaxyeye' for ghcr.io)
+    $0 --registry ghcr.io --namespace galaxyeye --version latest --push
 
     # 只构建 API 和 Proxy 服务
-    $0 --services api,proxy --version dev
+    $0 --services api,proxy --version 0.0.1
 
-    # 使用环境变量
-    REGISTRY=ghcr.io NAMESPACE=galaxyeye88 VERSION=v1.0.0 PUSH=true $0
+    # 使用环境变量 ('galaxyeye' for ghcr.io)
+    REGISTRY=ghcr.io NAMESPACE=galaxyeye VERSION=v1.0.0 PUSH=true $0
 EOF
 }
 
