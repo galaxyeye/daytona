@@ -203,6 +203,8 @@ export class BackupManager {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     const backupSnapshot = `${registry.url}/${registry.project}/backup-${sandbox.id}:${timestamp}`
 
+    this.logger.log(`Creating backup for sandbox ${sandbox.id} with snapshot ${backupSnapshot}`)
+
     //  if sandbox has a backup snapshot, add it to the existingBackupSnapshots array
     if (
       sandbox.lastBackupAt &&

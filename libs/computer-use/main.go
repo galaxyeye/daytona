@@ -21,8 +21,8 @@ func main() {
 	})
 	hc_plugin.Serve(&hc_plugin.ServeConfig{
 		HandshakeConfig: manager.ComputerUseHandshakeConfig,
-		Plugins:         map[string]hc_plugin.Plugin{
-			// "daytona-computer-use": &computeruse.ComputerUsePlugin{Impl: &cu.ComputerUse{}},
+		Plugins: map[string]hc_plugin.Plugin{
+			"daytona-computer-use": &computeruse.ComputerUsePlugin{Impl: &cu.ComputerUse{}},
 		},
 		Logger: logger,
 	})

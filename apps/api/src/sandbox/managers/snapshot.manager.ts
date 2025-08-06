@@ -50,7 +50,7 @@ export class SnapshotManager {
     private readonly runnerAdapterFactory: RunnerAdapterFactory,
     private readonly redisLockProvider: RedisLockProvider,
     private readonly organizationService: OrganizationService,
-  ) { }
+  ) {}
 
   @Cron(CronExpression.EVERY_5_SECONDS)
   async syncRunnerSnapshots() {
@@ -771,6 +771,8 @@ export class SnapshotManager {
     //  get tag from snapshot name
     const tag = snapshot.imageName.split(':')[1]
     const internalSnapshotName = `${registry.url.replace(/^(https?:\/\/)/, '')}/${registry.project}/${snapshot.id}:${tag}`
+
+    this.logger.debug(`Pushing snapshot ${snapshot.id} to internal registry as ${internalSnapshotName}`)
 
     snapshot.internalName = internalSnapshotName
     await this.snapshotRepository.save(snapshot)
