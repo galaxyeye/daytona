@@ -65,7 +65,9 @@
   },
   "onCreateCommand": {
     // "install-deps": "git config --global --add safe.directory ${containerWorkspaceFolder} && yarn",
-    "env": "test -f .env.local || touch .env.local"
+    "env": "test -f .env.local || touch .env.local",
+    "setup-git-proxy": "${containerWorkspaceFolder}/.devcontainer/scripts/setup-git-proxy.sh",
+    "setup-os-env": "${containerWorkspaceFolder}/.devcontainer/scripts/setup-os-env.sh"
   },
   "postStartCommand": "yarn && poetry lock && poetry install && docker buildx create --name builder --driver-opt network=host --config .devcontainer/buildkitd.toml --driver docker-container --use",
   "postAttachCommand": "",
