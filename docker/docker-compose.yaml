@@ -1,7 +1,7 @@
 name: spacedock
 services:
   api:
-    image: galaxyeye/spacedock-api:latest
+    image: ghcr.io/galaxyeye/spacedock-api:latest
     privileged: true
     ports:
       - 3000:3000
@@ -10,12 +10,15 @@ services:
       - 6000:6000
       - 5556:5556
       - 5100:5100
+
   proxy:
-    image: galaxyeye/spacedock-proxy:latest
+    image: ghcr.io/galaxyeye/spacedock-proxy:latest
     network_mode: service:api
+    environment:
+      - DAYTONA_API_URL=http://localhost:3001/api
 
   runner:
-    image: galaxyeye/spacedock-runner:latest
+    image: ghcr.io/galaxyeye/spacedock-runner:latest
     privileged: true
     network_mode: service:api
 
