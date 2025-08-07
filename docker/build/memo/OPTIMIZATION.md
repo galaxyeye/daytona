@@ -160,7 +160,7 @@ docker-compose -f docker/docker-compose.build.yaml build --parallel
 
 ```bash
 # 完整构建，启用所有优化
-docker build -f docker/Dockerfile . --target daytona
+docker build -f docker/Dockerfile . --target spacedock
 ```
 
 ### 调试单个组件

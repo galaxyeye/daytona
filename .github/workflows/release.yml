@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      version-type:
+        description: 'Version type to release'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+          - prerelease
+      dry-run:
+        description: 'Run in dry-run mode (no actual release)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Run release (auto)
+        if: github.event.inputs.version-type == 'auto' || github.event.inputs.version-type == ''
+        run: |
+          if [ "${{ github.event.inputs.dry-run }}" = "true" ]; then
+            yarn release --dry-run
+          else
+            yarn release
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run release (manual version)
+        if: github.event.inputs.version-type != 'auto' && github.event.inputs.version-type != ''
+        run: |
+          if [ "${{ github.event.inputs.dry-run }}" = "true" ]; then
+            yarn nx release version ${{ github.event.inputs.version-type }} --dry-run
+            yarn nx release changelog --dry-run
+          else
+            yarn nx release version ${{ github.event.inputs.version-type }}
+            yarn nx release changelog
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.inputs.version-type }}" != "" ]; then
+            echo "- Version Type: ${{ github.event.inputs.version-type }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ github.event.inputs.dry-run }}" = "true" ]; then
+            echo "- Mode: Dry Run" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Mode: Live Release" >> $GITHUB_STEP_SUMMARY
+          fi

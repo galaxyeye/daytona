@@ -1,7 +1,7 @@
-name: daytona
+name: spacedock
 services:
   api:
-    image: daytonaio/daytona-api:0.2.4
+    image: galaxyeye88/spacedock-api:latest
     privileged: true
     ports:
       - 3000:3000
@@ -11,11 +11,11 @@ services:
       - 5556:5556
       - 5100:5100
   proxy:
-    image: daytonaio/daytona-proxy:0.2.13
+    image: galaxyeye88/spacedock-proxy:latest
     network_mode: service:api
 
   runner:
-    image: daytonaio/daytona-runner:0.2.3
+    image: galaxyeye88/spacedock-runner:latest
     privileged: true
     network_mode: service:api
 
@@ -31,13 +31,13 @@ services:
     environment:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_USER=user
-      - POSTGRES_DB=daytona
+      - POSTGRES_DB=spacedock
 
   pgadmin:
     image: dpage/pgadmin4:9.2.0
     entrypoint: ['sh', '-c', 'chmod 600 /pgpass && exec /entrypoint.sh']
     environment:
-      PGADMIN_DEFAULT_EMAIL: dev@daytona.io
+      PGADMIN_DEFAULT_EMAIL: dev@spacedock.io
       PGADMIN_DEFAULT_PASSWORD: pgadmin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'

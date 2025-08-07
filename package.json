@@ -28,7 +28,12 @@
     "shadcn:add": "TS_NODE_PROJECT=apps/dashboard/tsconfig.app.json npx shadcn@latest add",
     "docs": "nx run-many --target=docs --all",
     "sdk-python:generate-sync": "nx run sdk-python:generate-sync",
-    "publish": "nx run-many --target=publish --all"
+    "publish": "nx run-many --target=publish --all",
+    "release": "nx release",
+    "release:version": "nx release version",
+    "release:changelog": "nx release changelog",
+    "release:publish": "nx release publish",
+    "release:dry-run": "nx release --dry-run"
   },
   "dependencies": {
     "@astrojs/mdx": "2.2.4",
@@ -196,6 +201,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "@vitest/ui": "^1.3.1",
     "autoprefixer": "10.4.13",
+    "conventional-changelog-angular": "^8.0.0",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "2.31.0",

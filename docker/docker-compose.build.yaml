@@ -1,15 +1,15 @@
-name: daytona-dev
+name: spacedock
 services:
   api:
     build:
       context: ../
       dockerfile: docker/Dockerfile
-      target: daytona
+      target: spacedock
     privileged: true
     environment:
       - OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
-      - OIDC_CLIENT_ID=daytona
-      - OIDC_AUDIENCE=daytona
+      - OIDC_CLIENT_ID=spacedock
+      - OIDC_AUDIENCE=spacedock
     ports:
       - 3000:3000
       - 3003:3003
@@ -58,9 +58,9 @@ services:
     environment:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_USER=user
-      - POSTGRES_DB=daytona
+      - POSTGRES_DB=spacedock
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d daytona"]
+      test: ["CMD-SHELL", "pg_isready -U user -d spacedock"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -69,7 +69,7 @@ services:
     image: dpage/pgadmin4:9.2.0
     entrypoint: ['sh', '-c', 'chmod 600 /pgpass && exec /entrypoint.sh']
     environment:
-      PGADMIN_DEFAULT_EMAIL: dev@daytona.io
+      PGADMIN_DEFAULT_EMAIL: dev@spacedock.io
       PGADMIN_DEFAULT_PASSWORD: pgadmin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'

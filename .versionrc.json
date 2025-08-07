@@ -1,0 +1,82 @@
+{
+  "types": [
+    {
+      "type": "feat",
+      "section": "Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements"
+    },
+    {
+      "type": "revert",
+      "section": "Reverts"
+    },
+    {
+      "type": "docs",
+      "section": "Documentation"
+    },
+    {
+      "type": "style",
+      "section": "Styles"
+    },
+    {
+      "type": "chore",
+      "section": "Miscellaneous Chores",
+      "hidden": true
+    },
+    {
+      "type": "refactor",
+      "section": "Code Refactoring"
+    },
+    {
+      "type": "test",
+      "section": "Tests"
+    },
+    {
+      "type": "build",
+      "section": "Build System"
+    },
+    {
+      "type": "ci",
+      "section": "Continuous Integration"
+    }
+  ],
+  "commitUrlFormat": "https://github.com/galaxyeye/daytona/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/galaxyeye/daytona/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/galaxyeye/daytona/issues/{{id}}",
+  "releaseCommitMessageFormat": "chore(release): publish {{currentTag}}",
+  "header": "# Changelog\n\nAll notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.\n",
+  "packageFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    }
+  ],
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/api-client/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/runner-api-client/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/sdk-typescript/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "libs/sdk-python/package.json",
+      "type": "json"
+    }
+  ]
+}
