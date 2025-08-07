@@ -7,7 +7,7 @@ echo "========================================"
 echo "快速Runner项目测试脚本"
 echo "========================================"
 
-cd /workspaces/daytona/apps/runner
+cd /workspaces/daytona/apps/runner || exit
 
 echo "1. 检查Go环境..."
 go version

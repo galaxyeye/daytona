@@ -194,7 +194,7 @@ make github VERSION=0.0.1
 
 # 推送到私有仓库
 make build-push \
-  REGISTRY=myregistry.com \
+  REGISTRY=docker.io \
   NAMESPACE=galaxyeye88 \
   VERSION=0.0.1
 ```

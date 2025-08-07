@@ -40,7 +40,7 @@ help: ## 显示帮助信息
 	@echo "  $(YELLOW)SERVICES$(NC)   构建服务 (默认: $(SERVICES))"
 	@echo ""
 	@echo "示例:"
-	@echo "  make build VERSION=v1.0.0"
+	@echo "  make build VERSION=0.0.1"
 	@echo "  make build-push REGISTRY=ghcr.io NAMESPACE=galaxyeye88"
 	@echo "  make build-dev SERVICES=api,proxy"
 

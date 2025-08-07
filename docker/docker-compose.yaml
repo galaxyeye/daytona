@@ -1,7 +1,7 @@
 name: spacedock
 services:
   api:
-    image: galaxyeye88/spacedock-api:latest
+    image: galaxyeye/spacedock-api:latest
     privileged: true
     ports:
       - 3000:3000
@@ -11,11 +11,11 @@ services:
       - 5556:5556
       - 5100:5100
   proxy:
-    image: galaxyeye88/spacedock-proxy:latest
+    image: galaxyeye/spacedock-proxy:latest
     network_mode: service:api
 
   runner:
-    image: galaxyeye88/spacedock-runner:latest
+    image: galaxyeye/spacedock-runner:latest
     privileged: true
     network_mode: service:api
 
