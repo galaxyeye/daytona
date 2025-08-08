@@ -1,5 +1,5 @@
 #!/bin/bash
-# 测试 Spacedock Docker 构建环境
+# 测试 Daytona Docker 构建环境
 
 set -euo pipefail
 
@@ -56,7 +56,7 @@ test_docker_running() {
     fi
 }
 
-echo -e "${CYAN}Spacedock Docker 构建环境检查${NC}"
+echo -e "${CYAN}Daytona Docker 构建环境检查${NC}"
 echo -e "${CYAN}==============================${NC}"
 
 # 检查 Docker

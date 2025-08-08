@@ -1,17 +1,17 @@
 #!/bin/bash
-# Docker 镜像仓库登录脚本
-# 支持 docker.io 和 ghcr.io 登录
+# Docker image registry login script
+# Supports docker.io and ghcr.io login
 
 set -euo pipefail
 
-# 颜色定义
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# 日志函数
+# Logging function
 log() {
     local level="$1"
     shift
@@ -38,16 +38,16 @@ log() {
     esac
 }
 
-# 显示帮助信息
+# Show help information
 show_help() {
     cat << EOF
-Docker 镜像仓库登录脚本
+Docker image registry login script
 
-用法: $0 [选项]
+Usage: $0 [options]
 
-选项:
-    -r, --registry REGISTRY     镜像仓库 (docker.io 或 ghcr.io)
-    -u, --username USERNAME     用户名
+Options:
+    -r, --registry REGISTRY     Image registry (docker.io or ghcr.io)
+    -u, --username USERNAME     Username
     -t, --token TOKEN           密码/访问令牌
     -i, --interactive           交互式登录
     --web                       通过网页获取登录凭据
