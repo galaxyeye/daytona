@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/root/.yarn \
 COPY . .
 
 # Build arguments
-ARG PUBLIC_WEB_URL=https://platon.ai
+ARG PUBLIC_WEB_URL=https://daytona.io
 ARG PUBLIC_ALGOLIA_APP_ID
 ARG PUBLIC_ALGOLIA_API_KEY
 ARG VERSION=0.0.1
@@ -47,15 +47,23 @@ RUN --mount=type=cache,target=/root/.cache/nx \
 RUN --mount=type=cache,target=/root/.cache/nx \
     NX_DAEMON=false yarn nx build docs --configuration=production
 
-# Step 3: Build Go Runner separately (largest, most cache-sensitive)
+# Step 3: Build Go components that runner depends on first (daemon and computer-use)
+# Start Docker daemon and run builds
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    dockerd & \
+    sleep 5 && \
+    NX_DAEMON=false yarn nx run-many --target=build --projects=daemon,computer-use --parallel --configuration=production
+
+# Step 4: Build Go Runner (depends on daemon and computer-use)
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     NX_DAEMON=false yarn nx build runner --configuration=production
 
-# Step 4: Build remaining Go components together (similar dependencies)
+# Step 5: Build remaining Go components (proxy, cli)
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    NX_DAEMON=false yarn nx run-many --target=build --projects=proxy,daemon,cli --parallel --configuration=production
+    NX_DAEMON=false yarn nx run-many --target=build --projects=proxy,cli --parallel --configuration=production
 
 # Runtime stage
 FROM docker:28.2.2-dind-alpine3.22 AS daytona
@@ -76,6 +84,8 @@ COPY --from=builder /daytona/nx.json ./nx.json
 COPY --from=builder /daytona/node_modules ./node_modules
 # Copy apps/api directory for migrations
 COPY --from=builder /daytona/apps/api ./apps/api
+# Copy apps/docs directory for docs server
+COPY --from=builder /daytona/apps/docs ./apps/docs
 # Copy TypeScript config files for migrations
 COPY --from=builder /daytona/tsconfig.base.json ./tsconfig.base.json
 

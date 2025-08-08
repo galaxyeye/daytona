@@ -12,7 +12,15 @@ fi
 if [ "$(uname -m)" = "x86_64" ]; then
     echo "Building computer-use for amd64 architecture (native build)..."
     cd libs/computer-use
+    
+    # Create both regular and amd64 binaries since we're on amd64
     go build -o ../../dist/libs/computer-use-amd64 main.go
+    
+    # Also create the regular binary if it doesn't exist
+    if [ ! -f "../../dist/libs/computer-use" ]; then
+        go build -o ../../dist/libs/computer-use main.go
+    fi
+    
     echo "Native build completed successfully"
     exit 0
 fi

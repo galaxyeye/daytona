@@ -114,7 +114,7 @@ Then use the script:
 | Variable Name | Default Value | Description |
 |---------------|---------------|-------------|
 | `REGISTRY` | `docker.io` | Docker image registry address |
-| `NAMESPACE` | `datonaio` | Image namespace |
+| `NAMESPACE` | `daytonaio` | Image namespace |
 | `VERSION` | `latest` | Image version tag |
 | `PLATFORM` | `linux/amd64,linux/arm64` | Build platforms |
 | `SERVICES` | `api,proxy,runner,docs` | Services to build |
@@ -163,7 +163,7 @@ make github VERSION=0.0.1
 # Push to private registry
 make build-push \
   REGISTRY=docker.io \
-  NAMESPACE=datonaio \
+  NAMESPACE=daytonaio \
   VERSION=0.0.1
 ```
 
@@ -233,6 +233,36 @@ make clean
 # Complete cleanup (use with caution)
 make clean-all
 ```
+
+### Docker Registry Mirror
+
+If you encounter network timeout issues when pulling Docker images (like `TLS handshake timeout`), you can configure Docker registry mirrors to speed up image downloads:
+
+1. **Configure Docker daemon** (recommended):
+
+   Create or edit `/etc/docker/daemon.json`:
+
+   ```json
+   {
+     "registry-mirrors": [
+       "https://docker.m.daocloud.io"
+     ]
+   }
+   ```
+
+2. **Restart Docker service**:
+
+   ```bash
+   sudo systemctl restart docker
+   ```
+
+3. **Verify configuration**:
+
+   ```bash
+   docker info | grep "Registry Mirrors" -A 1
+   ```
+
+**Note**: This configuration is particularly useful for users in China where direct access to Docker Hub may be slow or unstable.
 
 ### Build Failures
 
