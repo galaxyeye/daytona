@@ -1,4 +1,4 @@
-name: spacedock
+name: spacedock-dev
 services:
   api:
     build:
@@ -29,6 +29,8 @@ services:
       dockerfile: docker/Dockerfile
       target: proxy
     environment:
+      - DAYTONA_API_URL=http://localhost:3001/api
+      - SPACEDOCK_API_URL=http://localhost:3001/api # Added for compatibility
       - OIDC_DOMAIN=http://localhost:5556/dex
     network_mode: service:api
 
