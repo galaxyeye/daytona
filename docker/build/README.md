@@ -114,7 +114,7 @@ Then use the script:
 | Variable Name | Default Value | Description |
 |---------------|---------------|-------------|
 | `REGISTRY` | `docker.io` | Docker image registry address |
-| `NAMESPACE` | `galaxyeye88` | Image namespace |
+| `NAMESPACE` | `datonaio` | Image namespace |
 | `VERSION` | `latest` | Image version tag |
 | `PLATFORM` | `linux/amd64,linux/arm64` | Build platforms |
 | `SERVICES` | `api,proxy,runner,docs` | Services to build |
@@ -163,7 +163,7 @@ make github VERSION=0.0.1
 # Push to private registry
 make build-push \
   REGISTRY=docker.io \
-  NAMESPACE=galaxyeye88 \
+  NAMESPACE=datonaio \
   VERSION=0.0.1
 ```
 
@@ -289,7 +289,7 @@ jobs:
       
       - name: Build and push images
         run: |
-          cd scripts/build
+          cd docker/build
           ./build.sh \
             --registry ghcr.io \
             --namespace ${{ github.repository_owner }} \
@@ -303,7 +303,7 @@ jobs:
 build-images:
   stage: build
   script:
-    - cd scripts/build
+    - cd docker/build
     - ./build.sh
       --registry $CI_REGISTRY
       --namespace $CI_PROJECT_NAMESPACE
