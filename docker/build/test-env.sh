@@ -171,7 +171,7 @@ if [ "$docker_ok" = true ]; then
     echo ""
     echo -e "${GREEN}可以开始构建镜像！${NC}"
     echo -e "${YELLOW}使用以下命令开始构建:${NC}"
-    echo -e "  ./build-and-push.sh --version dev"
+    echo -e "  ./build.sh --version dev"
     echo -e "  或者运行: make build"
     
     # 检查是否有 .env 文件

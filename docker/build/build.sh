@@ -80,19 +80,19 @@ Environment Variables:
 
 Examples:
     # Build all service images (single platform local build)
-    build-and-push.sh --version 1.0.0 --platform linux/amd64
+    build.sh --version 1.0.0 --platform linux/amd64
 
     # Build and push to GitHub Container Registry (multi-platform)
-    build-and-push.sh --registry ghcr.io --namespace galaxyeye --version 1.0.0 --push
+    build.sh --registry ghcr.io --namespace galaxyeye --version 1.0.0 --push
 
     # Build only API and Proxy services (local single platform)
-    build-and-push.sh --services api,proxy --version 1.0.0 --platform linux/amd64
+    build.sh --services api,proxy --version 1.0.0 --platform linux/amd64
 
     # Multi-platform build and push (recommended for production)
-    build-and-push.sh --version 1.0.0 --platform linux/amd64,linux/arm64 --push
+    build.sh --version 1.0.0 --platform linux/amd64,linux/arm64 --push
 
     # Using environment variables
-    REGISTRY=ghcr.io NAMESPACE=galaxyeye VERSION=1.0.0 PUSH=true build-and-push.sh
+    REGISTRY=ghcr.io NAMESPACE=galaxyeye VERSION=1.0.0 PUSH=true build.sh
 EOF
 }
 

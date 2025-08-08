@@ -13,7 +13,7 @@ SERVICES ?= api,proxy,runner,docs
 
 # Script paths
 SCRIPT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-SCRIPT_PATH := $(SCRIPT_DIR)build-and-push.sh
+SCRIPT_PATH := $(SCRIPT_DIR)build.sh
 
 # Color definitions
 GREEN := \033[0;32m

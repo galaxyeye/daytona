@@ -8,7 +8,7 @@ These build tools are located in the `docker/build/` directory, alongside the Do
 
 ## File Description
 
-- `build-and-push.sh` - Bash script for Linux/macOS environments
+- `build.sh` - Bash script for Linux/macOS environments
 - `build.env.example` - Example environment variable configuration file
 - `docker-compose.build-local.yaml` - Docker Compose configuration for local builds
 - `Makefile` - Make configuration file providing convenient build commands
@@ -56,17 +56,17 @@ make docs
 cd docker/build
 
 # Basic build
-./build-and-push.sh --version 0.0.1
+./build.sh --version 0.0.1
 
 # Build and push to GitHub Container Registry
-./build-and-push.sh \
+./build.sh \
   --registry ghcr.io \
   --namespace myorg \
   --version 0.0.1 \
   --push
 
 # Build only API and Proxy services
-./build-and-push.sh \
+./build.sh \
   --services api,proxy \
   --version 0.0.1
 ```
@@ -104,7 +104,7 @@ Then use the script:
 
 ```bash
 # Script will automatically read .env file
-./build-and-push.sh
+./build.sh
 ```
 
 ## Configuration Options
@@ -124,7 +124,7 @@ Then use the script:
 
 ### Command Line Arguments
 
-#### Bash Script (`build-and-push.sh`)
+#### Bash Script (`build.sh`)
 
 ```bash
 Options:
@@ -148,7 +148,7 @@ Options:
 make build-dev
 
 # Or
-./build-and-push.sh --version 0.0.1 --platform linux/amd64
+./build.sh --version 0.0.1 --platform linux/amd64
 ```
 
 ### Production Environment
@@ -176,7 +176,7 @@ export NAMESPACE=${{ github.repository_owner }}
 export VERSION=${{ github.ref_name }}
 export PUSH=true
 
-./build-and-push.sh
+./build.sh
 ```
 
 ### Building Specific Services
@@ -186,7 +186,7 @@ export PUSH=true
 make build-single SERVICE=api VERSION=0.0.1
 
 # Build multiple but not all services
-./build-and-push.sh --services api,proxy --version 0.0.1
+./build.sh --services api,proxy --version 0.0.1
 ```
 
 ## Build Optimization
@@ -197,7 +197,7 @@ By default, Docker build cache is used to accelerate builds. If you need to rebu
 
 ```bash
 # Disable cache
-./build-and-push.sh --no-cache
+./build.sh --no-cache
 
 # Or
 make quick  # includes --no-cache
@@ -209,7 +209,7 @@ For production environments, it's recommended to build multi-platform images:
 
 ```bash
 # Multi-platform builds require Docker Buildx
-./build-and-push.sh --platform linux/amd64,linux/arm64
+./build.sh --platform linux/amd64,linux/arm64
 ```
 
 If Docker Buildx is not available, the script will automatically downgrade to single-platform builds.
@@ -290,7 +290,7 @@ jobs:
       - name: Build and push images
         run: |
           cd scripts/build
-          ./build-and-push.sh \
+          ./build.sh \
             --registry ghcr.io \
             --namespace ${{ github.repository_owner }} \
             --version ${GITHUB_REF#refs/tags/} \
@@ -304,7 +304,7 @@ build-images:
   stage: build
   script:
     - cd scripts/build
-    - ./build-and-push.sh
+    - ./build.sh
       --registry $CI_REGISTRY
       --namespace $CI_PROJECT_NAMESPACE
       --version $CI_COMMIT_TAG
