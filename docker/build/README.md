@@ -8,7 +8,6 @@ These build tools are located in the `docker/build/` directory, alongside the Do
 
 ## File Description
 
-- `build-and-push.ps1` - PowerShell script for Windows environments
 - `build-and-push.sh` - Bash script for Linux/macOS environments
 - `build.env.example` - Example environment variable configuration file
 - `docker-compose.build-local.yaml` - Docker Compose configuration for local builds
@@ -70,22 +69,6 @@ cd docker/build
 ./build-and-push.sh \
   --services api,proxy \
   --version 0.0.1
-```
-
-#### Windows PowerShell
-
-```powershell
-# Enter build directory
-cd docker\build
-
-# Basic build
-.\build-and-push.ps1 -Version "0.0.1"
-
-# Build and push
-.\build-and-push.ps1 -Registry "ghcr.io" -Namespace "myorg" -Version "0.0.1" -Push
-
-# Using build arguments
-.\build-and-push.ps1 -Version "0.0.1" -BuildArgs @{"PUBLIC_WEB_URL"="https://dev.platon.ai"}
 ```
 
 ### 3. Using Docker Compose
@@ -154,21 +137,6 @@ Options:
     --no-cache                  Don't use build cache
     --verbose                   Show verbose logs
     -h, --help                  Show help information
-```
-
-#### PowerShell Script (`build-and-push.ps1`)
-
-```powershell
-Parameters:
-    -Registry       Docker image registry address
-    -Namespace      Image namespace
-    -Version        Image version tag
-    -Platform       Target platforms
-    -Services       List of services to build, comma-separated
-    -Push           Push images to repository (switch parameter)
-    -NoBuildCache   Don't use build cache (switch parameter)
-    -Verbose        Show verbose logs (switch parameter)
-    -BuildArgs      Additional build arguments (hashtable)
 ```
 
 ## Common Use Cases
