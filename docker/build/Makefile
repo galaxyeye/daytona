@@ -103,7 +103,7 @@ endif
 
 docker-compose-build: ## Build images using Docker Compose
 	@echo "$(GREEN)Building images using Docker Compose...$(NC)"
-	@cd $(SCRIPT_DIR) && \
+	@cd $(SCRIPT_DIR).. && \
 	REGISTRY=$(REGISTRY) \
 	VERSION=$(VERSION) \
 	docker-compose -f docker-compose.build-local.yaml build
