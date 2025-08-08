@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Advanced Docker build script with multiple cache strategies
+# 高级Docker构建脚本，支持多种缓存策略
 set -e
 
-# Force enter project root directory
+# 强制进入项目根目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$PROJECT_ROOT"
 
-# Parse command line arguments
+# 解析命令行参数
 CLEAN=false
 CACHE_TYPE="docker"
 HELP=false
@@ -35,24 +35,24 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$HELP" = true ]; then
-    echo "🚀 Daytona Docker Build Script"
+    echo "🚀 Spacedock Docker构建脚本"
     echo ""
-    echo "Usage: $0 [options]"
+    echo "用法: $0 [选项]"
     echo ""
-    echo "Options:"
-    echo "  --clean              Clean Docker resources before build"
-    echo "  --cache-type TYPE    Cache type (docker|registry|local)"
-    echo "  --help, -h           Show this help information"
+    echo "选项:"
+    echo "  --clean              构建前清理Docker资源"
+    echo "  --cache-type TYPE    缓存类型 (docker|registry|local)"
+    echo "  --help, -h           显示此帮助信息"
     echo ""
-    echo "Cache type descriptions:"
-    echo "  docker     - Use Docker built-in layer cache (default, most stable)"
-    echo "  registry   - Use image registry cache (suitable for CI/CD)"
-    echo "  local      - Use local filesystem cache (fastest, but may be unstable)"
+    echo "缓存类型说明:"
+    echo "  docker     - 使用Docker内置层缓存 (默认，最稳定)"
+    echo "  registry   - 使用镜像注册表缓存 (适用于CI/CD)"
+    echo "  local      - 使用本地文件系统缓存 (最快，但可能不稳定)"
     echo ""
-    echo "Examples:"
-    echo "  $0                    # Standard build"
-    echo "  $0 --clean           # Clean and build"
-    echo "  $0 --cache-type local # Build with local cache"
+    echo "示例:"
+    echo "  $0                    # 标准构建"
+    echo "  $0 --clean           # 清理后构建"
+    echo "  $0 --cache-type local # 使用本地缓存构建"
     exit 0
 fi
 
@@ -61,35 +61,35 @@ echo "📍 Working directory: $(pwd)"
 echo "   Cache type: $CACHE_TYPE"
 echo "   Clean build: $CLEAN"
 
-# Set BuildKit features
+# 设置BuildKit特性
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 
-# Preprocessing: clean unused Docker resources (optional)
+# 预处理：清理无用的Docker资源（可选）
 if [ "$CLEAN" = true ]; then
     echo "🧹 Cleaning up Docker resources..."
     docker system prune -f --volumes || true
     docker builder prune -f || true
 fi
 
-# Choose build strategy based on cache type
+# 根据缓存类型选择构建策略
 case $CACHE_TYPE in
     "local")
         echo "🔧 Building with local file cache..."
         mkdir -p /tmp/.buildx-cache
         export COMPOSE_FILE="docker/docker-compose.build-local-cache.yaml"
         
-        # Create local cache configuration file
+        # 创建本地缓存配置文件
         cp docker/docker-compose.build.yaml docker/docker-compose.build-local-cache.yaml
         
-        # Add local cache configuration (temporary)
-        sed -i '/target: daytona/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
+        # 添加本地缓存配置（临时）
+        sed -i '/target: spacedock/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         sed -i '/target: proxy/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         sed -i '/target: runner/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         
         docker-compose -f docker/docker-compose.build-local-cache.yaml build --parallel --progress=plain
         
-        # Clean temporary files
+        # 清理临时文件
         rm -f docker/docker-compose.build-local-cache.yaml
         ;;
     "registry")
@@ -109,13 +109,13 @@ esac
 
 echo "✅ Build completed successfully!"
 
-# Show image sizes
+# 显示镜像大小
 echo "📊 Image sizes:"
-docker images | grep daytona-dev | head -10
+docker images | grep spacedock-dev | head -10
 
-# Show build performance information
+# 显示构建性能信息
 echo ""
 echo "💡 Performance tips:"
-echo "   - Subsequent builds will automatically reuse cache"
-echo "   - Use --clean option to force rebuild"
-echo "   - Modifying dependency files (package.json, go.mod) will trigger re-download of dependencies"
+echo "   - 后续构建将自动复用缓存"
+echo "   - 使用 --clean 选项可以强制重新构建"
+echo "   - 修改依赖文件(package.json, go.mod)会触发重新下载依赖"

@@ -1,17 +1,17 @@
 #!/bin/bash
-# Docker image registry login script
-# Supports docker.io and ghcr.io login
+# Docker 镜像仓库登录脚本
+# 支持 docker.io 和 ghcr.io 登录
 
 set -euo pipefail
 
-# Color definitions
+# 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Logging functions
+# 日志函数
 log() {
     local level="$1"
     shift
@@ -38,74 +38,74 @@ log() {
     esac
 }
 
-# Show help information
+# 显示帮助信息
 show_help() {
     cat << EOF
-Docker Image Registry Login Script
+Docker 镜像仓库登录脚本
 
-Usage: $0 [options]
+用法: $0 [选项]
 
-Options:
-    -r, --registry REGISTRY     Image registry (docker.io or ghcr.io)
-    -u, --username USERNAME     Username
-    -t, --token TOKEN           Password/Access token
-    -i, --interactive           Interactive login
-    --web                       Get login credentials via web
-    --check                     Check current login status
-    --logout                    Logout from all registries
-    -h, --help                  Show this help information
+选项:
+    -r, --registry REGISTRY     镜像仓库 (docker.io 或 ghcr.io)
+    -u, --username USERNAME     用户名
+    -t, --token TOKEN           密码/访问令牌
+    -i, --interactive           交互式登录
+    --web                       通过网页获取登录凭据
+    --check                     检查当前登录状态
+    --logout                    登出所有仓库
+    -h, --help                  显示此帮助信息
 
-Supported registries:
-    docker.io                   Docker Hub (requires Docker Hub username and password)
-    ghcr.io                     GitHub Container Registry (requires GitHub username and Personal Access Token)
+支持的仓库:
+    docker.io                   Docker Hub (需要 Docker Hub 用户名和密码)
+    ghcr.io                     GitHub Container Registry (需要 GitHub 用户名和 Personal Access Token)
 
-Examples:
-    # Interactive login
+示例:
+    # 交互式登录
     $0 --interactive
 
-    # Get login information via web
+    # 通过网页获取登录信息
     $0 --web
 
-    # Login to Docker Hub
+    # 登录到 Docker Hub
     $0 -r docker.io -u myusername -t mypassword
 
-    # Login to GitHub Container Registry
+    # 登录到 GitHub Container Registry
     $0 -r ghcr.io -u mygithubuser -t ghp_xxxxxxxxxxxx
 
-    # Check login status
+    # 检查登录状态
     $0 --check
 
-    # Logout from all registries
+    # 登出所有仓库
     $0 --logout
 
-Environment variables:
-    DOCKER_REGISTRY             Same as --registry
-    DOCKER_USERNAME              Same as --username
-    DOCKER_TOKEN                 Same as --token
+环境变量:
+    DOCKER_REGISTRY             同 --registry
+    DOCKER_USERNAME              同 --username
+    DOCKER_TOKEN                 同 --token
 
-Notes:
-    - GitHub Container Registry requires Personal Access Token, not password
-    - Personal Access Token needs 'write:packages' and 'read:packages' permissions
-    - Recommend using environment variables or interactive input to avoid exposing credentials in command line
+注意事项:
+    - GitHub Container Registry 需要 Personal Access Token，不是密码
+    - Personal Access Token 需要 'write:packages' 和 'read:packages' 权限
+    - 建议使用环境变量或交互式输入以避免在命令行中暴露凭据
 EOF
 }
 
-# Check if Docker is installed
+# 检查 Docker 是否安装
 check_docker() {
     if ! command -v docker &> /dev/null; then
-        log "ERROR" "Docker is not installed or not in PATH"
+        log "ERROR" "Docker 未安装或不在 PATH 中"
         exit 1
     fi
     
     if ! docker info &> /dev/null; then
-        log "ERROR" "Docker service is not running or cannot connect"
+        log "ERROR" "Docker 服务未运行或无法连接"
         exit 1
     fi
     
-    log "INFO" "Docker check passed"
+    log "INFO" "Docker 检查通过"
 }
 
-# Validate registry name
+# 验证仓库名称
 validate_registry() {
     local registry="$1"
     case "$registry" in
@@ -113,47 +113,47 @@ validate_registry() {
             return 0
             ;;
         *)
-            log "ERROR" "Unsupported registry: $registry"
-            log "ERROR" "Supported registries: docker.io, ghcr.io"
+            log "ERROR" "不支持的仓库: $registry"
+            log "ERROR" "支持的仓库: docker.io, ghcr.io"
             return 1
             ;;
     esac
 }
 
-# Check login status
+# 检查登录状态
 check_login_status() {
     local registries=("docker.io" "ghcr.io")
     
-    log "INFO" "Checking Docker login status..."
+    log "INFO" "检查 Docker 登录状态..."
     
     for registry in "${registries[@]}"; do
         local creds_store
         creds_store=$(docker config get credsStore 2>/dev/null || echo "desktop")
         if "docker-credential-${creds_store}" get <<< "$registry" &>/dev/null || \
            grep -q "\"$registry\"" ~/.docker/config.json 2>/dev/null; then
-            log "INFO" "Logged in to $registry ✓"
+            log "INFO" "已登录到 $registry ✓"
         else
-            log "WARN" "Not logged in to $registry ✗"
+            log "WARN" "未登录到 $registry ✗"
         fi
     done
 }
 
-# Logout from all registries
+# 登出所有仓库
 logout_all() {
     local registries=("docker.io" "ghcr.io")
     
-    log "INFO" "Logging out from all registries..."
+    log "INFO" "登出所有仓库..."
     
     for registry in "${registries[@]}"; do
         if docker logout "$registry" 2>/dev/null; then
-            log "INFO" "Logged out from $registry"
+            log "INFO" "已从 $registry 登出"
         else
-            log "WARN" "Failed to logout from $registry or not logged in"
+            log "WARN" "从 $registry 登出失败或未登录"
         fi
     done
 }
 
-# Get registry-specific help information
+# 获取仓库特定的帮助信息
 get_registry_help() {
     local registry="$1"
     
@@ -161,38 +161,38 @@ get_registry_help() {
         "docker.io")
             cat << EOF
 
-${BLUE}Docker Hub Login Instructions:${NC}
-- Username: Your Docker Hub username
-- Password: Your Docker Hub password
-- Registration URL: https://hub.docker.com/
+${BLUE}Docker Hub 登录说明:${NC}
+- 用户名: 您的 Docker Hub 用户名
+- 密码: 您的 Docker Hub 密码
+- 注册地址: https://hub.docker.com/
 
 EOF
             ;;
         "ghcr.io")
             cat << EOF
 
-${BLUE}GitHub Container Registry Login Instructions:${NC}
-- Username: Your GitHub username
-- Token: GitHub Personal Access Token (not password!)
-- Required permissions: write:packages, read:packages
-- Create token: GitHub Settings → Developer settings → Personal access tokens
-- Documentation: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+${BLUE}GitHub Container Registry 登录说明:${NC}
+- 用户名: 您的 GitHub 用户名
+- 令牌: GitHub Personal Access Token (不是密码!)
+- 所需权限: write:packages, read:packages
+- 创建令牌: GitHub Settings → Developer settings → Personal access tokens
+- 文档: https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 
 EOF
             ;;
     esac
 }
 
-# Open web page to get login information
+# 打开网页获取登录信息
 open_web_login() {
-    echo -e "\n${BLUE}Get login credentials via web${NC}"
-    echo -e "${YELLOW}Please select the registry to login:${NC}"
+    echo -e "\n${BLUE}通过网页获取登录凭据${NC}"
+    echo -e "${YELLOW}请选择要登录的仓库:${NC}"
     echo "1) Docker Hub"
     echo "2) GitHub Container Registry"
     echo
     
     while true; do
-        read -p "Please enter your choice (1-2): " choice
+        read -p "请输入选择 (1-2): " choice
         case $choice in
             1)
                 open_docker_hub_web
@@ -203,18 +203,18 @@ open_web_login() {
                 break
                 ;;
             *)
-                echo -e "${RED}Invalid choice, please enter 1 or 2${NC}"
+                echo -e "${RED}无效选择，请输入 1 或 2${NC}"
                 ;;
         esac
     done
 }
 
-# Open Docker Hub related web pages
+# 打开 Docker Hub 相关网页
 open_docker_hub_web() {
-    echo -e "\n${BLUE}Docker Hub Login Guide${NC}"
-    echo -e "1. Opening Docker Hub login page for you..."
+    echo -e "\n${BLUE}Docker Hub 登录指南${NC}"
+    echo -e "1. 正在为您打开 Docker Hub 登录页面..."
     
-    # Try to open web page
+    # 尝试打开网页
     if command -v "$BROWSER" &> /dev/null && [[ -n "$BROWSER" ]]; then
         "$BROWSER" "https://hub.docker.com/signin" &
     elif command -v xdg-open &> /dev/null; then
@@ -222,41 +222,41 @@ open_docker_hub_web() {
     elif command -v open &> /dev/null; then
         open "https://hub.docker.com/signin" &
     else
-        echo -e "${YELLOW}Unable to open browser automatically, please visit manually: https://hub.docker.com/signin${NC}"
+        echo -e "${YELLOW}无法自动打开浏览器，请手动访问: https://hub.docker.com/signin${NC}"
     fi
     
-    echo -e "\n2. After login, use your Docker Hub username and password"
-    echo -e "3. When ready, press Enter to continue..."
+    echo -e "\n2. 登录后，使用您的 Docker Hub 用户名和密码"
+    echo -e "3. 准备好后，按 Enter 键继续..."
     read -r
     
-    # Get username and password
+    # 获取用户名和密码
     local username token
     while true; do
-        read -p "Docker Hub username: " username
+        read -p "Docker Hub 用户名: " username
         if [[ -n "$username" ]]; then
             break
         fi
-        echo -e "${RED}Username cannot be empty${NC}"
+        echo -e "${RED}用户名不能为空${NC}"
     done
     
     while true; do
-        read -s -p "Docker Hub password: " token
+        read -s -p "Docker Hub 密码: " token
         echo
         if [[ -n "$token" ]]; then
             break
         fi
-        echo -e "${RED}Password cannot be empty${NC}"
+        echo -e "${RED}密码不能为空${NC}"
     done
     
     perform_login "docker.io" "$username" "$token"
 }
 
-# Open GitHub related web pages
+# 打开 GitHub 相关网页
 open_github_web() {
-    echo -e "\n${BLUE}GitHub Container Registry Login Guide${NC}"
-    echo -e "1. Opening GitHub Personal Access Token creation page for you..."
+    echo -e "\n${BLUE}GitHub Container Registry 登录指南${NC}"
+    echo -e "1. 正在为您打开 GitHub Personal Access Token 创建页面..."
     
-    # Try to open web page
+    # 尝试打开网页
     if command -v "$BROWSER" &> /dev/null && [[ -n "$BROWSER" ]]; then
         "$BROWSER" "https://github.com/settings/tokens/new?scopes=write:packages,read:packages&description=Docker%20Registry%20Login" &
     elif command -v xdg-open &> /dev/null; then
@@ -264,56 +264,56 @@ open_github_web() {
     elif command -v open &> /dev/null; then
         open "https://github.com/settings/tokens/new?scopes=write:packages,read:packages&description=Docker%20Registry%20Login" &
     else
-        echo -e "${YELLOW}Unable to open browser automatically, please visit manually:${NC}"
+        echo -e "${YELLOW}无法自动打开浏览器，请手动访问:${NC}"
         echo "https://github.com/settings/tokens/new?scopes=write:packages,read:packages&description=Docker%20Registry%20Login"
     fi
     
-    echo -e "\n2. On the web page:"
-    echo -e "   - Make sure ${GREEN}write:packages${NC} and ${GREEN}read:packages${NC} permissions are selected"
-    echo -e "   - Set an appropriate expiration time"
-    echo -e "   - Click 'Generate token' to generate the token"
-    echo -e "   - ${RED}Copy the generated token (it will only be shown once!)${NC}"
-    echo -e "\n3. When ready, press Enter to continue..."
+    echo -e "\n2. 在网页中:"
+    echo -e "   - 确保选中 ${GREEN}write:packages${NC} 和 ${GREEN}read:packages${NC} 权限"
+    echo -e "   - 设置合适的过期时间"
+    echo -e "   - 点击 'Generate token' 生成令牌"
+    echo -e "   - ${RED}复制生成的令牌（只会显示一次！）${NC}"
+    echo -e "\n3. 准备好后，按 Enter 键继续..."
     read -r
     
-    # Get username and token
+    # 获取用户名和令牌
     local username token
     while true; do
-        read -p "GitHub username: " username
+        read -p "GitHub 用户名: " username
         if [[ -n "$username" ]]; then
             break
         fi
-        echo -e "${RED}Username cannot be empty${NC}"
+        echo -e "${RED}用户名不能为空${NC}"
     done
     
     while true; do
-        echo -e "${YELLOW}Please paste the Personal Access Token you just created:${NC}"
+        echo -e "${YELLOW}请粘贴刚才创建的 Personal Access Token:${NC}"
         read -s -p "Personal Access Token: " token
         echo
         if [[ -n "$token" ]]; then
-            # Validate token format (GitHub PAT usually starts with ghp_)
+            # 验证令牌格式（GitHub PAT 通常以 ghp_ 开头）
             if [[ "$token" =~ ^ghp_[a-zA-Z0-9]{36}$ ]] || [[ "$token" =~ ^github_pat_[a-zA-Z0-9_]{82}$ ]]; then
                 break
             else
-                echo -e "${YELLOW}Warning: Token format may be incorrect, but will continue attempting login...${NC}"
+                echo -e "${YELLOW}警告: 令牌格式可能不正确，但将继续尝试登录...${NC}"
                 break
             fi
         fi
-        echo -e "${RED}Token cannot be empty${NC}"
+        echo -e "${RED}令牌不能为空${NC}"
     done
     
     perform_login "ghcr.io" "$username" "$token"
 }
 
-# Interactive registry selection
+# 交互式仓库选择
 select_registry_interactive() {
-    echo -e "\n${BLUE}Please select the image registry to login:${NC}"
+    echo -e "\n${BLUE}请选择要登录的镜像仓库:${NC}"
     echo "1) docker.io (Docker Hub)"
     echo "2) ghcr.io (GitHub Container Registry)"
     echo
     
     while true; do
-        read -p "Please enter your choice (1-2): " choice
+        read -p "请输入选择 (1-2): " choice
         case $choice in
             1)
                 echo "docker.io"
@@ -324,13 +324,13 @@ select_registry_interactive() {
                 return
                 ;;
             *)
-                echo -e "${RED}Invalid choice, please enter 1 or 2${NC}"
+                echo -e "${RED}无效选择，请输入 1 或 2${NC}"
                 ;;
         esac
     done
 }
 
-# Interactive login
+# 交互式登录
 interactive_login() {
     local registry username token
     
@@ -338,52 +338,52 @@ interactive_login() {
     get_registry_help "$registry"
     
     while true; do
-        read -p "Username: " username
+        read -p "用户名: " username
         if [[ -n "$username" ]]; then
             break
         fi
-        echo -e "${RED}Username cannot be empty${NC}"
+        echo -e "${RED}用户名不能为空${NC}"
     done
     
     while true; do
-        read -s -p "$(if [[ "$registry" == "ghcr.io" ]]; then echo "Personal Access Token"; else echo "Password"; fi): " token
+        read -s -p "$(if [[ "$registry" == "ghcr.io" ]]; then echo "Personal Access Token"; else echo "密码"; fi): " token
         echo
         if [[ -n "$token" ]]; then
             break
         fi
-        echo -e "${RED}$(if [[ "$registry" == "ghcr.io" ]]; then echo "Token"; else echo "Password"; fi) cannot be empty${NC}"
+        echo -e "${RED}$(if [[ "$registry" == "ghcr.io" ]]; then echo "令牌"; else echo "密码"; fi)不能为空${NC}"
     done
     
     perform_login "$registry" "$username" "$token"
 }
 
-# Perform login
+# 执行登录
 perform_login() {
     local registry="$1"
     local username="$2"
     local token="$3"
     
-    log "INFO" "Attempting to login to $registry..."
+    log "INFO" "尝试登录到 $registry..."
     
     if echo "$token" | docker login "$registry" -u "$username" --password-stdin; then
-        log "INFO" "Successfully logged in to $registry ✓"
+        log "INFO" "成功登录到 $registry ✓"
         
-        # Verify login
+        # 验证登录
         if docker pull hello-world &>/dev/null; then
-            log "INFO" "Login verification successful"
+            log "INFO" "登录验证成功"
         else
-            log "WARN" "Login may have succeeded, but verification failed"
+            log "WARN" "登录可能成功，但验证失败"
         fi
     else
-        log "ERROR" "Failed to login to $registry"
+        log "ERROR" "登录到 $registry 失败"
         
         case "$registry" in
             "docker.io")
-                log "ERROR" "Please check your Docker Hub username and password"
+                log "ERROR" "请检查您的 Docker Hub 用户名和密码"
                 ;;
             "ghcr.io")
-                log "ERROR" "Please check your GitHub username and Personal Access Token"
-                log "ERROR" "Make sure the token has 'write:packages' and 'read:packages' permissions"
+                log "ERROR" "请检查您的 GitHub 用户名和 Personal Access Token"
+                log "ERROR" "确保 Token 具有 'write:packages' 和 'read:packages' 权限"
                 ;;
         esac
         
@@ -391,7 +391,7 @@ perform_login() {
     fi
 }
 
-# Parse command line arguments
+# 解析命令行参数
 parse_args() {
     REGISTRY="${DOCKER_REGISTRY:-}"
     USERNAME="${DOCKER_USERNAME:-}"
@@ -436,7 +436,7 @@ parse_args() {
                 exit 0
                 ;;
             *)
-                log "ERROR" "Unknown parameter: $1"
+                log "ERROR" "未知参数: $1"
                 show_help
                 exit 1
                 ;;
@@ -444,14 +444,14 @@ parse_args() {
     done
 }
 
-# Main function
+# 主函数
 main() {
-    log "INFO" "Starting Docker registry login script"
+    log "INFO" "启动 Docker 仓库登录脚本"
     
     parse_args "$@"
     check_docker
     
-    # Handle special commands
+    # 处理特殊命令
     if [[ "$CHECK_ONLY" == "true" ]]; then
         check_login_status
         exit 0
@@ -462,21 +462,21 @@ main() {
         exit 0
     fi
     
-    # Interactive login
+    # 交互式登录
     if [[ "$INTERACTIVE" == "true" ]]; then
         interactive_login
         exit 0
     fi
     
-    # Web login
+    # 网页登录
     if [[ "$WEB_LOGIN" == "true" ]]; then
         open_web_login
         exit 0
     fi
     
-    # Validate parameters
+    # 验证参数
     if [[ -z "$REGISTRY" ]]; then
-        log "ERROR" "Must specify registry (-r/--registry) or use interactive mode (-i/--interactive)"
+        log "ERROR" "必须指定仓库 (-r/--registry) 或使用交互模式 (-i/--interactive)"
         show_help
         exit 1
     fi
@@ -486,17 +486,17 @@ main() {
     fi
     
     if [[ -z "$USERNAME" ]]; then
-        log "ERROR" "Must specify username (-u/--username)"
+        log "ERROR" "必须指定用户名 (-u/--username)"
         exit 1
     fi
     
     if [[ -z "$TOKEN" ]]; then
-        log "ERROR" "Must specify password/token (-t/--token)"
+        log "ERROR" "必须指定密码/令牌 (-t/--token)"
         exit 1
     fi
     
     perform_login "$REGISTRY" "$USERNAME" "$TOKEN"
 }
 
-# Execute main function
+# 执行主函数
 main "$@"

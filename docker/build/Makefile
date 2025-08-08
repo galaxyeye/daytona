@@ -1,21 +1,21 @@
-# Daytona Docker Image Build Makefile
+# Spacedock Docker 镜像构建 Makefile
 
-# Default configuration
+# 默认配置
 REGISTRY ?= docker.io
-NAMESPACE ?= daytona
+NAMESPACE ?= galaxyeye88
 VERSION ?= 0.0.1
-# Build platform configuration (options: linux/amd64, linux/arm64, linux/amd64,linux/arm64)
+# 构建平台配置 (可选: linux/amd64, linux/arm64, linux/amd64,linux/arm64)
 PLATFORM ?= linux/amd64
 
-# List of services to build (options: api, proxy, runner, docs or combinations, comma-separated)
-# Example: api,proxy or runner or api,proxy,runner,docs
+# 要构建的服务列表 (可选: api, proxy, runner, docs 或其组合，用逗号分隔)
+# 示例: api,proxy 或 runner 或 api,proxy,runner,docs
 SERVICES ?= api,proxy,runner,docs
 
-# Script paths
+# 脚本路径
 SCRIPT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SCRIPT_PATH := $(SCRIPT_DIR)build-and-push.sh
 
-# Color definitions
+# 颜色定义
 GREEN := \033[0;32m
 YELLOW := \033[1;33m
 RED := \033[0;31m
@@ -23,29 +23,29 @@ NC := \033[0m
 
 .PHONY: help build build-push build-dev build-prod build-single clean test-build docker-compose-build clean-all github dockerhub api proxy runner docs quick
 
-# Default target
-help: ## Show help information
-	@echo "Daytona Docker Image Build Tool"
+# 默认目标
+help: ## 显示帮助信息
+	@echo "Spacedock Docker 镜像构建工具"
 	@echo ""
-	@echo "Usage: make [target] [variable=value]"
+	@echo "用法: make [目标] [变量=值]"
 	@echo ""
-	@echo "Targets:"
+	@echo "目标:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 	@echo ""
-	@echo "Variables:"
-	@echo "  $(YELLOW)REGISTRY$(NC)   Image registry address (default: $(REGISTRY))"
-	@echo "  $(YELLOW)NAMESPACE$(NC)  Image namespace (default: $(NAMESPACE))"
-	@echo "  $(YELLOW)VERSION$(NC)    Image version (default: $(VERSION))"
-	@echo "  $(YELLOW)PLATFORM$(NC)   Build platform (default: $(PLATFORM))"
-	@echo "  $(YELLOW)SERVICES$(NC)   Build services (default: $(SERVICES))"
+	@echo "变量:"
+	@echo "  $(YELLOW)REGISTRY$(NC)   镜像仓库地址 (默认: $(REGISTRY))"
+	@echo "  $(YELLOW)NAMESPACE$(NC)  镜像命名空间 (默认: $(NAMESPACE))"
+	@echo "  $(YELLOW)VERSION$(NC)    镜像版本 (默认: $(VERSION))"
+	@echo "  $(YELLOW)PLATFORM$(NC)   构建平台 (默认: $(PLATFORM))"
+	@echo "  $(YELLOW)SERVICES$(NC)   构建服务 (默认: $(SERVICES))"
 	@echo ""
-	@echo "Examples:"
+	@echo "示例:"
 	@echo "  make build VERSION=0.0.1"
-	@echo "  make build-push REGISTRY=ghcr.io NAMESPACE=daytona"
+	@echo "  make build-push REGISTRY=ghcr.io NAMESPACE=galaxyeye88"
 	@echo "  make build-dev SERVICES=api,proxy"
 
-build: ## Build images locally
-	@echo "$(GREEN)Building images locally...$(NC)"
+build: ## 构建镜像到本地
+	@echo "$(GREEN)构建镜像到本地...$(NC)"
 	@chmod +x $(SCRIPT_PATH)
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
@@ -54,8 +54,8 @@ build: ## Build images locally
 		--platform "$(PLATFORM)" \
 		--services "$(SERVICES)"
 
-build-push: ## Build and push images to registry
-	@echo "$(GREEN)Building and pushing images...$(NC)"
+build-push: ## 构建并推送镜像到仓库
+	@echo "$(GREEN)构建并推送镜像...$(NC)"
 	@chmod +x $(SCRIPT_PATH)
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
@@ -65,8 +65,8 @@ build-push: ## Build and push images to registry
 		--services "$(SERVICES)" \
 		--push
 
-build-dev: ## Build development version images (single platform, fast build)
-	@echo "$(GREEN)Building development version images...$(NC)"
+build-dev: ## 构建开发版本镜像（单平台，快速构建）
+	@echo "$(GREEN)构建开发版本镜像...$(NC)"
 	@chmod +x $(SCRIPT_PATH)
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
@@ -75,8 +75,8 @@ build-dev: ## Build development version images (single platform, fast build)
 		--platform "linux/amd64" \
 		--services "$(SERVICES)"
 
-build-prod: ## Build production version images (multi-platform)
-	@echo "$(GREEN)Building production version images...$(NC)"
+build-prod: ## 构建生产版本镜像（多平台）
+	@echo "$(GREEN)构建生产版本镜像...$(NC)"
 	@chmod +x $(SCRIPT_PATH)
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
@@ -86,13 +86,13 @@ build-prod: ## Build production version images (multi-platform)
 		--services "$(SERVICES)" \
 		--push
 
-build-single: ## Build single service (requires SERVICE variable)
+build-single: ## 构建单个服务 (需要指定 SERVICE 变量)
 ifndef SERVICE
-	@echo "$(RED)Error: Please specify SERVICE variable$(NC)"
-	@echo "Example: make build-single SERVICE=api"
+	@echo "$(RED)错误: 请指定 SERVICE 变量$(NC)"
+	@echo "示例: make build-single SERVICE=api"
 	@exit 1
 endif
-	@echo "$(GREEN)Building $(SERVICE) service image...$(NC)"
+	@echo "$(GREEN)构建 $(SERVICE) 服务镜像...$(NC)"
 	@chmod +x $(SCRIPT_PATH)
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
@@ -101,56 +101,56 @@ endif
 		--platform "$(PLATFORM)" \
 		--services "$(SERVICE)"
 
-docker-compose-build: ## Build images using Docker Compose
-	@echo "$(GREEN)Building images using Docker Compose...$(NC)"
+docker-compose-build: ## 使用 Docker Compose 构建镜像
+	@echo "$(GREEN)使用 Docker Compose 构建镜像...$(NC)"
 	@cd $(SCRIPT_DIR) && \
 	REGISTRY=$(REGISTRY) \
 	VERSION=$(VERSION) \
 	docker-compose -f docker-compose.build-local.yaml build
 
-test-build: ## Test build environment
-	@echo "$(GREEN)Testing build environment...$(NC)"
+test-build: ## 测试构建环境
+	@echo "$(GREEN)测试构建环境...$(NC)"
 	@docker version
 	@echo "Docker: $(GREEN)✓$(NC)"
-	@docker buildx version && echo "Docker Buildx: $(GREEN)✓$(NC)" || echo "Docker Buildx: $(YELLOW)Not available$(NC)"
+	@docker buildx version && echo "Docker Buildx: $(GREEN)✓$(NC)" || echo "Docker Buildx: $(YELLOW)不可用$(NC)"
 
-clean: ## Clean build artifacts and cache
-	@echo "$(GREEN)Cleaning build artifacts...$(NC)"
-	@echo "Cleaning Docker build cache..."
+clean: ## 清理构建产物和缓存
+	@echo "$(GREEN)清理构建产物...$(NC)"
+	@echo "清理 Docker 构建缓存..."
 	@docker system prune -f
-	@echo "Cleaning unused images..."
+	@echo "清理未使用的镜像..."
 	@docker image prune -f
-	@echo "$(GREEN)Cleanup complete$(NC)"
+	@echo "$(GREEN)清理完成$(NC)"
 
-clean-all: ## Clean all Docker resources (dangerous operation)
-	@echo "$(RED)Warning: This will clean all unused Docker resources!$(NC)"
-	@read -p "Confirm to continue? (y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
+clean-all: ## 清理所有 Docker 资源（危险操作）
+	@echo "$(RED)警告: 这将清理所有未使用的 Docker 资源！$(NC)"
+	@read -p "确认继续？(y/N): " confirm && [ "$$confirm" = "y" ] || exit 1
 	@docker system prune -a -f
 	@docker builder prune -a -f
 
-# Preset configurations
-github: ## Build and push to GitHub Container Registry
+# 预设配置
+github: ## 构建并推送到 GitHub Container Registry
 	@$(MAKE) build-push REGISTRY=ghcr.io NAMESPACE=$(shell git config user.name | tr '[:upper:]' '[:lower:]')
 
-dockerhub: ## Build and push to Docker Hub
+dockerhub: ## 构建并推送到 Docker Hub
 	@$(MAKE) build-push REGISTRY=docker.io
 
-# Service-specific builds
-api: ## Build only API service
+# 服务特定构建
+api: ## 只构建 API 服务
 	@$(MAKE) build-single SERVICE=api
 
-proxy: ## Build only Proxy service
+proxy: ## 只构建 Proxy 服务
 	@$(MAKE) build-single SERVICE=proxy
 
-runner: ## Build only Runner service
+runner: ## 只构建 Runner 服务
 	@$(MAKE) build-single SERVICE=runner
 
-docs: ## Build only Docs service
+docs: ## 只构建 Docs 服务
 	@$(MAKE) build-single SERVICE=docs
 
-# Quick build (for development)
-quick: ## Quick build all services (single platform, no cache)
-	@echo "$(GREEN)Quick building all services...$(NC)"
+# 快速构建（开发用）
+quick: ## 快速构建所有服务（单平台，无缓存）
+	@echo "$(GREEN)快速构建所有服务...$(NC)"
 	@chmod +x $(SCRIPT_PATH)
 	@$(SCRIPT_PATH) \
 		--registry "$(REGISTRY)" \
