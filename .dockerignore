@@ -1,18 +1,70 @@
+# Development and CI files
 .devcontainer
 .github
 .husky
-.vscode
 .nx
+.vscode
+
+# Temporary and cache directories
+.tmp
+.venv
+node_modules
+*.log
+logs
+reports
+data_maintenance.log
+data_report_*.json
+
+# Environment files
+.env.local
+.env.development
+.env.test
+
+# Build artifacts (except specific ones needed)
+dist
+!dist/libs/computer-use-amd64
+
+# Docker files
+docker
+!docker/Dockerfile
+!docker/dex
+
+# Large example and asset directories
 examples
 functions
 images
-node_modules
-.env.local
-dist
-!dist/libs/computer-use-amd64
-docker
-.tmp
+assets
+
+# Python libraries (already built as separate packages)
 libs/sdk-python
 libs/sdk-typescript
 libs/api-client-python
 libs/api-client-python-async
+
+# Additional large files that might exist
+*.tar.gz
+*.zip
+*.tgz
+coverage
+.nyc_output
+
+# IDE and editor files
+.idea
+.vscode/settings.json
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build caches
+.cache
+.parcel-cache
+.next
+.nuxt
+
+# Test files
+test-results
+playwright-report
+e2e-results
