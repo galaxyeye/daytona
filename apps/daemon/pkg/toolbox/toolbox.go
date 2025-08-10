@@ -14,7 +14,7 @@ import (
 	common_proxy "github.com/daytonaio/common-go/pkg/proxy"
 	"github.com/daytonaio/daemon/internal"
 	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
-	// "github.com/daytonaio/daemon/pkg/toolbox/computeruse/manager"
+	"github.com/daytonaio/daemon/pkg/toolbox/computeruse/manager"
 	"github.com/daytonaio/daemon/pkg/toolbox/config"
 	"github.com/daytonaio/daemon/pkg/toolbox/fs"
 	"github.com/daytonaio/daemon/pkg/toolbox/git"
@@ -151,16 +151,16 @@ func (s *Server) Start() error {
 	}
 
 	// Initialize plugin-based computer use
-	// pluginPath := "/usr/local/lib/daytona-computer-use"
+	pluginPath := "/usr/local/lib/daytona-computer-use"
 	// Fallback to local config directory for development
-	// if _, err := os.Stat(pluginPath); os.IsNotExist(err) {
-	// 	pluginPath = path.Join(configDir, "daytona-computer-use")
-	// }
-	// s.ComputerUse, err = manager.GetComputerUse(pluginPath)
-	// if err != nil {
-	// 	log.Errorf("Failed to initialize computer-use plugin: %v", err)
-	// 	log.Info("Continuing without computer-use functionality...")
-	// }
+	if _, err := os.Stat(pluginPath); os.IsNotExist(err) {
+		pluginPath = path.Join(configDir, "daytona-computer-use")
+	}
+	s.ComputerUse, err = manager.GetComputerUse(pluginPath)
+	if err != nil {
+		log.Errorf("Failed to initialize computer-use plugin: %v", err)
+		log.Info("Continuing without computer-use functionality...")
+	}
 
 	// Always register computer-use endpoints, but handle the case when plugin is nil
 	computerUseController := r.Group("/computeruse")
