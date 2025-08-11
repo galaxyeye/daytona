@@ -27,6 +27,7 @@ import { SandboxDestroyedEvent } from '../events/sandbox-destroyed.event'
 import { SandboxBackupCreatedEvent } from '../events/sandbox-backup-created.event'
 import { SandboxArchivedEvent } from '../events/sandbox-archived.event'
 import { RunnerAdapterFactory } from '../runner-adapter/runnerAdapter'
+import { alwaysTrue } from '../../common/utils/lang'
 
 @Injectable()
 export class BackupManager {
@@ -84,6 +85,11 @@ export class BackupManager {
                 return
               }
 
+              if (alwaysTrue()) {
+                // todo: correct backup creation
+                return
+              }
+
               try {
                 //  todo: remove the catch handler asap
                 await this.startBackupCreate(sandbox.id).catch((error) => {
@@ -103,6 +109,11 @@ export class BackupManager {
 
   @Cron(CronExpression.EVERY_10_SECONDS, { name: 'sync-backup-states' }) // Run every 10 seconds
   async syncBackupStates(): Promise<void> {
+    if (alwaysTrue()) {
+      // todo: correct backup creation
+      return
+    }
+
     //  lock the sync to only run one instance at a time
     const lockKey = 'sync-backup-states'
     const hasLock = await this.redisLockProvider.lock(lockKey, 10)
@@ -166,6 +177,12 @@ export class BackupManager {
   }
 
   async startBackupCreate(sandboxId: string): Promise<void> {
+    if (alwaysTrue()) {
+      // todo: correct backup creation
+      this.logger.log(`Skipping backup creation for sandbox ${sandboxId}, waiting for bug fix`)
+      return
+    }
+
     const sandbox = await this.sandboxRepository.findOneByOrFail({
       id: sandboxId,
     })
