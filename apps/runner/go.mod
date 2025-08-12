@@ -1,4 +1,4 @@
-module github.com/daytonaio/runner
+module github.com/galaxyeye/runner
 
 go 1.23.2
 

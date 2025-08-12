@@ -1,7 +1,7 @@
 <div align="center">
  <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/daytonaio/daytona/raw/main/assets/images/Daytona-logotype-white.png">
-  <img alt="Daytona logo" src="https://github.com/daytonaio/daytona/raw/main/assets/images/Daytona-logotype-black.png" width="40%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/galaxyeye/daytona/raw/main/assets/images/Daytona-logotype-white.png">
+  <img alt="Daytona logo" src="https://github.com/galaxyeye/daytona/raw/main/assets/images/Daytona-logotype-black.png" width="40%">
  </picture>
 </div>
 
@@ -11,7 +11,7 @@
 
 [![Documentation](https://img.shields.io/github/v/release/daytonaio/docs?label=Docs&color=23cc71)](https://www.daytona.io/docs)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue)](#license)
-[![Issues - daytona](https://img.shields.io/github/issues/daytonaio/docs)](https://github.com/daytonaio/docs/issues)
+[![Issues - daytona](https://img.shields.io/github/issues/daytonaio/docs)](https://github.com/galaxyeye/docs/issues)
 
 </div>
 
@@ -22,7 +22,7 @@ Daytona user and developer documentation.
 </br>
 
 <p align="center">
-  <a href="https://github.com/daytonaio/docs/issues/new?assignees=&labels=bug">Report Bug</a>
+  <a href="https://github.com/galaxyeye/docs/issues/new?assignees=&labels=bug">Report Bug</a>
     ·
   <a href="https://go.daytona.io/slack">Join Our Slack</a>
     ·
@@ -37,7 +37,7 @@ Its core architecture leverages React, while documentation content is authored u
 If Node.js or Yarn are installed and set up on your local machine, you can clone this repository and install the required dependencies and configurations:
 
 ```shell
-git clone https://github.com/daytonaio/docs.git
+git clone https://github.com/galaxyeye/docs.git
 ```
 
 ```shell

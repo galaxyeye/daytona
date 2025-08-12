@@ -6,8 +6,8 @@ package docker
 import (
 	"context"
 
-	"github.com/daytonaio/common-go/pkg/timer"
 	"github.com/docker/docker/api/types/container"
+	"github.com/galaxyeye/common-go/pkg/timer"
 
 	log "github.com/sirupsen/logrus"
 )

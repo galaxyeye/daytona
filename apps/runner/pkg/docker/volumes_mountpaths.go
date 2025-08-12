@@ -12,9 +12,9 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/daytonaio/runner/cmd/runner/config"
-	"github.com/daytonaio/runner/internal/util"
-	"github.com/daytonaio/runner/pkg/api/dto"
+	"github.com/galaxyeye/runner/cmd/runner/config"
+	"github.com/galaxyeye/runner/internal/util"
+	"github.com/galaxyeye/runner/pkg/api/dto"
 	log "github.com/sirupsen/logrus"
 )
 

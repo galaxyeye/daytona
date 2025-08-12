@@ -1,4 +1,4 @@
-module github.com/daytonaio/daemon
+module github.com/galaxyeye/daemon
 
 go 1.23.0
 

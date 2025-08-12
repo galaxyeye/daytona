@@ -10,11 +10,11 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/daytonaio/common-go/pkg/timer"
-	"github.com/daytonaio/runner/pkg/common"
-	"github.com/daytonaio/runner/pkg/models/enums"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/galaxyeye/common-go/pkg/timer"
+	"github.com/galaxyeye/runner/pkg/common"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 
 	log "github.com/sirupsen/logrus"
 )

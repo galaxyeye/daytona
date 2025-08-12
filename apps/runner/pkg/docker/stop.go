@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/daytonaio/runner/pkg/models/enums"
 	"github.com/docker/docker/api/types/container"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 )
 
 func (d *DockerClient) Stop(ctx context.Context, containerId string) error {

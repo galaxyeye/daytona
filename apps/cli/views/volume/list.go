@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/daytonaio/apiclient"
-	"github.com/daytonaio/daytona/cli/views/common"
-	"github.com/daytonaio/daytona/cli/views/util"
+	"github.com/galaxyeye/apiclient"
+	"github.com/galaxyeye/daytona/cli/views/common"
+	"github.com/galaxyeye/daytona/cli/views/util"
 )
 
 type RowData struct {

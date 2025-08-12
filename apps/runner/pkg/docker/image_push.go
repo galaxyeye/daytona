@@ -7,8 +7,8 @@ import (
 	"context"
 	"io"
 
-	"github.com/daytonaio/runner/internal/util"
-	"github.com/daytonaio/runner/pkg/api/dto"
+	"github.com/galaxyeye/runner/internal/util"
+	"github.com/galaxyeye/runner/pkg/api/dto"
 
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/pkg/jsonmessage"

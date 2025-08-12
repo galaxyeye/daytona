@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/daytonaio/runner/pkg/models"
-	"github.com/daytonaio/runner/pkg/models/enums"
+	"github.com/galaxyeye/runner/pkg/models"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 )
 
 type IRunnerCache interface {

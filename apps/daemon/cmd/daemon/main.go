@@ -13,9 +13,9 @@ import (
 
 	golog "log"
 
-	"github.com/daytonaio/daemon/cmd/daemon/config"
-	"github.com/daytonaio/daemon/pkg/terminal"
-	"github.com/daytonaio/daemon/pkg/toolbox"
+	"github.com/galaxyeye/daemon/cmd/daemon/config"
+	"github.com/galaxyeye/daemon/pkg/terminal"
+	"github.com/galaxyeye/daemon/pkg/toolbox"
 	log "github.com/sirupsen/logrus"
 )
 

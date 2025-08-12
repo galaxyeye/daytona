@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/daytonaio/runner/pkg/common"
-	"github.com/daytonaio/runner/pkg/models/enums"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/errdefs"
+	"github.com/galaxyeye/runner/pkg/common"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 
 	log "github.com/sirupsen/logrus"
 )

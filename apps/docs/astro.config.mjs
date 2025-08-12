@@ -29,10 +29,10 @@ export default defineConfig({
       favicon: '/favicon.ico',
       title: 'Daytona',
       social: {
-        github: 'https://github.com/daytonaio',
+        github: 'https://github.com/galaxyeye',
       },
       editLink: {
-        baseUrl: 'https://github.com/daytonaio/docs/blob/main/',
+        baseUrl: 'https://github.com/galaxyeye/docs/blob/main/',
       },
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       customCss: ['./src/fonts/font-face.css', './src/styles/style.scss'],

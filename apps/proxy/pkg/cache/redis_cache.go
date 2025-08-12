@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/daytonaio/proxy/cmd/proxy/config"
+	"github.com/galaxyeye/proxy/cmd/proxy/config"
 	"github.com/redis/go-redis/v9"
 )
 

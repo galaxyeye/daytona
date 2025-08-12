@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse/manager"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse/manager"
 	"github.com/hashicorp/go-hclog"
 	hc_plugin "github.com/hashicorp/go-plugin"
 	"github.com/stretchr/testify/assert"

@@ -6,8 +6,8 @@ package docker
 import (
 	"context"
 
-	"github.com/daytonaio/runner/pkg/api/dto"
-	"github.com/daytonaio/runner/pkg/models/enums"
+	"github.com/galaxyeye/runner/pkg/api/dto"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 
 	log "github.com/sirupsen/logrus"
 )

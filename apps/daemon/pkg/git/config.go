@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/daytonaio/daemon/pkg/gitprovider"
+	"github.com/galaxyeye/daemon/pkg/gitprovider"
 	"gopkg.in/ini.v1"
 )
 

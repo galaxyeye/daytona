@@ -4,7 +4,7 @@
 package sandbox
 
 import (
-	"github.com/daytonaio/daytona/cli/internal"
+	"github.com/galaxyeye/daytona/cli/internal"
 	"github.com/spf13/cobra"
 )
 

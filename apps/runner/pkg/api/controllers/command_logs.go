@@ -9,8 +9,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/daytonaio/common-go/pkg/errors"
-	"github.com/daytonaio/common-go/pkg/proxy"
+	"github.com/galaxyeye/common-go/pkg/errors"
+	"github.com/galaxyeye/common-go/pkg/proxy"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 

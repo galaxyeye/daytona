@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/daytonaio/runner/internal/util"
-	"github.com/daytonaio/runner/pkg/common"
 	"github.com/docker/docker/errdefs"
+	"github.com/galaxyeye/runner/internal/util"
+	"github.com/galaxyeye/runner/pkg/common"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )

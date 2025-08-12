@@ -1,4 +1,4 @@
-module github.com/daytonaio/proxy
+module github.com/galaxyeye/proxy
 
 go 1.23.0
 

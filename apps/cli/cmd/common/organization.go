@@ -6,9 +6,9 @@ package common
 import (
 	"context"
 
-	"github.com/daytonaio/apiclient"
-	apiclient_cli "github.com/daytonaio/daytona/cli/apiclient"
-	"github.com/daytonaio/daytona/cli/config"
+	"github.com/galaxyeye/apiclient"
+	apiclient_cli "github.com/galaxyeye/daytona/cli/apiclient"
+	"github.com/galaxyeye/daytona/cli/config"
 )
 
 func GetPersonalOrganizationId(profile config.Profile) (string, error) {

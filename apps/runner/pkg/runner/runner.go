@@ -6,9 +6,9 @@ package runner
 import (
 	"log"
 
-	"github.com/daytonaio/runner/pkg/cache"
-	"github.com/daytonaio/runner/pkg/docker"
-	"github.com/daytonaio/runner/pkg/services"
+	"github.com/galaxyeye/runner/pkg/cache"
+	"github.com/galaxyeye/runner/pkg/docker"
+	"github.com/galaxyeye/runner/pkg/services"
 )
 
 type RunnerInstanceConfig struct {

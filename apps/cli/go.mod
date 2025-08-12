@@ -1,4 +1,4 @@
-module github.com/daytonaio/daytona/cli
+module github.com/galaxyeye/daytona/cli
 
 go 1.23.0
 

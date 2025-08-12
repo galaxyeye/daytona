@@ -12,16 +12,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/daytonaio/apiclient"
-	apiclient_cli "github.com/daytonaio/daytona/cli/apiclient"
-	"github.com/daytonaio/daytona/cli/cmd/common"
-	"github.com/daytonaio/daytona/cli/docker"
-	views_common "github.com/daytonaio/daytona/cli/views/common"
-	views_util "github.com/daytonaio/daytona/cli/views/util"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/registry"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/galaxyeye/apiclient"
+	apiclient_cli "github.com/galaxyeye/daytona/cli/apiclient"
+	"github.com/galaxyeye/daytona/cli/cmd/common"
+	"github.com/galaxyeye/daytona/cli/docker"
+	views_common "github.com/galaxyeye/daytona/cli/views/common"
+	views_util "github.com/galaxyeye/daytona/cli/views/util"
 	"github.com/spf13/cobra"
 )
 

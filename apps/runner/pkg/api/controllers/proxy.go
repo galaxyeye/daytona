@@ -10,9 +10,9 @@ import (
 	"regexp"
 	"strings"
 
-	proxy "github.com/daytonaio/common-go/pkg/proxy"
-	"github.com/daytonaio/runner/pkg/common"
-	"github.com/daytonaio/runner/pkg/runner"
+	proxy "github.com/galaxyeye/common-go/pkg/proxy"
+	"github.com/galaxyeye/runner/pkg/common"
+	"github.com/galaxyeye/runner/pkg/runner"
 	"github.com/gin-gonic/gin"
 )
 

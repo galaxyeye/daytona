@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -6,9 +6,9 @@ package main
 import (
 	"os"
 
-	cu "github.com/daytonaio/computer-use/pkg/computeruse"
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse/manager"
+	cu "github.com/galaxyeye/computer-use/pkg/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse/manager"
 	"github.com/hashicorp/go-hclog"
 	hc_plugin "github.com/hashicorp/go-plugin"
 )

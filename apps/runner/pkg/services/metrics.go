@@ -14,11 +14,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/daytonaio/runner/pkg/cache"
-	"github.com/daytonaio/runner/pkg/docker"
-	"github.com/daytonaio/runner/pkg/models"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
+	"github.com/galaxyeye/runner/pkg/cache"
+	"github.com/galaxyeye/runner/pkg/docker"
+	"github.com/galaxyeye/runner/pkg/models"
 )
 
 type MetricsService struct {

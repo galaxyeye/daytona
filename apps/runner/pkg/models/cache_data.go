@@ -6,7 +6,7 @@ package models
 import (
 	"time"
 
-	"github.com/daytonaio/runner/pkg/models/enums"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 )
 
 type SystemMetrics struct {

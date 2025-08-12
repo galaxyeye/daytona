@@ -8,8 +8,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/daytonaio/runner/internal/constants"
-	"github.com/daytonaio/runner/pkg/common"
+	"github.com/galaxyeye/runner/internal/constants"
+	"github.com/galaxyeye/runner/pkg/common"
 	"github.com/gin-gonic/gin"
 )
 

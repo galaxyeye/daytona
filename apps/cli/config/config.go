@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/daytonaio/daytona/cli/cmd"
-	"github.com/daytonaio/daytona/cli/internal"
+	"github.com/galaxyeye/daytona/cli/cmd"
+	"github.com/galaxyeye/daytona/cli/internal"
 )
 
 type Config struct {

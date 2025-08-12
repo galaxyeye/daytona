@@ -37,7 +37,7 @@ Remember to stay responsive to feedback during the review process and make any n
 To contribute using Daytona, follow these steps:
 
 1. **Fork the Docs repo**: Fork the [Daytona Docs repository][sl] to your GitHub account to create an isolated copy where you can work without affecting the original project.
-2. **Access Daytona**: Start a new workspace using the GitHub repositor link and Daytona URL of your Daytona instance, for example '<https://YOUR-DAYTONA.INSTANCE/#https://github.com/YOUR-USERNAME/docs>'. If you don't have access to Daytona you can easily [install](https://github.com/daytonaio/installer) it on your own server. Now, start a workspace through a Daytona dashboard. Optionally, you can install a preferred [Daytona extension](https://download.daytona.io/) in your IDE.
+2. **Access Daytona**: Start a new workspace using the GitHub repositor link and Daytona URL of your Daytona instance, for example '<https://YOUR-DAYTONA.INSTANCE/#https://github.com/YOUR-USERNAME/docs>'. If you don't have access to Daytona you can easily [install](https://github.com/galaxyeye/installer) it on your own server. Now, start a workspace through a Daytona dashboard. Optionally, you can install a preferred [Daytona extension](https://download.daytona.io/) in your IDE.
 3. **Sync Your Fork**: Before making changes, sync your fork with the main repository to ensure you're working with the latest version.
 4. **Branch Out**: Create a new branch for your work. Use a descriptive name that reflects the changes you're planning to make.
 5. **Make Changes and Test**: Use the preferred IDE to edit, preview, and validate your changes to the documentation.
@@ -105,7 +105,7 @@ cd docs
 
 ```sh
 # Add the original repository as an upstream remote
-git remote add upstream https://github.com/daytonaio/docs.git
+git remote add upstream https://github.com/galaxyeye/docs.git
 
 # Fetch the latest changes from upstream
 git fetch upstream
@@ -214,6 +214,6 @@ To add a language, you will need its BCP-47 tag and a label. See [“Adding a ne
   You can find a list of supported browsers and their versions using this [browserslist query](https://browsersl.ist/#q=%3E+0.5%25%2C+not+dead%2C+Chrome+%3E%3D+88%2C+Edge+%3E%3D+88%2C+Firefox+%3E%3D+98%2C+Safari+%3E%3D+15.4%2C+iOS+%3E%3D+15.4%2C+not+op_mini+all). To check whether or not a feature is supported, you can visit the [Can I use](https://caniuse.com) website and search for the feature.
 
 [slack]: https://go.daytona.io/slack
-[issues]: https://github.com/daytonaio/docs/issues
-[sl]: https://github.com/daytonaio/docs/pulls
+[issues]: https://github.com/galaxyeye/docs/issues
+[sl]: https://github.com/galaxyeye/docs/pulls
 [api-docs]: https://docs.astro.build/en/reference/integrations-reference/

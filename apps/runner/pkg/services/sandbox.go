@@ -6,10 +6,10 @@ package services
 import (
 	"context"
 
-	"github.com/daytonaio/runner/pkg/cache"
-	"github.com/daytonaio/runner/pkg/docker"
-	"github.com/daytonaio/runner/pkg/models"
-	"github.com/daytonaio/runner/pkg/models/enums"
+	"github.com/galaxyeye/runner/pkg/cache"
+	"github.com/galaxyeye/runner/pkg/docker"
+	"github.com/galaxyeye/runner/pkg/models"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 )
 
 type SandboxService struct {

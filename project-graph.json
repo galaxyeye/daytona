@@ -1564,7 +1564,7 @@
                 "main": "apps/daemon/cmd/daemon/main.go",
                 "outputPath": "dist/apps/daemon",
                 "flags": [
-                  "-ldflags \"-X 'github.com/daytonaio/daemon/internal.Version=${npm_package_version}'\""
+                  "-ldflags \"-X 'github.com/galaxyeye/daemon/internal.Version=${npm_package_version}'\""
                 ]
               },
               "configurations": {
@@ -1585,7 +1585,7 @@
                   "GOOS": "linux"
                 },
                 "flags": [
-                  "-ldflags \"-X 'github.com/daytonaio/daemon/internal.Version=${npm_package_version}'\""
+                  "-ldflags \"-X 'github.com/galaxyeye/daemon/internal.Version=${npm_package_version}'\""
                 ]
               },
               "dependsOn": [

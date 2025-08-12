@@ -11,7 +11,7 @@ import (
 	"image/jpeg"
 	"image/png"
 
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse"
 	"github.com/go-vgo/robotgo"
 	"github.com/kbinani/screenshot"
 )

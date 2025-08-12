@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/daytonaio/daemon/pkg/git"
-	"github.com/daytonaio/daemon/pkg/gitprovider"
+	"github.com/galaxyeye/daemon/pkg/git"
+	"github.com/galaxyeye/daemon/pkg/gitprovider"
 	"github.com/gin-gonic/gin"
 	go_git_http "github.com/go-git/go-git/v5/plumbing/transport/http"
 )

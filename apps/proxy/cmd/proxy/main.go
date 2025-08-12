@@ -4,8 +4,8 @@
 package main
 
 import (
-	"github.com/daytonaio/proxy/cmd/proxy/config"
-	"github.com/daytonaio/proxy/pkg/proxy"
+	"github.com/galaxyeye/proxy/cmd/proxy/config"
+	"github.com/galaxyeye/proxy/pkg/proxy"
 
 	log "github.com/sirupsen/logrus"
 )

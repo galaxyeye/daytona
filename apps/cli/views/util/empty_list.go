@@ -4,7 +4,7 @@
 package util
 
 import (
-	"github.com/daytonaio/daytona/cli/views/common"
+	"github.com/galaxyeye/daytona/cli/views/common"
 )
 
 func NotifyEmptySandboxList(tip bool) {

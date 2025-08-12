@@ -9,8 +9,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/daytonaio/daemon/pkg/common"
-	"github.com/daytonaio/daemon/pkg/ssh/config"
+	"github.com/galaxyeye/daemon/pkg/common"
+	"github.com/galaxyeye/daemon/pkg/ssh/config"
 	"github.com/gliderlabs/ssh"
 	"github.com/pkg/sftp"
 	"golang.org/x/sys/unix"

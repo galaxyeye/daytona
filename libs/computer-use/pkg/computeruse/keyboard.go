@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse"
 	"github.com/go-vgo/robotgo"
 )
 

@@ -11,15 +11,15 @@ import (
 	"net/http"
 	"slices"
 
-	apiclient "github.com/daytonaio/apiclient"
-	"github.com/daytonaio/proxy/cmd/proxy/config"
-	"github.com/daytonaio/proxy/pkg/cache"
+	apiclient "github.com/galaxyeye/apiclient"
+	"github.com/galaxyeye/proxy/cmd/proxy/config"
+	"github.com/galaxyeye/proxy/pkg/cache"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/securecookie"
 
-	common_errors "github.com/daytonaio/common-go/pkg/errors"
-	common_proxy "github.com/daytonaio/common-go/pkg/proxy"
+	common_errors "github.com/galaxyeye/common-go/pkg/errors"
+	common_proxy "github.com/galaxyeye/common-go/pkg/proxy"
 
 	log "github.com/sirupsen/logrus"
 )

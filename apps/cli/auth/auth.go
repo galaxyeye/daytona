@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/daytonaio/daytona/cli/config"
+	"github.com/galaxyeye/daytona/cli/config"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 )

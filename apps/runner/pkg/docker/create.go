@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/daytonaio/common-go/pkg/timer"
-	"github.com/daytonaio/runner/internal/constants"
-	"github.com/daytonaio/runner/pkg/api/dto"
-	"github.com/daytonaio/runner/pkg/common"
-	"github.com/daytonaio/runner/pkg/models/enums"
 	"github.com/docker/docker/errdefs"
+	"github.com/galaxyeye/common-go/pkg/timer"
+	"github.com/galaxyeye/runner/internal/constants"
+	"github.com/galaxyeye/runner/pkg/api/dto"
+	"github.com/galaxyeye/runner/pkg/common"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 
 	log "github.com/sirupsen/logrus"

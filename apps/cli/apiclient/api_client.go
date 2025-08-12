@@ -7,9 +7,9 @@ import (
 	"context"
 	"net/http"
 
-	apiclient "github.com/daytonaio/apiclient"
-	"github.com/daytonaio/daytona/cli/auth"
-	"github.com/daytonaio/daytona/cli/config"
+	apiclient "github.com/galaxyeye/apiclient"
+	"github.com/galaxyeye/daytona/cli/auth"
+	"github.com/galaxyeye/daytona/cli/config"
 )
 
 var apiClient *apiclient.APIClient

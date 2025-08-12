@@ -3,7 +3,7 @@
 
 package tools
 
-import "github.com/daytonaio/daytona/cli/apiclient"
+import "github.com/galaxyeye/daytona/cli/apiclient"
 
 var daytonaMCPHeaders map[string]string = map[string]string{
 	apiclient.DaytonaSourceHeader: "daytona-mcp",

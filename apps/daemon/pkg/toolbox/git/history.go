@@ -7,7 +7,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/daytonaio/daemon/pkg/git"
+	"github.com/galaxyeye/daemon/pkg/git"
 	"github.com/gin-gonic/gin"
 )
 

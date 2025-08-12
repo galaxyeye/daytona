@@ -6,12 +6,12 @@
   "types": "./src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daytonaio/daytona.git"
+    "url": "git+https://github.com/galaxyeye/daytona.git"
   },
   "author": "Daytona Platforms Inc.",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/daytonaio/daytona/issues"
+    "url": "https://github.com/galaxyeye/daytona/issues"
   },
   "homepage": "https://www.daytona.io/docs",
   "config": {

@@ -21,10 +21,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/daytonaio/runner/cmd/runner/config"
-	"github.com/daytonaio/runner/pkg/api/controllers"
-	"github.com/daytonaio/runner/pkg/api/docs"
-	"github.com/daytonaio/runner/pkg/api/middlewares"
+	"github.com/galaxyeye/runner/cmd/runner/config"
+	"github.com/galaxyeye/runner/pkg/api/controllers"
+	"github.com/galaxyeye/runner/pkg/api/docs"
+	"github.com/galaxyeye/runner/pkg/api/middlewares"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/gin-gonic/gin"

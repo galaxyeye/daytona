@@ -12,7 +12,7 @@ import (
 	"image/png"
 	"os"
 
-	"github.com/daytonaio/daemon/pkg/toolbox/computeruse"
+	"github.com/galaxyeye/daemon/pkg/toolbox/computeruse"
 	"github.com/go-vgo/robotgo"
 	"github.com/kbinani/screenshot"
 	log "github.com/sirupsen/logrus"

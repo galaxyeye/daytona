@@ -1,4 +1,4 @@
-module github.com/daytonaio/computer-use
+module github.com/galaxyeye/computer-use
 
 go 1.23.0
 

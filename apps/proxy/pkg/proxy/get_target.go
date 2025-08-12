@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	common_errors "github.com/daytonaio/common-go/pkg/errors"
+	common_errors "github.com/galaxyeye/common-go/pkg/errors"
 	"github.com/gin-gonic/gin"
 
 	log "github.com/sirupsen/logrus"

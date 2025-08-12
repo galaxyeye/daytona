@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/daytonaio/runner/pkg/models/enums"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
+	"github.com/galaxyeye/runner/pkg/models/enums"
 )
 
 func (d *DockerClient) DeduceSandboxState(ctx context.Context, sandboxId string) (enums.SandboxState, error) {

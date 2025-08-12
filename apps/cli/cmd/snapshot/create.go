@@ -9,13 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/daytonaio/apiclient"
-	apiclient_cli "github.com/daytonaio/daytona/cli/apiclient"
-	"github.com/daytonaio/daytona/cli/cmd/common"
-	"github.com/daytonaio/daytona/cli/config"
-	"github.com/daytonaio/daytona/cli/util"
-	view_common "github.com/daytonaio/daytona/cli/views/common"
-	views_util "github.com/daytonaio/daytona/cli/views/util"
+	"github.com/galaxyeye/apiclient"
+	apiclient_cli "github.com/galaxyeye/daytona/cli/apiclient"
+	"github.com/galaxyeye/daytona/cli/cmd/common"
+	"github.com/galaxyeye/daytona/cli/config"
+	"github.com/galaxyeye/daytona/cli/util"
+	view_common "github.com/galaxyeye/daytona/cli/views/common"
+	views_util "github.com/galaxyeye/daytona/cli/views/util"
 	"github.com/spf13/cobra"
 )
 

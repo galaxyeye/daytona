@@ -10,7 +10,7 @@ __author__ = "Daytona Platforms Inc."
 __email__ = "support@daytona.io"
 __description__ = "Database maintenance tools for Daytona project"
 __license__ = "Apache-2.0"
-__url__ = "https://github.com/daytonaio/daytona"
+__url__ = "https://github.com/galaxyeye/daytona"
 
 # Package metadata
 __all__ = [

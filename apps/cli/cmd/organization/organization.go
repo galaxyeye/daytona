@@ -6,8 +6,8 @@ package organization
 import (
 	"errors"
 
-	"github.com/daytonaio/daytona/cli/config"
-	"github.com/daytonaio/daytona/cli/internal"
+	"github.com/galaxyeye/daytona/cli/config"
+	"github.com/galaxyeye/daytona/cli/internal"
 	"github.com/spf13/cobra"
 )
 

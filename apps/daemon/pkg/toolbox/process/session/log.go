@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/daytonaio/daemon/internal/util"
+	"github.com/galaxyeye/daemon/internal/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 

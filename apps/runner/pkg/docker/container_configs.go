@@ -7,9 +7,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/daytonaio/runner/cmd/runner/config"
-	"github.com/daytonaio/runner/pkg/api/dto"
 	"github.com/docker/docker/api/types/network"
+	"github.com/galaxyeye/runner/cmd/runner/config"
+	"github.com/galaxyeye/runner/pkg/api/dto"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/system"

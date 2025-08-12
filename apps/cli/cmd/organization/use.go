@@ -7,12 +7,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/daytonaio/apiclient"
-	apiclient_cli "github.com/daytonaio/daytona/cli/apiclient"
-	"github.com/daytonaio/daytona/cli/config"
-	"github.com/daytonaio/daytona/cli/views/common"
-	"github.com/daytonaio/daytona/cli/views/organization"
-	"github.com/daytonaio/daytona/cli/views/util"
+	"github.com/galaxyeye/apiclient"
+	apiclient_cli "github.com/galaxyeye/daytona/cli/apiclient"
+	"github.com/galaxyeye/daytona/cli/config"
+	"github.com/galaxyeye/daytona/cli/views/common"
+	"github.com/galaxyeye/daytona/cli/views/organization"
+	"github.com/galaxyeye/daytona/cli/views/util"
 	"github.com/spf13/cobra"
 )
 

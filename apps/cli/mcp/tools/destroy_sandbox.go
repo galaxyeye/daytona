@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/daytonaio/daytona/cli/apiclient"
+	"github.com/galaxyeye/daytona/cli/apiclient"
 	"github.com/mark3labs/mcp-go/mcp"
 
 	log "github.com/sirupsen/logrus"

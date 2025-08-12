@@ -1,4 +1,4 @@
-module github.com/daytonaio/common-go
+module github.com/galaxyeye/common-go
 
 go 1.23.0
 
