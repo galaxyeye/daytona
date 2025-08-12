@@ -1,303 +1,301 @@
-# Spacedock Docker 镜像构建工具
+# Daytona Docker Image Build Tools
 
-本目录包含用于构建和发布 Spacedock 项目 Docker 镜像的工具和脚本。
+This directory contains tools and scripts for building and publishing Docker images for the Daytona project.
 
-## 目录位置
+## Directory Location
 
-这些构建工具位于 `docker/build/` 目录下，与 Dockerfile 在同一个 docker 目录中，便于管理。
+These build tools are located in the `docker/build/` directory, alongside the Dockerfile in the same docker directory for easy management.
 
-## 文件说明
+## File Description
 
-- `build-and-push.ps1` - PowerShell 脚本，适用于 Windows 环境
-- `build-and-push.sh` - Bash 脚本，适用于 Linux/macOS 环境
-- `build.env.example` - 环境变量配置示例文件
-- `docker-compose.build-local.yaml` - Docker Compose 配置，用于本地构建
-- `Makefile` - Make 配置文件，提供便捷的构建命令
-- `README.md` - 本文档
+- `build.sh` - Bash script for Linux/macOS environments
+- `build.env.example` - Example environment variable configuration file
+- `docker-compose.build-local.yaml` - Docker Compose configuration for local builds
+- `Makefile` - Make configuration file providing convenient build commands
+- `README.md` - This documentation
 
-## 支持的镜像
+## Supported Images
 
-本工具可以构建以下 Spacedock 服务的镜像：
+This tool can build images for the following Daytona services:
 
-- **api** (Spacedock) - 主 API 服务
-- **proxy** - 代理服务
-- **runner** - 运行器服务
-- **docs** - 文档服务
+- **api** (Daytona) - Main API service
+- **proxy** - Proxy service
+- **runner** - Runner service
+- **docs** - Documentation service
 
-## 快速开始
+## Quick Start
 
-### 1. 使用 Make（推荐）
+### 1. Using Make (Recommended)
 
 ```bash
-# 显示帮助信息
+# Show help information
 make help
 
-# 构建所有镜像到本地
+# Build all images locally
 make build
 
-# 构建并推送到仓库
+# Build and push to repository
 make build-push VERSION=0.0.1
 
-# 快速开发构建（单平台，无缓存）
+# Quick development build (single platform, no cache)
 make quick
 
-# 构建单个服务
+# Build individual services
 make api
 make proxy
 make runner
 make docs
 ```
 
-### 2. 使用脚本直接调用
+### 2. Using Scripts Directly
 
 #### Linux/macOS
 
 ```bash
-# 进入构建目录
+# Enter build directory
 cd docker/build
 
-# 基本构建
-./build-and-push.sh --version 0.0.1
+# Basic build
+./build.sh --version 0.0.1
 
-# 构建并推送到 GitHub Container Registry
-./build-and-push.sh \
+# Build and push to GitHub Container Registry
+./build.sh \
   --registry ghcr.io \
   --namespace myorg \
   --version 0.0.1 \
   --push
 
-# 只构建 API 和 Proxy 服务
-./build-and-push.sh \
+# Build only API and Proxy services
+./build.sh \
   --services api,proxy \
   --version 0.0.1
 ```
 
-#### Windows PowerShell
-
-```powershell
-# 进入构建目录
-cd docker\build
-
-# 基本构建
-.\build-and-push.ps1 -Version "0.0.1"
-
-# 构建并推送
-.\build-and-push.ps1 -Registry "ghcr.io" -Namespace "myorg" -Version "0.0.1" -Push
-
-# 使用构建参数
-.\build-and-push.ps1 -Version "0.0.1" -BuildArgs @{"PUBLIC_WEB_URL"="https://dev.platon.ai"}
-```
-
-### 3. 使用 Docker Compose
+### 3. Using Docker Compose
 
 ```bash
-# 进入构建目录
+# Enter build directory
 cd docker/build
 
-# 设置环境变量
+# Set environment variables
 export VERSION=0.0.1
 export REGISTRY=myregistry
 
-# 构建所有镜像
+# Build all images
 docker-compose -f docker-compose.build-local.yaml build
 
-# 构建特定服务
+# Build specific services
 docker-compose -f docker-compose.build-local.yaml build api proxy
 ```
 
-### 4. 使用环境变量
+### 4. Using Environment Variables
 
-创建 `.env` 文件（基于 `build.env.example`）：
+Create `.env` file (based on `build.env.example`):
 
 ```bash
-# 复制示例配置
+# Copy example configuration
 cp build.env.example .env
 
-# 编辑配置
+# Edit configuration
 vim .env
 ```
 
-然后使用脚本：
+Then use the script:
 
 ```bash
-# 脚本会自动读取 .env 文件
-./build-and-push.sh
+# Script will automatically read .env file
+./build.sh
 ```
 
-## 配置选项
+## Configuration Options
 
-### 环境变量
+### Environment Variables
 
-| 变量名 | 默认值 | 说明 |
-|--------|--------|------|
-| `REGISTRY` | `docker.io` | Docker 镜像仓库地址 |
-| `NAMESPACE` | `galaxyeye88` | 镜像命名空间 |
-| `VERSION` | `latest` | 镜像版本标签 |
-| `PLATFORM` | `linux/amd64,linux/arm64` | 构建平台 |
-| `SERVICES` | `api,proxy,runner,docs` | 要构建的服务 |
-| `PUSH` | `false` | 是否推送到仓库 |
-| `NO_BUILD_CACHE` | `false` | 是否禁用构建缓存 |
-| `VERBOSE` | `false` | 是否显示详细日志 |
+| Variable Name | Default Value | Description |
+|---------------|---------------|-------------|
+| `REGISTRY` | `docker.io` | Docker image registry address |
+| `NAMESPACE` | `daytonaio` | Image namespace |
+| `VERSION` | `latest` | Image version tag |
+| `PLATFORM` | `linux/amd64,linux/arm64` | Build platforms |
+| `SERVICES` | `api,proxy,runner,docs` | Services to build |
+| `PUSH` | `false` | Whether to push to repository |
+| `NO_BUILD_CACHE` | `false` | Whether to disable build cache |
+| `VERBOSE` | `false` | Whether to show verbose logs |
 
-### 命令行参数
+### Command Line Arguments
 
-#### Bash 脚本 (`build-and-push.sh`)
+#### Bash Script (`build.sh`)
 
 ```bash
-选项:
-    -r, --registry REGISTRY     Docker 镜像仓库地址
-    -n, --namespace NAMESPACE   镜像命名空间
-    -v, --version VERSION       镜像版本标签
-    -p, --platform PLATFORM    目标平台
-    -s, --services SERVICES     要构建的服务列表，逗号分隔
-    --push                      推送镜像到仓库
-    --no-cache                  不使用构建缓存
-    --verbose                   显示详细日志
-    -h, --help                  显示帮助信息
+Options:
+    -r, --registry REGISTRY     Docker image registry address
+    -n, --namespace NAMESPACE   Image namespace
+    -v, --version VERSION       Image version tag
+    -p, --platform PLATFORM    Target platforms
+    -s, --services SERVICES     List of services to build, comma-separated
+    --push                      Push images to repository
+    --no-cache                  Don't use build cache
+    --verbose                   Show verbose logs
+    -h, --help                  Show help information
 ```
 
-#### PowerShell 脚本 (`build-and-push.ps1`)
+## Common Use Cases
 
-```powershell
-参数:
-    -Registry       Docker 镜像仓库地址
-    -Namespace      镜像命名空间
-    -Version        镜像版本标签
-    -Platform       目标平台
-    -Services       要构建的服务列表，逗号分隔
-    -Push           推送镜像到仓库（开关参数）
-    -NoBuildCache   不使用构建缓存（开关参数）
-    -Verbose        显示详细日志（开关参数）
-    -BuildArgs      额外的构建参数（哈希表）
-```
-
-## 常见用例
-
-### 开发环境
+### Development Environment
 
 ```bash
-# 快速本地构建（单平台，适合开发测试）
+# Quick local build (single platform, suitable for development testing)
 make build-dev
 
-# 或者
-./build-and-push.sh --version 0.0.1 --platform linux/amd64
+# Or
+./build.sh --version 0.0.1 --platform linux/amd64
 ```
 
-### 生产环境
+### Production Environment
 
 ```bash
-# 多平台构建并推送到 Docker Hub
+# Multi-platform build and push to Docker Hub
 make build-prod VERSION=0.0.1
 
-# 推送到 GitHub Container Registry
+# Push to GitHub Container Registry
 make github VERSION=0.0.1
 
-# 推送到私有仓库
+# Push to private registry
 make build-push \
   REGISTRY=docker.io \
-  NAMESPACE=galaxyeye88 \
+  NAMESPACE=daytonaio \
   VERSION=0.0.1
 ```
 
-### CI/CD 环境
+### CI/CD Environment
 
 ```bash
-# 在 CI/CD 管道中使用环境变量
+# Use environment variables in CI/CD pipeline
 export REGISTRY=ghcr.io
 export NAMESPACE=${{ github.repository_owner }}
 export VERSION=${{ github.ref_name }}
 export PUSH=true
 
-./build-and-push.sh
+./build.sh
 ```
 
-### 构建特定服务
+### Building Specific Services
 
 ```bash
-# 只构建 API 服务
+# Build only API service
 make build-single SERVICE=api VERSION=0.0.1
 
-# 构建多个但不是全部服务
-./build-and-push.sh --services api,proxy --version 0.0.1
+# Build multiple but not all services
+./build.sh --services api,proxy --version 0.0.1
 ```
 
-## 构建优化
+## Build Optimization
 
-### 使用构建缓存
+### Using Build Cache
 
-默认情况下会使用 Docker 构建缓存来加速构建。如果需要完全重新构建：
+By default, Docker build cache is used to accelerate builds. If you need to rebuild completely:
 
 ```bash
-# 禁用缓存
-./build-and-push.sh --no-cache
+# Disable cache
+./build.sh --no-cache
 
-# 或者
-make quick  # 包含 --no-cache
+# Or
+make quick  # includes --no-cache
 ```
 
-### 多平台构建
+### Multi-platform Builds
 
-对于生产环境，建议构建多平台镜像：
+For production environments, it's recommended to build multi-platform images:
 
 ```bash
-# 多平台构建需要 Docker Buildx
-./build-and-push.sh --platform linux/amd64,linux/arm64
+# Multi-platform builds require Docker Buildx
+./build.sh --platform linux/amd64,linux/arm64
 ```
 
-如果没有 Docker Buildx，脚本会自动降级为单平台构建。
+If Docker Buildx is not available, the script will automatically downgrade to single-platform builds.
 
-### 并行构建
+### Parallel Builds
 
-脚本支持并行构建多个服务以提高效率。所有服务会同时开始构建，但每个服务的构建过程是独立的。
+The script supports parallel builds of multiple services to improve efficiency. All services will start building simultaneously, but each service's build process is independent.
 
-## 故障排除
+## Troubleshooting
 
-### Docker 相关问题
+### Docker Related Issues
 
 ```bash
-# 检查 Docker 状态
+# Check Docker status
 docker version
 docker buildx version
 
-# 清理构建缓存
+# Clean build cache
 make clean
 
-# 完全清理（慎用）
+# Complete cleanup (use with caution)
 make clean-all
 ```
 
-### 构建失败
+### Docker Registry Mirror
 
-1. **内存不足**: 减少并行构建的服务数量
-2. **网络问题**: 检查网络连接和代理设置
-3. **权限问题**: 确保有 Docker 访问权限
-4. **平台不支持**: 检查目标平台是否受支持
+If you encounter network timeout issues when pulling Docker images (like `TLS handshake timeout`), you can configure Docker registry mirrors to speed up image downloads:
 
-### 推送失败
+1. **Configure Docker daemon** (recommended):
 
-1. **认证问题**: 确保已登录到镜像仓库
+   Create or edit `/etc/docker/daemon.json`:
+
+   ```json
+   {
+     "registry-mirrors": [
+       "https://docker.m.daocloud.io"
+     ]
+   }
+   ```
+
+2. **Restart Docker service**:
+
+   ```bash
+   sudo systemctl restart docker
+   ```
+
+3. **Verify configuration**:
+
+   ```bash
+   docker info | grep "Registry Mirrors" -A 1
+   ```
+
+**Note**: This configuration is particularly useful for users in China where direct access to Docker Hub may be slow or unstable.
+
+### Build Failures
+
+1. **Insufficient Memory**: Reduce the number of services being built in parallel
+2. **Network Issues**: Check network connection and proxy settings
+3. **Permission Issues**: Ensure Docker access permissions
+4. **Platform Not Supported**: Check if target platform is supported
+
+### Push Failures
+
+1. **Authentication Issues**: Ensure logged in to image registry
 
    ```bash
    docker login
-   # 或者对于 GitHub Container Registry
+   # Or for GitHub Container Registry
    echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
    ```
 
-2. **权限问题**: 确保有推送权限到目标仓库
+2. **Permission Issues**: Ensure push permissions to target registry
 
-3. **镜像名称问题**: 检查镜像名称格式是否正确
+3. **Image Name Issues**: Check if image name format is correct
 
-## 最佳实践
+## Best Practices
 
-1. **版本管理**: 使用语义化版本号（如 0.0.1）
-2. **标签策略**: 为不同环境使用不同标签（dev, staging, prod）
-3. **缓存利用**: 在 CI/CD 中配置适当的缓存策略
-4. **安全扫描**: 在推送前对镜像进行安全扫描
-5. **资源清理**: 定期清理不需要的镜像和缓存
+1. **Version Management**: Use semantic versioning (e.g., 0.0.1)
+2. **Tagging Strategy**: Use different tags for different environments (dev, staging, prod)
+3. **Cache Utilization**: Configure appropriate cache strategies in CI/CD
+4. **Security Scanning**: Perform security scans on images before pushing
+5. **Resource Cleanup**: Regularly clean up unnecessary images and cache
 
-## 集成到 CI/CD
+## CI/CD Integration
 
-### GitHub Actions 示例
+### GitHub Actions Example
 
 ```yaml
 name: Build and Push Docker Images
@@ -321,22 +319,22 @@ jobs:
       
       - name: Build and push images
         run: |
-          cd scripts/build
-          ./build-and-push.sh \
+          cd docker/build
+          ./build.sh \
             --registry ghcr.io \
             --namespace ${{ github.repository_owner }} \
             --version ${GITHUB_REF#refs/tags/} \
             --push
 ```
 
-### GitLab CI 示例
+### GitLab CI Example
 
 ```yaml
 build-images:
   stage: build
   script:
-    - cd scripts/build
-    - ./build-and-push.sh
+    - cd docker/build
+    - ./build.sh
       --registry $CI_REGISTRY
       --namespace $CI_PROJECT_NAMESPACE
       --version $CI_COMMIT_TAG
@@ -345,10 +343,10 @@ build-images:
     - tags
 ```
 
-## 贡献
+## Contributing
 
-如果您发现问题或有改进建议，请提交 Issue 或 Pull Request。
+If you find issues or have improvement suggestions, please submit an Issue or Pull Request.
 
-## 许可证
+## License
 
-本项目遵循与 Spacedock 主项目相同的许可证。
+This project follows the same license as the main Daytona project.
