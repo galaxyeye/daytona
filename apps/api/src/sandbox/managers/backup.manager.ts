@@ -50,7 +50,7 @@ export class BackupManager {
   }
 
   //  todo: make frequency configurable or more efficient
-  @Cron(CronExpression.EVERY_5_MINUTES, { name: 'ad-hoc-backup-check' })
+  @Cron(CronExpression.EVERY_YEAR, { name: 'ad-hoc-backup-check' })
   async adHocBackupCheck(): Promise<void> {
     // Get all ready runners
     const allRunners = await this.runnerService.findAll()
@@ -85,11 +85,6 @@ export class BackupManager {
                 return
               }
 
-              if (alwaysTrue()) {
-                // todo: correct backup creation
-                return
-              }
-
               try {
                 //  todo: remove the catch handler asap
                 await this.startBackupCreate(sandbox.id).catch((error) => {
@@ -107,13 +102,8 @@ export class BackupManager {
     )
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS, { name: 'sync-backup-states' }) // Run every 10 seconds
+  @Cron(CronExpression.EVERY_YEAR, { name: 'sync-backup-states' }) // Run every 10 seconds
   async syncBackupStates(): Promise<void> {
-    if (alwaysTrue()) {
-      // todo: correct backup creation
-      return
-    }
-
     //  lock the sync to only run one instance at a time
     const lockKey = 'sync-backup-states'
     const hasLock = await this.redisLockProvider.lock(lockKey, 10)
@@ -179,7 +169,7 @@ export class BackupManager {
   async startBackupCreate(sandboxId: string): Promise<void> {
     if (alwaysTrue()) {
       // todo: correct backup creation
-      this.logger.log(`Skipping backup creation for sandbox ${sandboxId}, waiting for bug fix`)
+      // this.logger.log(`Skipping backup creation for sandbox ${sandboxId}, waiting for bug fix`)
       return
     }
 
