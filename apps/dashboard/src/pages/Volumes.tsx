@@ -6,7 +6,7 @@
 import { Plus } from 'lucide-react'
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
-import { OrganizationRolePermissionsEnum, VolumeDto, VolumeState } from '@daytonaio/api-client'
+import { OrganizationRolePermissionsEnum, VolumeDto, VolumeState } from '@galaxyeye/api-client'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

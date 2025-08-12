@@ -11,7 +11,7 @@ import {
   SnapshotState,
   OrganizationRolePermissionsEnum,
   PaginatedSnapshotsDto,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { SnapshotTable } from '@/components/SnapshotTable'
 import {
   Dialog,

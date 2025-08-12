@@ -43,7 +43,7 @@ export class SandboxDto {
 
   @ApiPropertyOptional({
     description: 'The snapshot used for the sandbox',
-    example: 'daytonaio/sandbox:latest',
+    example: 'galaxyeye/sandbox:latest',
   })
   snapshot: string
 

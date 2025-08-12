@@ -16,7 +16,7 @@
               "executor": "nx:run-commands",
               "options": {
                 "commands": [
-                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i dist/apps/api/openapi.json -g python --additional-properties=packageName=daytona_api_client_async,projectName=daytona_api_client_async,packageVersion=$DEFAULT_PACKAGE_VERSION,pythonPackageName=daytona_api_client_async,disallowAdditionalPropertiesIfNotPresent=false,library=asyncio -o libs/api-client-python-async",
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=galaxyeye -i dist/apps/api/openapi.json -g python --additional-properties=packageName=daytona_api_client_async,projectName=daytona_api_client_async,packageVersion=$DEFAULT_PACKAGE_VERSION,pythonPackageName=daytona_api_client_async,disallowAdditionalPropertiesIfNotPresent=false,library=asyncio -o libs/api-client-python-async",
                   "sed -i 's/^license = \".*\"/license = \"Apache-2.0\"/' libs/api-client-python-async/pyproject.toml"
                 ],
                 "parallel": false
@@ -93,7 +93,7 @@
               "executor": "nx:run-commands",
               "options": {
                 "commands": [
-                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i dist/apps/api/openapi.json -g python --additional-properties=packageName=daytona_api_client,projectName=daytona_api_client,packageVersion=$DEFAULT_PACKAGE_VERSION,pythonPackageName=daytona_api_client,disallowAdditionalPropertiesIfNotPresent=false -o libs/api-client-python",
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=galaxyeye -i dist/apps/api/openapi.json -g python --additional-properties=packageName=daytona_api_client,projectName=daytona_api_client,packageVersion=$DEFAULT_PACKAGE_VERSION,pythonPackageName=daytona_api_client,disallowAdditionalPropertiesIfNotPresent=false -o libs/api-client-python",
                   "sed -i 's/^license = \".*\"/license = \"Apache-2.0\"/' libs/api-client-python/pyproject.toml"
                 ],
                 "parallel": false
@@ -247,7 +247,7 @@
               "executor": "nx:run-commands",
               "options": {
                 "commands": [
-                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i apps/runner/pkg/api/docs/swagger.json -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true,withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,useTags=true,enumPropertyNaming=UPPERCASE --type-mappings=DateTime=Date -o libs/runner-api-client/src",
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=galaxyeye -i apps/runner/pkg/api/docs/swagger.json -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true,withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,useTags=true,enumPropertyNaming=UPPERCASE --type-mappings=DateTime=Date -o libs/runner-api-client/src",
                   "yarn nx format runner-api-client"
                 ],
                 "parallel": false
@@ -271,7 +271,7 @@
             "npm:typescript",
             "npm:openapi-client",
             "npm:openapi-generator",
-            "npm:@daytonaio/runner-api-client"
+            "npm:@galaxyeye/runner-api-client"
           ],
           "metadata": {
             "targetGroups": {
@@ -279,9 +279,9 @@
                 "prepare"
               ]
             },
-            "description": "OpenAPI client for @daytonaio/runner-api-client",
+            "description": "OpenAPI client for @galaxyeye/runner-api-client",
             "js": {
-              "packageName": "@daytonaio/runner-api-client",
+              "packageName": "@galaxyeye/runner-api-client",
               "packageMain": "./src/index.js",
               "isInPackageManagerWorkspaces": false
             }
@@ -461,7 +461,7 @@
             "targetGroups": {},
             "description": "TypeScript SDK for Daytona",
             "js": {
-              "packageName": "@daytonaio/sdk",
+              "packageName": "@galaxyeye/sdk",
               "packageMain": "./src/index.js",
               "isInPackageManagerWorkspaces": false
             }
@@ -507,7 +507,7 @@
             "generate:api-client": {
               "executor": "nx:run-commands",
               "options": {
-                "command": "yarn run openapi-generator-cli generate --git-repo-id=apiclient --git-user-id=daytonaio -i dist/apps/api/openapi.json -g go --additional-properties=packageName=apiclient,moduleVersion=$DEFAULT_PACKAGE_VERSION,generateInterfaces=true,enumClassPrefix=true,structPrefix=true -o libs/api-client-go"
+                "command": "yarn run openapi-generator-cli generate --git-repo-id=apiclient --git-user-id=galaxyeye -i dist/apps/api/openapi.json -g go --additional-properties=packageName=apiclient,moduleVersion=$DEFAULT_PACKAGE_VERSION,generateInterfaces=true,enumClassPrefix=true,structPrefix=true -o libs/api-client-go"
               },
               "configurations": {},
               "parallelism": true
@@ -753,7 +753,7 @@
               "executor": "nx:run-commands",
               "options": {
                 "commands": [
-                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=daytonaio -i dist/apps/api/openapi.json -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true,withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,useTags=true,enumPropertyNaming=UPPERCASE --type-mappings=DateTime=Date -o libs/api-client/src",
+                  "yarn run openapi-generator-cli generate --git-repo-id=daytona --git-user-id=galaxyeye -i dist/apps/api/openapi.json -g typescript-axios --additional-properties=supportsES6=true,typescriptThreePlus=true,withSeparateModelsAndApi=true,apiPackage=api,modelPackage=models,useTags=true,enumPropertyNaming=UPPERCASE --type-mappings=DateTime=Date -o libs/api-client/src",
                   "yarn nx format api-client"
                 ],
                 "parallel": false
@@ -805,13 +805,13 @@
             "npm:typescript",
             "npm:openapi-client",
             "npm:openapi-generator",
-            "npm:@daytonaio/api-client"
+            "npm:@galaxyeye/api-client"
           ],
           "metadata": {
             "targetGroups": {},
-            "description": "OpenAPI client for @daytonaio/api-client",
+            "description": "OpenAPI client for @galaxyeye/api-client",
             "js": {
-              "packageName": "@daytonaio/api-client",
+              "packageName": "@galaxyeye/api-client",
               "packageMain": "./src/index.js",
               "isInPackageManagerWorkspaces": false
             }
@@ -1753,7 +1753,7 @@
                 ],
                 "file": "docker/Dockerfile",
                 "tags": [
-                  "daytonaio/daytona-runner:$VERSION"
+                  "galaxyeye/daytona-runner:$VERSION"
                 ],
                 "build-args": [
                   "VERSION=$VERSION",
@@ -1768,7 +1768,7 @@
                 "local-registry": {
                   "push": true,
                   "tags": [
-                    "registry:5000/daytonaio/daytona-runner:$VERSION"
+                    "registry:5000/galaxyeye/daytona-runner:$VERSION"
                   ]
                 }
               },
@@ -1857,7 +1857,7 @@
                 ],
                 "file": "docker/Dockerfile",
                 "tags": [
-                  "daytonaio/daytona-proxy:$VERSION"
+                  "galaxyeye/daytona-proxy:$VERSION"
                 ],
                 "build-args": [
                   "VERSION=$VERSION",
@@ -1872,7 +1872,7 @@
                 "local-registry": {
                   "push": true,
                   "tags": [
-                    "registry:5000/daytonaio/daytona-proxy:$VERSION"
+                    "registry:5000/galaxyeye/daytona-proxy:$VERSION"
                   ]
                 }
               },
@@ -2033,7 +2033,7 @@
                 ],
                 "file": "docker/Dockerfile",
                 "tags": [
-                  "daytonaio/daytona-docs:$VERSION"
+                  "galaxyeye/daytona-docs:$VERSION"
                 ],
                 "build-args": [
                   "VERSION=$VERSION",
@@ -2048,7 +2048,7 @@
                 "local-registry": {
                   "push": true,
                   "tags": [
-                    "registry:5000/daytonaio/daytona-docs:$VERSION"
+                    "registry:5000/galaxyeye/daytona-docs:$VERSION"
                   ]
                 }
               },
@@ -2310,7 +2310,7 @@
                 ],
                 "file": "docker/Dockerfile",
                 "tags": [
-                  "daytonaio/daytona-api:$VERSION"
+                  "galaxyeye/daytona-api:$VERSION"
                 ],
                 "build-args": [
                   "VERSION=$VERSION",
@@ -2325,7 +2325,7 @@
                 "local-registry": {
                   "push": true,
                   "tags": [
-                    "registry:5000/daytonaio/daytona-api:$VERSION"
+                    "registry:5000/galaxyeye/daytona-api:$VERSION"
                   ]
                 }
               },
@@ -2399,12 +2399,12 @@
           "implicitDependencies": []
         }
       },
-      "@daytonaio/ai": {
-        "name": "@daytonaio/ai",
+      "@galaxyeye/ai": {
+        "name": "@galaxyeye/ai",
         "type": "lib",
         "data": {
           "root": ".",
-          "name": "@daytonaio/ai",
+          "name": "@galaxyeye/ai",
           "includedScripts": [],
           "tags": [
             "npm:private"
@@ -2486,7 +2486,7 @@
         }
       ],
       "cli": [],
-      "@daytonaio/ai": []
+      "@galaxyeye/ai": []
     }
   }
 }

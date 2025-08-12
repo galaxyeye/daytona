@@ -16,7 +16,7 @@ import {
   ToolboxApi,
   AuditApi,
   DaytonaConfiguration,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import axios, { AxiosError } from 'axios'
 import { DaytonaError } from './errors'
 

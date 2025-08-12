@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FileInfo, Match, ReplaceRequest, ReplaceResult, SearchFilesResponse, ToolboxApi } from '@daytonaio/api-client'
+import { FileInfo, Match, ReplaceRequest, ReplaceResult, SearchFilesResponse, ToolboxApi } from '@galaxyeye/api-client'
 import { prefixRelativePath } from './utils/Path'
 import { dynamicImport } from './utils/Import'
 import { Buffer } from 'buffer'

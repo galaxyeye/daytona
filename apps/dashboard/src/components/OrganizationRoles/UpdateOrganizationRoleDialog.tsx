@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react'
-import { OrganizationRole, OrganizationRolePermissionsEnum } from '@daytonaio/api-client'
+import { OrganizationRole, OrganizationRolePermissionsEnum } from '@galaxyeye/api-client'
 import {
   Dialog,
   DialogClose,

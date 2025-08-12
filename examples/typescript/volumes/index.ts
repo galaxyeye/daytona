@@ -1,4 +1,4 @@
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 import path from 'path'
 
 async function main() {

@@ -10,7 +10,7 @@ import {
   ApiKeyResponse,
   CreateApiKeyPermissionsEnum,
   OrganizationUserRoleEnum,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { ApiKeyTable } from '../components/ApiKeyTable'
 import { toast } from 'sonner'
 import { useSelectedOrganization } from '@/hooks/useSelectedOrganization'

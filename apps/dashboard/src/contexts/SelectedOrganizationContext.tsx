@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { Organization, OrganizationRolePermissionsEnum, OrganizationUser } from '@daytonaio/api-client'
+import { Organization, OrganizationRolePermissionsEnum, OrganizationUser } from '@galaxyeye/api-client'
 
 import { createContext } from 'react'
 

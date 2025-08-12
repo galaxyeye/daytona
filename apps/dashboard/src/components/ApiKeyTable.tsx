@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { ApiKeyList } from '@daytonaio/api-client'
+import { ApiKeyList } from '@galaxyeye/api-client'
 import {
   ColumnDef,
   flexRender,

@@ -109,7 +109,7 @@
         "context": "{workspaceRoot}",
         "platforms": ["linux/amd64", "linux/arm64"],
         "file": "docker/Dockerfile",
-        "tags": ["daytonaio/daytona-{projectName}:$VERSION"],
+        "tags": ["galaxyeye/daytona-{projectName}:$VERSION"],
         "build-args": [
           "VERSION=$VERSION",
           "PUBLIC_ALGOLIA_APP_ID=$PUBLIC_ALGOLIA_APP_ID",
@@ -122,7 +122,7 @@
         },
         "local-registry": {
           "push": true,
-          "tags": ["registry:5000/daytonaio/daytona-{projectName}:$VERSION"]
+          "tags": ["registry:5000/galaxyeye/daytona-{projectName}:$VERSION"]
         }
       },
       "dependsOn": [

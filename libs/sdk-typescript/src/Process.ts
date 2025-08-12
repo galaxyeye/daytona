@@ -10,7 +10,7 @@ import {
   SessionExecuteRequest,
   SessionExecuteResponse,
   ToolboxApi,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { SandboxCodeToolbox } from './Sandbox'
 import { ExecuteResponse } from './types/ExecuteResponse'
 import { ArtifactParser } from './utils/ArtifactParser'

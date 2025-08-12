@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { Check, Copy, Plus } from 'lucide-react'
-import { CreateApiKeyPermissionsEnum, ApiKeyResponse } from '@daytonaio/api-client'
+import { CreateApiKeyPermissionsEnum, ApiKeyResponse } from '@galaxyeye/api-client'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {

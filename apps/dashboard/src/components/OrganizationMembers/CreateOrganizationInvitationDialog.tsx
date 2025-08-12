@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
-import { CreateOrganizationInvitationRoleEnum, OrganizationRole } from '@daytonaio/api-client'
+import { CreateOrganizationInvitationRoleEnum, OrganizationRole } from '@galaxyeye/api-client'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {

@@ -84,7 +84,7 @@ config = DaytonaConfig(
 
 ```
 ```typescript
-import { DaytonaConfig } from '@daytonaio/sdk';
+import { DaytonaConfig } from '@galaxyeye/sdk';
 
 const config: DaytonaConfig = {
     apiKey: "your-api-key",          
@@ -176,7 +176,7 @@ This example shows how to build an AI-powered data analyst that automatically ge
 Install the Daytona SDK and Anthropic SDK to your project:
 
     ```bash pip install daytona anthropic python-dotenv ```
-    ```bash npm install @daytonaio/sdk @anthropic-ai/sdk dotenv ```
+    ```bash npm install @galaxyeye/sdk @anthropic-ai/sdk dotenv ```
 
 #### 1.2 Configure Environment
 
@@ -225,7 +225,7 @@ sandbox.fs.upload_file("dataset.csv", "/home/daytona/dataset.csv")
 ````
 ```typescript
 import 'dotenv/config'
-import { Daytona } from '@daytonaio/sdk';
+import { Daytona } from '@galaxyeye/sdk';
 
 // Create sandbox
 const daytona = new Daytona();
@@ -558,7 +558,7 @@ if __name__ == "__main__":
 import 'dotenv/config'
 import fs from 'fs'
 import Anthropic from '@anthropic-ai/sdk'
-import { Daytona, Sandbox } from '@daytonaio/sdk';
+import { Daytona, Sandbox } from '@galaxyeye/sdk';
 
 
 async function main() {
@@ -1133,15 +1133,15 @@ pip install daytona
 ```
 ```bash
 # Using npm
-npm install @daytonaio/sdk
+npm install @galaxyeye/sdk
 
 # Using yarn
 
-yarn add @daytonaio/sdk
+yarn add @galaxyeye/sdk
 
 # Using pnpm
 
-pnpm add @daytonaio/sdk
+pnpm add @galaxyeye/sdk
 
 ```
 
@@ -1170,7 +1170,7 @@ sandbox.delete()
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 
 async function main() {
   // Initialize the Daytona client
@@ -1242,7 +1242,7 @@ def hello():
     </head>
     <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #0a0a0a; font-family: Arial, sans-serif;">
         <div style="text-align: center; padding: 2rem; border-radius: 10px; background-color: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-            <img src="https://raw.githubusercontent.com/daytonaio/daytona/main/assets/images/Daytona-logotype-black.png" alt="Daytona Logo" style="width: 180px; margin: 10px 0px;">
+            <img src="https://raw.githubusercontent.com/galaxyeye/daytona/main/assets/images/Daytona-logotype-black.png" alt="Daytona Logo" style="width: 180px; margin: 10px 0px;">
             <p>This web app is running in a Daytona sandbox!</p>
         </div>
     </body>
@@ -1275,7 +1275,7 @@ print(f"Flask app is available at: {preview_info.url}")
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk';
+import { Daytona } from '@galaxyeye/sdk';
 
 const daytona = new Daytona(({
   apiKey: "YOUR_API_KEY"
@@ -1300,7 +1300,7 @@ def hello():
     </head>
     <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #0a0a0a; font-family: Arial, sans-serif;">
         <div style="text-align: center; padding: 2rem; border-radius: 10px; background-color: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-            <img src="https://raw.githubusercontent.com/daytonaio/daytona/main/assets/images/Daytona-logotype-black.png" alt="Daytona Logo" style="width: 180px; margin: 10px 0px;">
+            <img src="https://raw.githubusercontent.com/galaxyeye/daytona/main/assets/images/Daytona-logotype-black.png" alt="Daytona Logo" style="width: 180px; margin: 10px 0px;">
             <p>This web app is running in a Daytona sandbox!</p>
         </div>
     </body>
@@ -1405,7 +1405,7 @@ python claude-example.py
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 import * as dotenv from 'dotenv'
 import axios from 'axios'
 
@@ -1512,7 +1512,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 If you want to use [images from your local device](/docs/snapshots#using-a-local-image) or simply prefer managing your Sandboxes using the command line interface, install the Daytona CLI by running:
 
 ```bash
-brew install daytonaio/cli/daytona
+brew install galaxyeye/cli/daytona
 ```
 
 ```bash
@@ -1750,7 +1750,7 @@ Run your first line of code in a Daytona Sandbox. Use our [LLMs context files](/
   pip install daytona
   ```
   ```bash
-  npm install @daytonaio/sdk
+  npm install @galaxyeye/sdk
   ```
 
 #### 3. Write Your Code
@@ -1786,7 +1786,7 @@ Run your first line of code in a Daytona Sandbox. Use our [LLMs context files](/
   ```
   Create a file named: `index.mts`
   ```typescript
-  import { Daytona } from '@daytonaio/sdk';
+  import { Daytona } from '@galaxyeye/sdk';
 
   // Initialize the Daytona client
   const daytona = new Daytona({ apiKey: 'your-api-key' });
@@ -1856,7 +1856,7 @@ lsp_server = sandbox.create_lsp_server(
 
 ```
 ```typescript
-import { Daytona, LspLanguageId } from '@daytonaio/sdk'
+import { Daytona, LspLanguageId } from '@galaxyeye/sdk'
 
 // Create sandbox
 const daytona = new Daytona()
@@ -1886,7 +1886,7 @@ LspLanguageId.TYPESCRIPT
 
 ```
 ```typescript
-import { LspLanguageId } from '@daytonaio/sdk'
+import { LspLanguageId } from '@galaxyeye/sdk'
 
 // Available language IDs
 LspLanguageId.PYTHON      
@@ -2062,7 +2062,7 @@ if __name__ == "__main__":
 
 ```
   ```typescript
-  import { Daytona, Sandbox } from '@daytonaio/sdk'
+  import { Daytona, Sandbox } from '@galaxyeye/sdk'
 
   async function main() {
     const daytona = new Daytona()
@@ -2150,7 +2150,7 @@ you can process log stream synchronously. For example, you can write logs to a f
 
   ```
   ```typescript
-  import { Daytona, Sandbox } from '@daytonaio/sdk'
+  import { Daytona, Sandbox } from '@galaxyeye/sdk'
 
   async function main() {
     const daytona = new Daytona()
@@ -2208,7 +2208,7 @@ Before getting started, ensure you have:
 ### 1. Install Daytona CLI
 
 ```bash
-brew install daytonaio/cli/daytona
+brew install galaxyeye/cli/daytona
 ```
 
 ```bash
@@ -2756,7 +2756,7 @@ daytona = Daytona(config)
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk';
+import { Daytona } from '@galaxyeye/sdk';
 
 const daytona: Daytona = new Daytona({
     target: "eu"
@@ -2814,7 +2814,7 @@ sandbox = daytona.create(params)
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk';
+import { Daytona } from '@galaxyeye/sdk';
 
 const daytona = new Daytona();
 
@@ -2866,7 +2866,7 @@ sandbox = daytona.create(params)
 
 ```
 ```typescript
-import { Daytona, Image } from "@daytonaio/sdk";
+import { Daytona, Image } from "@galaxyeye/sdk";
 
 async function main() {
   const daytona = new Daytona();
@@ -3198,7 +3198,7 @@ sandbox.delete()
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 
 async function main() {
   // Initialize the Daytona client
@@ -3274,7 +3274,7 @@ sandbox = daytona.create(
 
 ```
 ```typescript
-import { Daytona, Image } from "@daytonaio/sdk";
+import { Daytona, Image } from "@galaxyeye/sdk";
 
 async function main() {
   const daytona = new Daytona();
@@ -3934,7 +3934,7 @@ sandbox.delete()
 ```
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 import path from 'path'
 
 async function main() {

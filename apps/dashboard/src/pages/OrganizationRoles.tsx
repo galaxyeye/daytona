@@ -6,7 +6,7 @@
 import React, { useState } from 'react'
 import { toast } from 'sonner'
 import { useApi } from '@/hooks/useApi'
-import { OrganizationRolePermissionsEnum } from '@daytonaio/api-client'
+import { OrganizationRolePermissionsEnum } from '@galaxyeye/api-client'
 import { OrganizationRoleTable } from '@/components/OrganizationRoles/OrganizationRoleTable'
 import { CreateOrganizationRoleDialog } from '@/components/OrganizationRoles/CreateOrganizationRoleDialog'
 import { useSelectedOrganization } from '@/hooks/useSelectedOrganization'

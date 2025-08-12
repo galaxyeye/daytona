@@ -45,7 +45,7 @@ export class WorkspaceDto extends SandboxDto {
 
   @ApiPropertyOptional({
     description: 'The image used for the workspace',
-    example: 'daytonaio/workspace:latest',
+    example: 'galaxyeye/workspace:latest',
   })
   image: string
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { ToolboxApi, ListBranchResponse, GitStatus } from '@daytonaio/api-client'
+import { ToolboxApi, ListBranchResponse, GitStatus } from '@galaxyeye/api-client'
 import { prefixRelativePath } from './utils/Path'
 
 /**

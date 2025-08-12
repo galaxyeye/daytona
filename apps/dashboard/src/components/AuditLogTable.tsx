@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { AuditLog } from '@daytonaio/api-client'
+import { AuditLog } from '@galaxyeye/api-client'
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { TextSearch } from 'lucide-react'
 import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from '@/components/ui/table'

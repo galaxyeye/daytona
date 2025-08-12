@@ -1,4 +1,4 @@
-import { Daytona, Image } from '@daytonaio/sdk'
+import { Daytona, Image } from '@galaxyeye/sdk'
 import fs from 'fs'
 
 async function main() {

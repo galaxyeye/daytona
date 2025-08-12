@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { VolumeDto, VolumesApi } from '@daytonaio/api-client'
+import { VolumeDto, VolumesApi } from '@galaxyeye/api-client'
 import { DaytonaNotFoundError } from './errors/DaytonaError'
 
 /**

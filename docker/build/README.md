@@ -114,7 +114,7 @@ Then use the script:
 | Variable Name | Default Value | Description |
 |---------------|---------------|-------------|
 | `REGISTRY` | `docker.io` | Docker image registry address |
-| `NAMESPACE` | `daytonaio` | Image namespace |
+| `NAMESPACE` | `galaxyeye` | Image namespace |
 | `VERSION` | `latest` | Image version tag |
 | `PLATFORM` | `linux/amd64,linux/arm64` | Build platforms |
 | `SERVICES` | `api,proxy,runner,docs` | Services to build |
@@ -163,7 +163,7 @@ make github VERSION=0.0.1
 # Push to private registry
 make build-push \
   REGISTRY=docker.io \
-  NAMESPACE=daytonaio \
+  NAMESPACE=galaxyeye \
   VERSION=0.0.1
 ```
 

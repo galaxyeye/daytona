@@ -28,7 +28,7 @@ import {
   ProcessRestartResponse,
   ProcessLogsResponse,
   ProcessErrorsResponse,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 
 /**
  * Interface for region coordinates used in screenshot operations

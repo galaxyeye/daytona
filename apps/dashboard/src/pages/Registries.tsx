@@ -10,7 +10,7 @@ import {
   DockerRegistryRegistryTypeEnum,
   OrganizationRolePermissionsEnum,
   type DockerRegistry,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { RegistryTable } from '@/components/RegistryTable'
 import {
   Dialog,

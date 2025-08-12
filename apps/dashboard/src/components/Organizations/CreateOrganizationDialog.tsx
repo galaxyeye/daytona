@@ -5,7 +5,7 @@
 
 import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
-import { Organization } from '@daytonaio/api-client'
+import { Organization } from '@galaxyeye/api-client'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { Sandbox, SandboxState, SnapshotDto } from '@daytonaio/api-client'
+import { Sandbox, SandboxState, SnapshotDto } from '@galaxyeye/api-client'
 import { Table } from '@tanstack/react-table'
 
 export interface SandboxTableProps {

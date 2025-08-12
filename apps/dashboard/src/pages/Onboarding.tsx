@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { Check, ClipboardIcon, Eye, EyeOff, Loader2, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
-import { CreateApiKeyPermissionsEnum, ApiKeyResponse, OrganizationRolePermissionsEnum } from '@daytonaio/api-client'
+import { CreateApiKeyPermissionsEnum, ApiKeyResponse, OrganizationRolePermissionsEnum } from '@galaxyeye/api-client'
 import pythonIcon from '@/assets/python.svg'
 import typescriptIcon from '@/assets/typescript.svg'
 import { Button } from '@/components/ui/button'
@@ -310,9 +310,9 @@ const Onboarding: React.FC = () => {
 
 const codeExamples = {
   typescript: {
-    install: `npm install @daytonaio/sdk`,
+    install: `npm install @galaxyeye/sdk`,
     run: `npx tsx index.mts`,
-    example: `import { Daytona } from '@daytonaio/sdk'
+    example: `import { Daytona } from '@galaxyeye/sdk'
   
 // Initialize the Daytona client
 const daytona = new Daytona({ apiKey: 'your-api-key' });

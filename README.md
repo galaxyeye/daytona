@@ -1,10 +1,10 @@
 <div align="center">
 
-[![Documentation](https://img.shields.io/github/v/release/daytonaio/docs?label=Docs&color=23cc71)](https://www.daytona.io/docs)
+[![Documentation](https://img.shields.io/github/v/release/galaxyeye/docs?label=Docs&color=23cc71)](https://www.daytona.io/docs)
 ![License](https://img.shields.io/badge/License-AGPL--3-blue)
 [![Go Report Card](https://goreportcard.com/badge/github.com/galaxyeye/daytona)](https://goreportcard.com/report/github.com/galaxyeye/daytona)
-[![Issues - daytona](https://img.shields.io/github/issues/daytonaio/daytona)](https://github.com/galaxyeye/daytona/issues)
-![GitHub Release](https://img.shields.io/github/v/release/daytonaio/daytona)
+[![Issues - daytona](https://img.shields.io/github/issues/galaxyeye/daytona)](https://github.com/galaxyeye/daytona/issues)
+![GitHub Release](https://img.shields.io/github/v/release/galaxyeye/daytona)
 
 </div>
 
@@ -30,7 +30,7 @@
     <a href="https://github.com/galaxyeye/daytona/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=%F0%9F%90%9B+Bug+Report%3A+"> Report Bug </a>·
     <a href="https://github.com/galaxyeye/daytona/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title=%F0%9F%9A%80+Feature%3A+"> Request Feature </a>·
     <a href="https://go.daytona.io/slack"> Join our Slack </a>·
-    <a href="https://x.com/daytonaio"> Connect on X </a>
+    <a href="https://x.com/galaxyeye"> Connect on X </a>
 </p>
 
 <p align="center">
@@ -51,7 +51,7 @@ pip install daytona
 ### TypeScript SDK
 
 ```bash
-npm install @daytonaio/sdk
+npm install @galaxyeye/sdk
 ```
 
 ---
@@ -100,7 +100,7 @@ daytona.remove(sandbox)
 ### Typescript SDK
 
 ```jsx
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 
 async function main() {
   // Initialize the Daytona client

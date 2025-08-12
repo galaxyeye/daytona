@@ -7089,7 +7089,7 @@ components:
         backupState: None
         user: daytona
         autoArchiveInterval: 10080
-        snapshot: daytonaio/sandbox:latest
+        snapshot: galaxyeye/sandbox:latest
       properties:
         id:
           description: The ID of the sandbox
@@ -7101,7 +7101,7 @@ components:
           type: string
         snapshot:
           description: The snapshot used for the sandbox
-          example: daytonaio/sandbox:latest
+          example: galaxyeye/sandbox:latest
           type: string
         user:
           description: The user associated with the project
@@ -9178,7 +9178,7 @@ components:
         updatedAt: 2024-10-01T12:00:00Z
         info: ''
         desiredState: destroyed
-        image: daytonaio/workspace:latest
+        image: galaxyeye/workspace:latest
         volumes:
           - mountPath: /data
             volumeId: volume123
@@ -9199,7 +9199,7 @@ components:
         backupState: None
         user: daytona
         autoArchiveInterval: 10080
-        snapshot: daytonaio/sandbox:latest
+        snapshot: galaxyeye/sandbox:latest
       properties:
         id:
           description: The ID of the sandbox
@@ -9211,7 +9211,7 @@ components:
           type: string
         snapshot:
           description: The snapshot used for the sandbox
-          example: daytonaio/sandbox:latest
+          example: galaxyeye/sandbox:latest
           type: string
         user:
           description: The user associated with the project
@@ -9337,7 +9337,7 @@ components:
           type: string
         image:
           description: The image used for the workspace
-          example: daytonaio/workspace:latest
+          example: galaxyeye/workspace:latest
           type: string
         snapshotState:
           description: The state of the snapshot
@@ -9373,7 +9373,7 @@ components:
       type: object
     CreateWorkspace:
       example:
-        image: daytonaio/workspace:latest
+        image: galaxyeye/workspace:latest
         memory: 1
         buildInfo: ''
         volumes:
@@ -9397,7 +9397,7 @@ components:
       properties:
         image:
           description: The image used for the workspace
-          example: daytonaio/workspace:latest
+          example: galaxyeye/workspace:latest
           type: string
         user:
           description: The user associated with the project

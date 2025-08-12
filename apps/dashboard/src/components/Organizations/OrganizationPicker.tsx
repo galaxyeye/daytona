@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Building2, ChevronsUpDown, PlusCircle, SquareUserRound } from 'lucide-react'
-import { Organization } from '@daytonaio/api-client'
+import { Organization } from '@galaxyeye/api-client'
 import { useApi } from '@/hooks/useApi'
 import {
   DropdownMenu,

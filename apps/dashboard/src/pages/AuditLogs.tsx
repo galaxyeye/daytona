@@ -5,7 +5,7 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 import { useApi } from '@/hooks/useApi'
-import { AuditLog, PaginatedAuditLogs } from '@daytonaio/api-client'
+import { AuditLog, PaginatedAuditLogs } from '@galaxyeye/api-client'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { AuditLogTable } from '@/components/AuditLogTable'

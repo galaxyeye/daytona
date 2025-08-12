@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { SandboxState } from '@daytonaio/api-client'
+import { SandboxState } from '@galaxyeye/api-client'
 import { Terminal, MoreVertical, Play, Square, Loader2 } from 'lucide-react'
 import { Button } from '../ui/button'
 import {

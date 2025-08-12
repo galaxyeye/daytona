@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react'
-import { Sandbox, SandboxState } from '@daytonaio/api-client'
+import { Sandbox, SandboxState } from '@galaxyeye/api-client'
 import { SandboxState as SandboxStateComponent } from './SandboxTable/SandboxState'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'

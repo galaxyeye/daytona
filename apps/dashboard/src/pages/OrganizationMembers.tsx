@@ -12,7 +12,7 @@ import {
   OrganizationInvitation,
   OrganizationUserRoleEnum,
   UpdateOrganizationInvitationRoleEnum,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { OrganizationMemberTable } from '@/components/OrganizationMembers/OrganizationMemberTable'
 import { CreateOrganizationInvitationDialog } from '@/components/OrganizationMembers/CreateOrganizationInvitationDialog'
 import { useSelectedOrganization } from '@/hooks/useSelectedOrganization'

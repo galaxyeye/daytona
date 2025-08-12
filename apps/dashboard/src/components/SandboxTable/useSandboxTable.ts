@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { Sandbox } from '@daytonaio/api-client'
+import { Sandbox } from '@galaxyeye/api-client'
 import {
   ColumnFiltersState,
   SortingState,

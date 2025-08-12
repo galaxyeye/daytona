@@ -5,7 +5,7 @@
 
 import { Loader2, AlertTriangle, MoreHorizontal, CheckCircle, Timer, HardDrive } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { OrganizationRolePermissionsEnum, VolumeDto, VolumeState } from '@daytonaio/api-client'
+import { OrganizationRolePermissionsEnum, VolumeDto, VolumeState } from '@galaxyeye/api-client'
 import {
   ColumnDef,
   ColumnFiltersState,

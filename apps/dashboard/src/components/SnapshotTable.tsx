@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { SnapshotDto, SnapshotState, OrganizationRolePermissionsEnum } from '@daytonaio/api-client'
+import { SnapshotDto, SnapshotState, OrganizationRolePermissionsEnum } from '@galaxyeye/api-client'
 import {
   ColumnDef,
   flexRender,

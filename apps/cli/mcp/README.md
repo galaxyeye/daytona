@@ -20,7 +20,7 @@ Daytona MCP Server allows AI agents to utilize:
 **Mac/Linux**
 
 ```bash
-brew install daytonaio/cli/daytona
+brew install galaxyeye/cli/daytona
 ```
 
 **Windows**

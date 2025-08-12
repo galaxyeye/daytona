@@ -11,7 +11,7 @@ export const SideNavLinks = () => {
   useEffect(() => {
     const storedStars = sessionStorage.getItem('stargazers')
     if (!storedStars || isNaN(Number(storedStars))) {
-      fetch('https://api.github.com/repos/daytonaio/daytona')
+      fetch('https://api.github.com/repos/galaxyeye/daytona')
         .then(response => response.json())
         .then(data => {
           setStars(data.stargazers_count)

@@ -7,13 +7,13 @@ A TypeScript SDK for interacting with the Daytona API, providing a simple interf
 You can install the package using npm:
 
 ```bash
-npm install @daytonaio/sdk
+npm install @galaxyeye/sdk
 ```
 
 Or using yarn:
 
 ```bash
-yarn add @daytonaio/sdk
+yarn add @galaxyeye/sdk
 ```
 
 ## Quick Start
@@ -21,7 +21,7 @@ yarn add @daytonaio/sdk
 Here's a simple example of using the SDK:
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 
 // Initialize using environment variables
 const daytona = new Daytona()
@@ -42,7 +42,7 @@ await daytona.delete(sandbox)
 The SDK can be configured using environment variables or by passing a configuration object:
 
 ```typescript
-import { Daytona } from '@daytonaio/sdk'
+import { Daytona } from '@galaxyeye/sdk'
 
 // Initialize with configuration
 const daytona = new Daytona({

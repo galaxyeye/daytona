@@ -9,7 +9,7 @@ import {
   PieChart,
   ScatterChart,
   Image,
-} from '@daytonaio/sdk'
+} from '@galaxyeye/sdk'
 import * as fs from 'fs'
 import * as path from 'path'
 

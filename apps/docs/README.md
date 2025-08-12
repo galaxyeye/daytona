@@ -9,9 +9,9 @@
 
 <div align="center">
 
-[![Documentation](https://img.shields.io/github/v/release/daytonaio/docs?label=Docs&color=23cc71)](https://www.daytona.io/docs)
+[![Documentation](https://img.shields.io/github/v/release/galaxyeye/docs?label=Docs&color=23cc71)](https://www.daytona.io/docs)
 [![License](https://img.shields.io/badge/License-Apache--2.0-blue)](#license)
-[![Issues - daytona](https://img.shields.io/github/issues/daytonaio/docs)](https://github.com/galaxyeye/docs/issues)
+[![Issues - daytona](https://img.shields.io/github/issues/galaxyeye/docs)](https://github.com/galaxyeye/docs/issues)
 
 </div>
 
@@ -26,7 +26,7 @@ Daytona user and developer documentation.
     ·
   <a href="https://go.daytona.io/slack">Join Our Slack</a>
     ·
-  <a href="https://twitter.com/daytonaio">Twitter</a>
+  <a href="https://twitter.com/galaxyeye">Twitter</a>
 </p>
 
 The Daytona Documentation is developed with Astro and Starlight.

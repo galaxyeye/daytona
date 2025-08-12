@@ -8,7 +8,7 @@ import {
   CreateOrganizationInvitationRoleEnum,
   OrganizationUserRoleEnum,
   UpdateOrganizationMemberRoleRoleEnum,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

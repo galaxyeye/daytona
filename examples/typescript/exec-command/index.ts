@@ -1,4 +1,4 @@
-import { Daytona, Sandbox, Image } from '@daytonaio/sdk'
+import { Daytona, Sandbox, Image } from '@galaxyeye/sdk'
 
 async function basicExec(sandbox: Sandbox) {
   //  run some typescript code directly

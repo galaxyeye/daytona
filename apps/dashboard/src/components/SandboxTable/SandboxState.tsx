@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { SandboxState as SandboxStateType } from '@daytonaio/api-client'
+import { SandboxState as SandboxStateType } from '@galaxyeye/api-client'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { getStateLabel } from './constants'
 import { STATE_ICONS } from './state-icons'

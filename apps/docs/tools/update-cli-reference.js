@@ -35,7 +35,7 @@ macOS Installation: \`\`\`brew install bash-completion\`\`\`
 
 async function fetchRawDocs(ref) {
   const url =
-    'https://api.github.com/repos/daytonaio/daytona/contents/apps/cli/hack/docs'
+    'https://api.github.com/repos/galaxyeye/daytona/contents/apps/cli/hack/docs'
   const request = await fetch(`${url}?ref=${ref}`)
   const response = await request.json()
 

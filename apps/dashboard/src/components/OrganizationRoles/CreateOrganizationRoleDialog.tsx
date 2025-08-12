@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { OrganizationRolePermissionsEnum } from '@daytonaio/api-client'
+import { OrganizationRolePermissionsEnum } from '@galaxyeye/api-client'
 import {
   Dialog,
   DialogClose,

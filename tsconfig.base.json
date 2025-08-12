@@ -15,9 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@daytonaio/api-client": ["libs/api-client/src/index.ts"],
-      "@daytonaio/runner-api-client": ["libs/runner-api-client/src/index.ts"],
-      "@daytonaio/sdk": ["libs/sdk-typescript/src/index.ts"]
+      "@galaxyeye/api-client": ["libs/api-client/src/index.ts"],
+      "@galaxyeye/runner-api-client": ["libs/runner-api-client/src/index.ts"],
+      "@galaxyeye/sdk": ["libs/sdk-typescript/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

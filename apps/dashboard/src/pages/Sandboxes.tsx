@@ -12,7 +12,7 @@ import {
   SandboxDesiredState,
   SandboxState,
   SnapshotDto,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { SandboxTable } from '@/components/SandboxTable'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { toast } from 'sonner'

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CompletionList, LspSymbol, ToolboxApi } from '@daytonaio/api-client'
+import { CompletionList, LspSymbol, ToolboxApi } from '@galaxyeye/api-client'
 import { prefixRelativePath } from './utils/Path'
 
 /**

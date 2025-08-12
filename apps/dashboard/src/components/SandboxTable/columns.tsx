@@ -4,7 +4,7 @@
  */
 
 import React from 'react'
-import { Sandbox, SandboxState } from '@daytonaio/api-client'
+import { Sandbox, SandboxState } from '@galaxyeye/api-client'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUp, ArrowDown } from 'lucide-react'
 import { Checkbox } from '../ui/checkbox'

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0
  */
 
-import { SandboxState } from '@daytonaio/api-client'
+import { SandboxState } from '@galaxyeye/api-client'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover'
 import { Command, CommandList, CommandGroup, CommandItem, CommandInput } from '@/components/ui/command'
 import { cn } from '@/lib/utils'

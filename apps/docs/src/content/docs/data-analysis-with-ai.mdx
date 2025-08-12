@@ -34,7 +34,7 @@ Install the Daytona SDK and Anthropic SDK to your project:
     ```bash pip install daytona anthropic python-dotenv ```
   </TabItem>
   <TabItem label="TypeScript" icon="seti:typescript">
-    ```bash npm install @daytonaio/sdk @anthropic-ai/sdk dotenv ```
+    ```bash npm install @galaxyeye/sdk @anthropic-ai/sdk dotenv ```
   </TabItem>
 </Tabs>
 
@@ -89,7 +89,7 @@ sandbox.fs.upload_file("dataset.csv", "/home/daytona/dataset.csv")
 <TabItem label="TypeScript" icon="seti:typescript">
 ```typescript
 import 'dotenv/config'
-import { Daytona } from '@daytonaio/sdk';
+import { Daytona } from '@galaxyeye/sdk';
 
 // Create sandbox
 const daytona = new Daytona();
@@ -458,7 +458,7 @@ if __name__ == "__main__":
 import 'dotenv/config'
 import fs from 'fs'
 import Anthropic from '@anthropic-ai/sdk'
-import { Daytona, Sandbox } from '@daytonaio/sdk';
+import { Daytona, Sandbox } from '@galaxyeye/sdk';
 
 
 async function main() {

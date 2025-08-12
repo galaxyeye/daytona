@@ -14,7 +14,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { OrganizationInvitation, OrganizationRole, UpdateOrganizationInvitationRoleEnum } from '@daytonaio/api-client'
+import { OrganizationInvitation, OrganizationRole, UpdateOrganizationInvitationRoleEnum } from '@galaxyeye/api-client'
 import { Pagination } from '@/components/Pagination'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'

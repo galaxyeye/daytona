@@ -9,7 +9,7 @@ import {
   OrganizationRole,
   OrganizationInvitation,
   OrganizationInvitationRoleEnum,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {

@@ -15,7 +15,7 @@ import { useApi } from '@/hooks/useApi'
 import { handleApiError } from '@/lib/error-handling'
 import { useLocation } from 'react-router-dom'
 import { AccountProviderIcon } from '@/components/AccountProviderIcon'
-import { AccountProvider as AccountProviderApi } from '@daytonaio/api-client'
+import { AccountProvider as AccountProviderApi } from '@galaxyeye/api-client'
 import { UserManager } from 'oidc-client-ts'
 import { useConfig } from '@/hooks/useConfig'
 

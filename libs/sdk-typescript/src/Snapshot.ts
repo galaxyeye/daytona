@@ -10,7 +10,7 @@ import {
   SnapshotState,
   CreateSnapshot,
   Configuration,
-} from '@daytonaio/api-client'
+} from '@galaxyeye/api-client'
 import { DaytonaError } from './errors/DaytonaError'
 import { Image } from './Image'
 import { Resources } from './Daytona'

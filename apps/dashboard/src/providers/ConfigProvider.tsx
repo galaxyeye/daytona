@@ -8,7 +8,7 @@ import { ReactNode, useMemo } from 'react'
 import { ConfigContext } from '../contexts/ConfigContext'
 import { suspendedFetch } from '../lib/suspended-fetch'
 import { InMemoryWebStorage, WebStorageStateStore } from 'oidc-client-ts'
-import { DaytonaConfiguration } from '@daytonaio/api-client/src'
+import { DaytonaConfiguration } from '@galaxyeye/api-client/src'
 import { RoutePath } from '@/enums/RoutePath'
 
 const getConfig = suspendedFetch<DaytonaConfiguration>(`${import.meta.env.VITE_API_URL}/config`)
