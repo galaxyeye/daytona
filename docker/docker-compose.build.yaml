@@ -7,6 +7,8 @@ services:
       target: spacedock
     privileged: true
     environment:
+      - DAYTONA_API_URL=http://localhost:3000/api
+      - SPACEDOCK_API_URL=http://localhost:3000/api # Added for compatibility
       - OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
       - OIDC_CLIENT_ID=spacedock
       - OIDC_AUDIENCE=spacedock
@@ -29,8 +31,8 @@ services:
       dockerfile: docker/Dockerfile
       target: proxy
     environment:
-      - DAYTONA_API_URL=http://localhost:3001/api
-      - SPACEDOCK_API_URL=http://localhost:3001/api # Added for compatibility
+      - DAYTONA_API_URL=http://localhost:3000/api
+      - SPACEDOCK_API_URL=http://localhost:3000/api # Added for compatibility
       - OIDC_DOMAIN=http://localhost:5556/dex
     network_mode: service:api
 

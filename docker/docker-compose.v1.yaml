@@ -4,6 +4,8 @@ services:
     image: ghcr.io/galaxyeye/spacedock-api:latest
     privileged: true
     environment:
+      - DAYTONA_API_URL=http://localhost:3001/api
+      - SPACEDOCK_API_URL=http://localhost:3001/api # Added for compatibility
       - OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
       - OIDC_CLIENT_ID=spacedock
       - OIDC_AUDIENCE=spacedock

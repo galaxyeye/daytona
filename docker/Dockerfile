@@ -130,7 +130,7 @@ ENV SMTP_HOST=maildev \
     SMTP_USER= \
     SMTP_PASSWORD= \
     SMTP_SECURE= \
-    SMTP_EMAIL_FROM="spacedock Team <no-reply@spacedock.io>"
+    SMTP_EMAIL_FROM="Platon AI <no-reply@platon.ai>"
 
 # S3 Configuration
 ENV S3_ENDPOINT=http://minio:9000 \
