@@ -1,0 +1,1084 @@
+/certs/server/cert.pem: OK
+/certs/client/cert.pem: OK
+iptables v1.8.11 (legacy)
+[dotenv@17.2.0] injecting env (6) from .env,.env.local (tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] })
+query: SELECT version()
+query: SELECT * FROM current_schema()
+query: CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+query: SELECT * FROM "information_schema"."tables" WHERE "table_schema" = 'public' AND "table_name" = 'migrations'
+query: CREATE TABLE "migrations" ("id" SERIAL NOT NULL, "timestamp" bigint NOT NULL, "name" character varying NOT NULL, CONSTRAINT "migrations_id_pk" PRIMARY KEY ("id"))
+query: SELECT * FROM "migrations" "migrations" ORDER BY "id" DESC
+0 migrations are already loaded in the database.
+41 migrations were found in the source code.
+41 migrations are new migrations must be executed.
+query: START TRANSACTION
+query: CREATE SCHEMA IF NOT EXISTS "public"
+query: CREATE TABLE "user" ("id" character varying NOT NULL, "name" character varying NOT NULL, "keyPair" text, "publicKeys" text NOT NULL, "total_cpu_quota" integer NOT NULL DEFAULT '10', "total_memory_quota" integer NOT NULL DEFAULT '40', "total_disk_quota" integer NOT NULL DEFAULT '100', "max_cpu_per_workspace" integer NOT NULL DEFAULT '2', "max_memory_per_workspace" integer NOT NULL DEFAULT '4', "max_disk_per_workspace" integer NOT NULL DEFAULT '10', "max_concurrent_workspaces" integer NOT NULL DEFAULT '10', "workspace_quota" integer NOT NULL DEFAULT '0', "image_quota" integer NOT NULL DEFAULT '5', "max_image_size" integer NOT NULL DEFAULT '2', "total_image_size" integer NOT NULL DEFAULT '5', CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id"))
+query: CREATE TABLE "team" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, CONSTRAINT "PK_f57d8293406df4af348402e4b74" PRIMARY KEY ("id"))
+query: CREATE TABLE "workspace_usage_periods" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workspaceId" character varying NOT NULL, "startAt" TIMESTAMP NOT NULL, "endAt" TIMESTAMP, "cpu" double precision NOT NULL, "gpu" double precision NOT NULL, "mem" double precision NOT NULL, "disk" double precision NOT NULL, "storage" double precision NOT NULL, "region" character varying NOT NULL, CONSTRAINT "PK_b8d71f79ee638064397f678e877" PRIMARY KEY ("id"))
+query: CREATE TYPE "node_class_enum" AS ENUM('small', 'medium', 'large')
+query: CREATE TYPE "node_region_enum" AS ENUM('eu', 'us', 'asia')
+query: CREATE TYPE "node_state_enum" AS ENUM('initializing', 'ready', 'disabled', 'decommissioned', 'unresponsive')
+query: CREATE TABLE "node" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "domain" character varying NOT NULL, "apiUrl" character varying NOT NULL, "apiKey" character varying NOT NULL, "cpu" integer NOT NULL, "memory" integer NOT NULL, "disk" integer NOT NULL, "gpu" integer NOT NULL, "gpuType" character varying NOT NULL, "class" "node_class_enum" NOT NULL DEFAULT 'small', "used" integer NOT NULL DEFAULT '0', "capacity" integer NOT NULL, "region" "node_region_enum" NOT NULL, "state" "node_state_enum" NOT NULL DEFAULT 'initializing', "lastChecked" TIMESTAMP, "unschedulable" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_330d74ac3d0e349b4c73c62ad6d" UNIQUE ("domain"), CONSTRAINT "PK_8c8caf5f29d25264abe9eaf94dd" PRIMARY KEY ("id"))
+query: CREATE TYPE "image_node_state_enum" AS ENUM('pulling_image', 'ready', 'error', 'removing')
+query: CREATE TABLE "image_node" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "state" "image_node_state_enum" NOT NULL DEFAULT 'pulling_image', "errorReason" character varying, "image" character varying NOT NULL, "internalImageName" character varying NOT NULL DEFAULT '', "nodeId" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_6c66fc8bd2b9fb41362a50fddd0" PRIMARY KEY ("id"))
+query: CREATE TYPE "image_state_enum" AS ENUM('pending', 'pulling_image', 'pending_validation', 'validating', 'active', 'error', 'removing')
+query: CREATE TABLE "image" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "userId" character varying NOT NULL, "general" boolean NOT NULL DEFAULT false, "name" character varying NOT NULL, "internalName" character varying, "enabled" boolean NOT NULL DEFAULT true, "state" "image_state_enum" NOT NULL DEFAULT 'pending', "errorReason" character varying, "size" double precision, "entrypoint" character varying, "internalRegistryId" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "lastUsedAt" TIMESTAMP, CONSTRAINT "UQ_9db6fbe71409d80375c32826db3" UNIQUE ("userId", "name"), CONSTRAINT "PK_d6db1ab4ee9ad9dbe86c64e4cc3" PRIMARY KEY ("id"))
+query: CREATE TYPE "workspace_region_enum" AS ENUM('eu', 'us', 'asia')
+query: CREATE TYPE "workspace_class_enum" AS ENUM('small', 'medium', 'large')
+query: CREATE TYPE "workspace_state_enum" AS ENUM('creating', 'restoring', 'destroyed', 'destroying', 'started', 'stopped', 'starting', 'stopping', 'resizing', 'error', 'unknown', 'pulling_image', 'archiving', 'archived')
+query: CREATE TYPE "workspace_desiredstate_enum" AS ENUM('destroyed', 'started', 'stopped', 'resized', 'archived')
+query: CREATE TYPE "workspace_snapshotstate_enum" AS ENUM('None', 'Pending', 'InProgress', 'Completed', 'Error')
+query: CREATE TABLE "workspace" ("id" character varying NOT NULL, "name" character varying NOT NULL, "userId" character varying NOT NULL, "region" "workspace_region_enum" NOT NULL DEFAULT 'eu', "nodeId" uuid, "prevNodeId" uuid, "class" "workspace_class_enum" NOT NULL DEFAULT 'small', "state" "workspace_state_enum" NOT NULL DEFAULT 'unknown', "desiredState" "workspace_desiredstate_enum" NOT NULL DEFAULT 'started', "image" character varying NOT NULL, "osUser" character varying NOT NULL, "errorReason" character varying, "env" text NOT NULL DEFAULT '{}', "public" boolean NOT NULL DEFAULT false, "labels" jsonb, "snapshotRegistryId" character varying, "snapshotImage" character varying, "lastSnapshotAt" TIMESTAMP, "snapshotState" "workspace_snapshotstate_enum" NOT NULL DEFAULT 'None', "existingSnapshotImages" jsonb NOT NULL DEFAULT '[]', "cpu" integer NOT NULL DEFAULT '2', "gpu" integer NOT NULL DEFAULT '0', "mem" integer NOT NULL DEFAULT '4', "disk" integer NOT NULL DEFAULT '10', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "lastActivityAt" TIMESTAMP, "autoStopInterval" integer NOT NULL DEFAULT '15', CONSTRAINT "PK_ca86b6f9b3be5fe26d307d09b49" PRIMARY KEY ("id"))
+query: CREATE TABLE "docker_registry" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "url" character varying NOT NULL, "username" character varying NOT NULL, "password" character varying NOT NULL, "isDefault" boolean NOT NULL DEFAULT false, "project" character varying NOT NULL, "userId" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_4ad72294240279415eb57799798" PRIMARY KEY ("id"))
+query: CREATE TABLE "api_key" ("userId" character varying NOT NULL, "name" character varying NOT NULL, "value" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL, CONSTRAINT "UQ_4b0873b633484d5de20b2d8f852" UNIQUE ("value"), CONSTRAINT "PK_1df0337a701df00e9b2a16c8a0b" PRIMARY KEY ("userId", "name"))
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1741087887225,"Migration1741087887225"]
+Migration Migration1741087887225 has been executed successfully.
+query: ALTER TABLE "image" DROP COLUMN "internalRegistryId"
+query: CREATE TYPE "public"."docker_registry_registrytype_enum" AS ENUM('internal', 'user', 'public', 'transient')
+query: ALTER TABLE "docker_registry" ADD "registryType" "public"."docker_registry_registrytype_enum" NOT NULL DEFAULT 'internal'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1741088165704,"Migration1741088165704"]
+Migration Migration1741088165704 has been executed successfully.
+query: CREATE TABLE "organization" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "createdBy" character varying NOT NULL, "personal" boolean NOT NULL DEFAULT false, "telemetryEnabled" boolean NOT NULL DEFAULT true, "total_cpu_quota" integer NOT NULL DEFAULT '10', "total_memory_quota" integer NOT NULL DEFAULT '40', "total_disk_quota" integer NOT NULL DEFAULT '100', "max_cpu_per_workspace" integer NOT NULL DEFAULT '2', "max_memory_per_workspace" integer NOT NULL DEFAULT '4', "max_disk_per_workspace" integer NOT NULL DEFAULT '10', "max_concurrent_workspaces" integer NOT NULL DEFAULT '10', "workspace_quota" integer NOT NULL DEFAULT '0', "image_quota" integer NOT NULL DEFAULT '5', "max_image_size" integer NOT NULL DEFAULT '2', "total_image_size" integer NOT NULL DEFAULT '5', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "organization_id_pk" PRIMARY KEY ("id"))
+query: CREATE TYPE "public"."organization_user_role_enum" AS ENUM('owner', 'member')
+query: CREATE TABLE "organization_user" ("organizationId" uuid NOT NULL, "userId" character varying NOT NULL, "role" "public"."organization_user_role_enum" NOT NULL DEFAULT 'member', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "organization_user_organizationId_userId_pk" PRIMARY KEY ("organizationId", "userId"))
+query: ALTER TABLE "organization_user" ADD CONSTRAINT "organization_user_organizationId_fk" FOREIGN KEY ("organizationId") REFERENCES "organization"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+query: CREATE TYPE "public"."organization_invitation_role_enum" AS ENUM('owner', 'member')
+query: CREATE TYPE "public"."organization_invitation_status_enum" AS ENUM('pending', 'accepted', 'declined', 'cancelled')
+query: CREATE TABLE "organization_invitation" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "organizationId" uuid NOT NULL, "email" character varying NOT NULL, "role" "public"."organization_invitation_role_enum" NOT NULL DEFAULT 'member', "expiresAt" TIMESTAMP NOT NULL, "status" "public"."organization_invitation_status_enum" NOT NULL DEFAULT 'pending', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "organization_invitation_id_pk" PRIMARY KEY ("id"))
+query: ALTER TABLE "organization_invitation" ADD CONSTRAINT "organization_invitation_organizationId_fk" FOREIGN KEY ("organizationId") REFERENCES "organization"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+query: CREATE TYPE "public"."organization_role_permissions_enum" AS ENUM('write:registries', 'delete:registries', 'write:images', 'delete:images', 'write:sandboxes', 'delete:sandboxes')
+query: CREATE TABLE "organization_role" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" character varying NOT NULL, "permissions" "public"."organization_role_permissions_enum" array NOT NULL, "isGlobal" boolean NOT NULL DEFAULT false, "organizationId" uuid, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "organization_role_id_pk" PRIMARY KEY ("id"))
+query: ALTER TABLE "organization_role" ADD CONSTRAINT "organization_role_organizationId_fk" FOREIGN KEY ("organizationId") REFERENCES "organization"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+query: CREATE TABLE "organization_role_assignment" ("organizationId" uuid NOT NULL, "userId" character varying NOT NULL, "roleId" uuid NOT NULL, CONSTRAINT "organization_role_assignment_organizationId_userId_roleId_pk" PRIMARY KEY ("organizationId", "userId", "roleId"))
+query: ALTER TABLE "organization_role_assignment" ADD CONSTRAINT "organization_role_assignment_organizationId_userId_fk" FOREIGN KEY ("organizationId", "userId") REFERENCES "organization_user"("organizationId","userId") ON DELETE CASCADE ON UPDATE CASCADE
+query: ALTER TABLE "organization_role_assignment" ADD CONSTRAINT "organization_role_assignment_roleId_fk" FOREIGN KEY ("roleId") REFERENCES "organization_role"("id") ON DELETE CASCADE ON UPDATE CASCADE
+query: CREATE INDEX "organization_role_assignment_organizationId_userId_index" ON "organization_role_assignment" ("organizationId", "userId") 
+query: CREATE INDEX "organization_role_assignment_roleId_index" ON "organization_role_assignment" ("roleId") 
+query: CREATE TABLE "organization_role_assignment_invitation" ("invitationId" uuid NOT NULL, "roleId" uuid NOT NULL, CONSTRAINT "organization_role_assignment_invitation_invitationId_roleId_pk" PRIMARY KEY ("invitationId", "roleId"))
+query: ALTER TABLE "organization_role_assignment_invitation" ADD CONSTRAINT "organization_role_assignment_invitation_invitationId_fk" FOREIGN KEY ("invitationId") REFERENCES "organization_invitation"("id") ON DELETE CASCADE ON UPDATE CASCADE
+query: ALTER TABLE "organization_role_assignment_invitation" ADD CONSTRAINT "organization_role_assignment_invitation_roleId_fk" FOREIGN KEY ("roleId") REFERENCES "organization_role"("id") ON DELETE CASCADE ON UPDATE CASCADE
+query: CREATE INDEX "organization_role_assignment_invitation_invitationId_index" ON "organization_role_assignment_invitation" ("invitationId") 
+query: CREATE INDEX "organization_role_assignment_invitation_roleId_index" ON "organization_role_assignment_invitation" ("roleId") 
+query: 
+        INSERT INTO "organization" (
+          name, 
+          personal,
+          "createdBy", 
+          total_cpu_quota,
+          total_memory_quota,
+          total_disk_quota,
+          max_cpu_per_workspace,
+          max_memory_per_workspace,
+          max_disk_per_workspace,
+          max_concurrent_workspaces,
+          workspace_quota,
+          image_quota,
+          max_image_size,
+          total_image_size
+        )
+        SELECT 
+          'Personal',
+          true,
+          u.id,
+          u.total_cpu_quota,
+          u.total_memory_quota,
+          u.total_disk_quota,
+          u.max_cpu_per_workspace,
+          u.max_memory_per_workspace,
+          u.max_disk_per_workspace,
+          u.max_concurrent_workspaces,
+          u.workspace_quota,
+          u.image_quota,
+          u.max_image_size,
+          u.total_image_size
+        FROM "user" u
+    
+query: 
+        INSERT INTO "organization_user" ("organizationId", "userId", role)
+        SELECT 
+          o.id,
+          o."createdBy",
+          'owner'
+        FROM "organization" o
+        WHERE o.personal = true
+    
+query: ALTER TABLE "user" DROP COLUMN "total_cpu_quota"
+query: ALTER TABLE "user" DROP COLUMN "total_memory_quota"
+query: ALTER TABLE "user" DROP COLUMN "total_disk_quota"
+query: ALTER TABLE "user" DROP COLUMN "max_cpu_per_workspace"
+query: ALTER TABLE "user" DROP COLUMN "max_memory_per_workspace"
+query: ALTER TABLE "user" DROP COLUMN "max_disk_per_workspace"
+query: ALTER TABLE "user" DROP COLUMN "max_concurrent_workspaces"
+query: ALTER TABLE "user" DROP COLUMN "workspace_quota"
+query: ALTER TABLE "user" DROP COLUMN "image_quota"
+query: ALTER TABLE "user" DROP COLUMN "max_image_size"
+query: ALTER TABLE "user" DROP COLUMN "total_image_size"
+query: ALTER TABLE "api_key" ADD "organizationId" uuid NULL
+query: 
+        UPDATE "api_key" ak
+        SET "organizationId" = (
+          SELECT o.id 
+          FROM "organization" o
+          WHERE o."createdBy" = ak."userId" 
+          AND o.personal = true
+          LIMIT 1
+        )
+    
+query: ALTER TABLE "api_key" ALTER COLUMN "organizationId" SET NOT NULL
+query: 
+        DO $$
+        DECLARE
+            constraint_name text;
+        BEGIN
+            SELECT tc.constraint_name INTO constraint_name
+            FROM information_schema.table_constraints tc
+            WHERE tc.table_name = 'api_key' 
+            AND tc.constraint_type = 'PRIMARY KEY';
+            IF constraint_name IS NOT NULL THEN
+            EXECUTE format('ALTER TABLE "api_key" DROP CONSTRAINT "%s"', constraint_name);
+            END IF;
+        END $$;
+    
+query: ALTER TABLE "api_key" ADD CONSTRAINT "api_key_userId_name_organizationId_pk" PRIMARY KEY ("userId", "name", "organizationId")
+query: CREATE TYPE "public"."api_key_permissions_enum" AS ENUM('write:registries', 'delete:registries', 'write:images', 'delete:images', 'write:sandboxes', 'delete:sandboxes')
+query: ALTER TABLE "api_key" ADD "permissions" "public"."api_key_permissions_enum" array NULL
+query: 
+      UPDATE api_key
+      SET permissions = ARRAY[
+        'write:registries',
+        'delete:registries', 
+        'write:images',
+        'delete:images',
+        'write:sandboxes',
+        'delete:sandboxes'
+      ]::api_key_permissions_enum[]
+    
+query: ALTER TABLE "api_key" ALTER COLUMN "permissions" SET NOT NULL
+query: ALTER TABLE "docker_registry" ALTER COLUMN "registryType" DROP DEFAULT
+query: ALTER TYPE "public"."docker_registry_registrytype_enum" RENAME TO "docker_registry_registrytype_enum_old"
+query: CREATE TYPE "public"."docker_registry_registrytype_enum" AS ENUM('internal', 'organization', 'public', 'transient')
+query: 
+      CREATE OR REPLACE FUNCTION migrate_registry_type(old_type text) 
+      RETURNS "public"."docker_registry_registrytype_enum" AS $$
+      BEGIN
+        IF old_type = 'user' THEN
+          RETURN 'organization'::"public"."docker_registry_registrytype_enum";
+        ELSE
+          RETURN old_type::"public"."docker_registry_registrytype_enum";
+        END IF;
+      END;
+      $$ LANGUAGE plpgsql;
+    
+query: 
+      ALTER TABLE "docker_registry" 
+      ALTER COLUMN "registryType" TYPE "public"."docker_registry_registrytype_enum" 
+      USING migrate_registry_type("registryType"::text)
+    
+query: ALTER TABLE "docker_registry" ALTER COLUMN "registryType" SET DEFAULT 'internal'
+query: DROP TYPE "public"."docker_registry_registrytype_enum_old"
+query: DROP FUNCTION migrate_registry_type
+query: ALTER TABLE "docker_registry" ADD "organizationId" uuid NULL
+query: UPDATE "docker_registry" SET "organizationId" = NULL WHERE "userId" = 'system'
+query: 
+        UPDATE "docker_registry" dr
+        SET "organizationId" = (
+          SELECT o.id 
+          FROM "organization" o
+          WHERE o."createdBy" = dr."userId" 
+          AND o.personal = true
+          LIMIT 1
+        )
+    
+query: ALTER TABLE "docker_registry" DROP COLUMN "userId"
+query: ALTER TABLE "image" ADD "organizationId" uuid NULL
+query: 
+        UPDATE "image" i
+        SET "organizationId" = (
+          SELECT o.id 
+          FROM "organization" o
+          WHERE o."createdBy" = i."userId" 
+          AND o.personal = true
+          LIMIT 1
+        )
+    
+query: 
+        DO $$
+        DECLARE
+            constraint_name text;
+        BEGIN
+            SELECT tc.constraint_name INTO constraint_name
+            FROM information_schema.table_constraints tc
+            WHERE tc.table_name = 'image' 
+            AND tc.constraint_type = 'UNIQUE' 
+            AND tc.constraint_name LIKE '%name%';
+            
+            IF constraint_name IS NOT NULL THEN
+            EXECUTE format('ALTER TABLE "image" DROP CONSTRAINT "%s"', constraint_name);
+            END IF;
+        END $$;
+    
+query: ALTER TABLE "image" ADD CONSTRAINT "image_organizationId_name_unique" UNIQUE ("organizationId", "name")
+query: ALTER TABLE "image" DROP COLUMN "userId"
+query: ALTER TABLE "workspace" ADD "organizationId" uuid NULL
+query: 
+        UPDATE "workspace" w
+        SET "organizationId" = (
+          SELECT o.id 
+          FROM "organization" o
+          WHERE o."createdBy" = w."userId" 
+          AND o.personal = true
+          LIMIT 1
+        )
+        WHERE w."userId" != 'unassigned'
+    
+query: 
+        UPDATE "workspace" w
+        SET "organizationId" = '00000000-0000-0000-0000-000000000000'
+        WHERE w."userId" = 'unassigned'
+    
+query: ALTER TABLE "workspace" ALTER COLUMN "organizationId" SET NOT NULL
+query: ALTER TABLE "workspace" DROP COLUMN "userId"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1741088883000,"Migration1741088883000"]
+Migration Migration1741088883000 has been executed successfully.
+query: ALTER TABLE "user" ADD "email" character varying NOT NULL DEFAULT ''
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1741088883001,"Migration1741088883001"]
+Migration Migration1741088883001 has been executed successfully.
+query: 
+      INSERT INTO "organization_role" 
+        ("id", "name", "description", "permissions", "isGlobal")
+      VALUES 
+        (
+          '00000000-0000-0000-0000-000000000001',
+          'Developer', 
+          'Grants the ability to create sandboxes and keys in the organization', 
+          ARRAY[
+            'write:sandboxes'
+          ]::organization_role_permissions_enum[],
+          TRUE
+        )
+    
+query: 
+      INSERT INTO "organization_role" 
+        ("id", "name", "description", "permissions", "isGlobal")
+      VALUES 
+        (
+          '00000000-0000-0000-0000-000000000002',
+          'Sandboxes Admin', 
+          'Grants admin access to sandboxes in the organization', 
+          ARRAY[
+            'write:sandboxes',
+            'delete:sandboxes'
+          ]::organization_role_permissions_enum[],
+          TRUE
+        )
+    
+query: 
+      INSERT INTO "organization_role" 
+        ("id", "name", "description", "permissions", "isGlobal")
+      VALUES 
+        (
+          '00000000-0000-0000-0000-000000000003',
+          'Images Admin', 
+          'Grants admin access to images in the organization', 
+          ARRAY[
+            'write:images',
+            'delete:images'
+          ]::organization_role_permissions_enum[],
+          TRUE
+        )
+    
+query: 
+      INSERT INTO "organization_role" 
+        ("id", "name", "description", "permissions", "isGlobal")
+      VALUES 
+        (
+          '00000000-0000-0000-0000-000000000004',
+          'Registries Admin', 
+          'Grants admin access to registries in the organization', 
+          ARRAY[
+            'write:registries',
+            'delete:registries'
+          ]::organization_role_permissions_enum[],
+          TRUE
+        )
+    
+query: 
+      INSERT INTO "organization_role" 
+        ("id", "name", "description", "permissions", "isGlobal")
+      VALUES 
+        (
+          '00000000-0000-0000-0000-000000000005',
+          'Super Admin', 
+          'Grants full access to all resources in the organization', 
+          ARRAY[
+            'write:registries',
+            'delete:registries',
+            'write:images',
+            'delete:images',
+            'write:sandboxes',
+            'delete:sandboxes'
+          ]::organization_role_permissions_enum[],
+          TRUE
+        )
+    
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1741088883002,"Migration1741088883002"]
+Migration Migration1741088883002 has been executed successfully.
+query: CREATE TYPE "public"."warm_pool_target_enum" AS ENUM('eu', 'us', 'asia')
+query: CREATE TYPE "public"."warm_pool_class_enum" AS ENUM('small', 'medium', 'large')
+query: CREATE TABLE "warm_pool" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "pool" integer NOT NULL, "image" character varying NOT NULL, "target" "public"."warm_pool_target_enum" NOT NULL DEFAULT 'eu', "cpu" integer NOT NULL, "mem" integer NOT NULL, "disk" integer NOT NULL, "gpu" integer NOT NULL, "gpuType" character varying NOT NULL, "class" "public"."warm_pool_class_enum" NOT NULL DEFAULT 'small', "osUser" character varying NOT NULL, "errorReason" character varying, "env" text NOT NULL DEFAULT '{}', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_fb06a13baeb3ac0ced145345d90" PRIMARY KEY ("id"))
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1741877019888,"Migration1741877019888"]
+Migration Migration1741877019888 has been executed successfully.
+query: ALTER TABLE "organization" ALTER COLUMN "image_quota" SET DEFAULT '0'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1742215525714,"Migration1742215525714"]
+Migration Migration1742215525714 has been executed successfully.
+query: CREATE TYPE "public"."user_role_enum" AS ENUM('admin', 'user')
+query: ALTER TABLE "user" ADD "role" "public"."user_role_enum" NOT NULL DEFAULT 'user'
+query: UPDATE "user" SET "role" = 'admin' WHERE "id" = 'daytona-admin'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1742475055353,"Migration1742475055353"]
+Migration Migration1742475055353 has been executed successfully.
+query: ALTER TABLE "workspace" ADD "pending" boolean NOT NULL DEFAULT false
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1742831092942,"Migration1742831092942"]
+Migration Migration1742831092942 has been executed successfully.
+query: ALTER TABLE "organization_invitation" ADD "invitedBy" character varying NOT NULL DEFAULT ''
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1743593463168,"Migration1743593463168"]
+Migration Migration1743593463168 has been executed successfully.
+query: ALTER TABLE "workspace" DROP COLUMN "name"
+query: ALTER TABLE "workspace" DROP CONSTRAINT "PK_ca86b6f9b3be5fe26d307d09b49"
+query: ALTER TABLE "workspace" ALTER COLUMN "id" SET DEFAULT uuid_generate_v4()
+query: ALTER TABLE "workspace" ADD CONSTRAINT "workspace_id_pk" PRIMARY KEY ("id")
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1743683015304,"Migration1743683015304"]
+Migration Migration1743683015304 has been executed successfully.
+query: ALTER TABLE "workspace_usage_periods" DROP COLUMN "storage"
+query: ALTER TABLE "workspace_usage_periods" ADD "organizationId" character varying NOT NULL
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1744028841133,"Migration1744028841133"]
+Migration Migration1744028841133 has been executed successfully.
+query: ALTER TABLE "organization_role_assignment" DROP CONSTRAINT "organization_role_assignment_roleId_fk"
+query: ALTER TABLE "organization_role_assignment_invitation" DROP CONSTRAINT "organization_role_assignment_invitation_roleId_fk"
+query: ALTER TABLE "workspace" ADD "authToken" character varying NOT NULL DEFAULT MD5(random()::text)
+query: ALTER TABLE "organization_role_assignment" ADD CONSTRAINT "organization_role_assignment_roleId_fk" FOREIGN KEY ("roleId") REFERENCES "organization_role"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+query: ALTER TABLE "organization_role_assignment_invitation" ADD CONSTRAINT "organization_role_assignment_invitation_roleId_fk" FOREIGN KEY ("roleId") REFERENCES "organization_role"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1744114341077,"Migration1744114341077"]
+Migration Migration1744114341077 has been executed successfully.
+query: ALTER TABLE "organization" ADD "suspended" boolean NOT NULL DEFAULT false
+query: ALTER TABLE "organization" ADD "suspensionReason" character varying
+query: ALTER TABLE "organization" ADD "suspendedUntil" TIMESTAMP
+query: ALTER TABLE "organization" ADD "suspendedAt" TIMESTAMP
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1744378115901,"Migration1744378115901"]
+Migration Migration1744378115901 has been executed successfully.
+query: CREATE TABLE "volume" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "organizationId" uuid, "name" character varying NOT NULL, "state" character varying NOT NULL, "errorReason" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "lastUsedAt" TIMESTAMP, CONSTRAINT "volume_organizationId_name_unique" UNIQUE ("organizationId", "name"), CONSTRAINT "volume_id_pk" PRIMARY KEY ("id"))
+query: ALTER TABLE "workspace" ALTER COLUMN "authToken" SET DEFAULT MD5(random()::text)
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1744808444807,"Migration1744808444807"]
+Migration Migration1744808444807 has been executed successfully.
+query: ALTER TYPE "public"."api_key_permissions_enum" RENAME TO "api_key_permissions_enum_old"
+query: CREATE TYPE "public"."api_key_permissions_enum" AS ENUM('write:registries', 'delete:registries', 'write:images', 'delete:images', 'write:sandboxes', 'delete:sandboxes', 'read:volumes', 'write:volumes', 'delete:volumes')
+query: ALTER TABLE "api_key" ALTER COLUMN "permissions" TYPE "public"."api_key_permissions_enum"[] USING "permissions"::"text"::"public"."api_key_permissions_enum"[]
+query: DROP TYPE "public"."api_key_permissions_enum_old"
+query: ALTER TYPE "public"."organization_role_permissions_enum" RENAME TO "organization_role_permissions_enum_old"
+query: CREATE TYPE "public"."organization_role_permissions_enum" AS ENUM('write:registries', 'delete:registries', 'write:images', 'delete:images', 'write:sandboxes', 'delete:sandboxes', 'read:volumes', 'write:volumes', 'delete:volumes')
+query: ALTER TABLE "organization_role" ALTER COLUMN "permissions" TYPE "public"."organization_role_permissions_enum"[] USING "permissions"::"text"::"public"."organization_role_permissions_enum"[]
+query: DROP TYPE "public"."organization_role_permissions_enum_old"
+query: 
+            INSERT INTO "organization_role" 
+              ("id", "name", "description", "permissions", "isGlobal")
+            VALUES 
+              (
+                '00000000-0000-0000-0000-000000000006',    
+                'Volumes Admin', 
+                'Grants admin access to volumes in the organization', 
+                ARRAY[
+                  'read:volumes',
+                  'write:volumes',
+                  'delete:volumes'
+                ]::organization_role_permissions_enum[],
+                TRUE
+              )
+          
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1744868914148,"Migration1744868914148"]
+Migration Migration1744868914148 has been executed successfully.
+query: ALTER TABLE "workspace" ADD "volumes" jsonb NOT NULL DEFAULT '[]'
+query: ALTER TABLE "workspace" ALTER COLUMN "authToken" SET DEFAULT MD5(random()::text)
+query: ALTER TABLE "volume" DROP COLUMN "state"
+query: CREATE TYPE "public"."volume_state_enum" AS ENUM('creating', 'ready', 'pending_create', 'pending_delete', 'deleting', 'deleted', 'error')
+query: ALTER TABLE "volume" ADD "state" "public"."volume_state_enum" NOT NULL DEFAULT 'pending_create'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1744971114480,"Migration1744971114480"]
+Migration Migration1744971114480 has been executed successfully.
+query: SELECT id, entrypoint FROM "image" WHERE entrypoint IS NOT NULL
+query: ALTER TABLE "image" RENAME COLUMN "entrypoint" TO "entrypoint_old"
+query: ALTER TABLE "image" ADD "entrypoint" text[]
+query: ALTER TABLE "image" DROP COLUMN "entrypoint_old"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1745393243334,"Migration1745393243334"]
+Migration Migration1745393243334 has been executed successfully.
+query: ALTER TABLE "user" ADD "emailVerified" boolean NOT NULL DEFAULT false
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1745494761360,"Migration1745494761360"]
+Migration Migration1745494761360 has been executed successfully.
+query: CREATE TABLE "build_info" ("imageRef" character varying NOT NULL, "dockerfileContent" text, "contextHashes" text, "lastUsedAt" TIMESTAMP NOT NULL DEFAULT now(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "build_info_imageRef_pk" PRIMARY KEY ("imageRef"))
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'image_node')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'image_node')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'image_node'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'image_node'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'image_node')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image_node' AND "column_name"='state'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'image_node_state_enum'
+query: ALTER TABLE "image_node" RENAME COLUMN "internalImageName" TO "imageRef"
+query: ALTER TABLE "image_node" DROP COLUMN "image"
+query: ALTER TABLE "image" ADD "buildInfoImageRef" character varying
+query: ALTER TABLE "workspace" ADD "buildInfoImageRef" character varying
+query: ALTER TYPE "public"."image_node_state_enum" RENAME TO "image_node_state_enum_old"
+query: CREATE TYPE "public"."image_node_state_enum" AS ENUM('pulling_image', 'building_image', 'ready', 'error', 'removing')
+query: ALTER TABLE "image_node" ALTER COLUMN "state" DROP DEFAULT
+query: ALTER TABLE "image_node" ALTER COLUMN "state" TYPE "public"."image_node_state_enum" USING "state"::"text"::"public"."image_node_state_enum"
+query: ALTER TABLE "image_node" ALTER COLUMN "state" SET DEFAULT 'pulling_image'
+query: DROP TYPE "public"."image_node_state_enum_old"
+query: ALTER TYPE "public"."image_state_enum" RENAME TO "image_state_enum_old"
+query: CREATE TYPE "public"."image_state_enum" AS ENUM('build_pending', 'building', 'pending', 'pulling_image', 'pending_validation', 'validating', 'active', 'error', 'removing')
+query: ALTER TABLE "image" ALTER COLUMN "state" DROP DEFAULT
+query: ALTER TABLE "image" ALTER COLUMN "state" TYPE "public"."image_state_enum" USING "state"::"text"::"public"."image_state_enum"
+query: ALTER TABLE "image" ALTER COLUMN "state" SET DEFAULT 'pending'
+query: DROP TYPE "public"."image_state_enum_old"
+query: ALTER TYPE "public"."workspace_state_enum" RENAME TO "workspace_state_enum_old"
+query: CREATE TYPE "public"."workspace_state_enum" AS ENUM('creating', 'restoring', 'destroyed', 'destroying', 'started', 'stopped', 'starting', 'stopping', 'resizing', 'error', 'pending_build', 'building_image', 'unknown', 'pulling_image', 'archiving', 'archived')
+query: ALTER TABLE "workspace" ALTER COLUMN "state" DROP DEFAULT
+query: ALTER TABLE "workspace" ALTER COLUMN "state" TYPE "public"."workspace_state_enum" USING "state"::"text"::"public"."workspace_state_enum"
+query: ALTER TABLE "workspace" ALTER COLUMN "state" SET DEFAULT 'unknown'
+query: DROP TYPE "public"."workspace_state_enum_old"
+query: ALTER TABLE "workspace" ALTER COLUMN "image" DROP NOT NULL
+query: ALTER TABLE "workspace" ALTER COLUMN "authToken" SET DEFAULT MD5(random()::text)
+query: ALTER TABLE "image" ADD CONSTRAINT "image_buildInfoImageRef_fk" FOREIGN KEY ("buildInfoImageRef") REFERENCES "build_info"("imageRef") ON DELETE NO ACTION ON UPDATE NO ACTION
+query: ALTER TABLE "workspace" ADD CONSTRAINT "workspace_buildInfoImageRef_fk" FOREIGN KEY ("buildInfoImageRef") REFERENCES "build_info"("imageRef") ON DELETE NO ACTION ON UPDATE NO ACTION
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1745574377029,"Migration1745574377029"]
+Migration Migration1745574377029 has been executed successfully.
+query: ALTER TABLE "api_key" ADD "keyHash" character varying NOT NULL DEFAULT ''
+query: ALTER TABLE "api_key" ADD "keyPrefix" character varying NOT NULL DEFAULT ''
+query: ALTER TABLE "api_key" ADD "keySuffix" character varying NOT NULL DEFAULT ''
+query: SELECT "value" FROM "api_key"
+query: ALTER TABLE "api_key" DROP CONSTRAINT "UQ_4b0873b633484d5de20b2d8f852"
+query: ALTER TABLE "api_key" DROP COLUMN "value"
+query: ALTER TABLE "api_key" ADD CONSTRAINT "api_key_keyHash_unique" UNIQUE ("keyHash")
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1745840296260,"Migration1745840296260"]
+Migration Migration1745840296260 has been executed successfully.
+query: 
+            ALTER TABLE "workspace"
+              ALTER COLUMN "env" DROP DEFAULT,
+              ALTER COLUMN "env" TYPE jsonb USING "env"::jsonb,
+              ALTER COLUMN "env" SET DEFAULT '{}'::jsonb,
+              ALTER COLUMN "env" SET NOT NULL;
+          
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1745864972652,"Migration1745864972652"]
+Migration Migration1745864972652 has been executed successfully.
+query: ALTER TABLE "image" ADD "buildNodeId" character varying
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1746354231722,"Migration1746354231722"]
+Migration Migration1746354231722 has been executed successfully.
+query: ALTER TABLE "organization" ADD "volume_quota" integer NOT NULL DEFAULT '10'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1746604150910,"Migration1746604150910"]
+Migration Migration1746604150910 has been executed successfully.
+query: ALTER TABLE "api_key" ADD "lastUsedAt" TIMESTAMP
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1747658203010,"Migration1747658203010"]
+Migration Migration1747658203010 has been executed successfully.
+query: ALTER TABLE "organization" DROP COLUMN "max_concurrent_workspaces"
+query: ALTER TABLE "organization" DROP COLUMN "workspace_quota"
+query: ALTER TABLE "organization" DROP COLUMN "total_image_size"
+query: ALTER TABLE "organization" ALTER COLUMN "total_memory_quota" SET DEFAULT '10'
+query: ALTER TABLE "organization" ALTER COLUMN "total_disk_quota" SET DEFAULT '30'
+query: ALTER TABLE "organization" ALTER COLUMN "max_cpu_per_workspace" SET DEFAULT '4'
+query: ALTER TABLE "organization" ALTER COLUMN "max_memory_per_workspace" SET DEFAULT '8'
+query: ALTER TABLE "organization" ALTER COLUMN "max_image_size" SET DEFAULT '20'
+query: ALTER TABLE "organization" ALTER COLUMN "image_quota" SET DEFAULT '100'
+query: ALTER TABLE "organization" ALTER COLUMN "volume_quota" SET DEFAULT '100'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1748006546552,"Migration1748006546552"]
+Migration Migration1748006546552 has been executed successfully.
+query: ALTER TABLE "workspace" ADD "autoArchiveInterval" integer NOT NULL DEFAULT '10080'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1748866194353,"Migration1748866194353"]
+Migration Migration1748866194353 has been executed successfully.
+query: ALTER TABLE "api_key" ADD "expiresAt" TIMESTAMP
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1749474791343,"Migration1749474791343"]
+Migration Migration1749474791343 has been executed successfully.
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'workspace')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'workspace')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'workspace'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'workspace'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'workspace')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='region'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='class'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='state'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='desiredState'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='snapshotState'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'workspace_region_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'workspace_class_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'workspace_state_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'workspace_desiredstate_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'workspace_snapshotstate_enum'
+query: ALTER TABLE "workspace" RENAME COLUMN "snapshotRegistryId" TO "backupRegistryId"
+query: ALTER TABLE "workspace" RENAME COLUMN "snapshotImage" TO "backupImage"
+query: ALTER TABLE "workspace" RENAME COLUMN "lastSnapshotAt" TO "lastBackupAt"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='snapshotState'
+query: ALTER TABLE "workspace" RENAME COLUMN "snapshotState" TO "backupState"
+query: ALTER TYPE "public"."workspace_snapshotstate_enum" RENAME TO "workspace_backupstate_enum"
+query: ALTER TABLE "workspace" RENAME COLUMN "existingSnapshotImages" TO "existingBackupImages"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'image')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'image')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'image'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'image'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'image')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image' AND "column_name"='state'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image' AND "column_name"='entrypoint'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'image_state_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'text'
+query: ALTER TABLE "image" RENAME COLUMN "buildNodeId" TO "buildRunnerId"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image_node' AND "column_name"='state'
+query: ALTER TABLE "image_node" RENAME TO "image_runner"
+query: ALTER TYPE "public"."image_node_state_enum" RENAME TO "image_runner_state_enum"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'image_runner')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'image_runner')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'image_runner'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'image_runner'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'image_runner')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image_runner' AND "column_name"='state'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'image_runner_state_enum'
+query: ALTER TABLE "image_runner" RENAME COLUMN "nodeId" TO "runnerId"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'node')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'node')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'node'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'node'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'node')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'node' AND "column_name"='class'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'node' AND "column_name"='region'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'node' AND "column_name"='state'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'node_class_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'node_region_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'node_state_enum'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'node' AND "column_name"='class'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'node' AND "column_name"='region'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'node' AND "column_name"='state'
+query: ALTER TABLE "node" RENAME TO "runner"
+query: ALTER TYPE "public"."node_class_enum" RENAME TO "runner_class_enum"
+query: ALTER TYPE "public"."node_region_enum" RENAME TO "runner_region_enum"
+query: ALTER TYPE "public"."node_state_enum" RENAME TO "runner_state_enum"
+query: ALTER TABLE "workspace" RENAME COLUMN "nodeId" TO "runnerId"
+query: ALTER TABLE "workspace" RENAME COLUMN "prevNodeId" TO "prevRunnerId"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'warm_pool')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'warm_pool')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'warm_pool'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'warm_pool'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'warm_pool')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'warm_pool' AND "column_name"='target'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'warm_pool' AND "column_name"='class'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'warm_pool_target_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'warm_pool_class_enum'
+query: ALTER TABLE "warm_pool" RENAME COLUMN "image" TO "snapshot"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'organization')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'organization')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'organization'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'organization'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'organization')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: ALTER TABLE "organization" RENAME COLUMN "image_quota" TO "snapshot_quota"
+query: ALTER TABLE "organization" RENAME COLUMN "max_image_size" TO "max_snapshot_size"
+query: ALTER TYPE "public"."organization_role_permissions_enum" RENAME VALUE 'write:images' TO 'write:snapshots'
+query: ALTER TYPE "public"."organization_role_permissions_enum" RENAME VALUE 'delete:images' TO 'delete:snapshots'
+query: ALTER TYPE "public"."api_key_permissions_enum" RENAME VALUE 'write:images' TO 'write:snapshots'
+query: ALTER TYPE "public"."api_key_permissions_enum" RENAME VALUE 'delete:images' TO 'delete:snapshots'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image_runner' AND "column_name"='state'
+query: ALTER TABLE "image_runner" RENAME TO "snapshot_runner"
+query: ALTER TYPE "public"."image_runner_state_enum" RENAME TO "snapshot_runner_state_enum"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'snapshot_runner')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'snapshot_runner')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'snapshot_runner'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'snapshot_runner'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'snapshot_runner')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'snapshot_runner' AND "column_name"='state'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'snapshot_runner_state_enum'
+query: ALTER TABLE "snapshot_runner" RENAME COLUMN "imageRef" TO "snapshotRef"
+query: ALTER TYPE "public"."snapshot_runner_state_enum" RENAME VALUE 'pulling_image' TO 'pulling_snapshot'
+query: ALTER TYPE "public"."snapshot_runner_state_enum" RENAME VALUE 'building_image' TO 'building_snapshot'
+query: ALTER TABLE "snapshot_runner" ALTER COLUMN "state" SET DEFAULT 'pulling_snapshot'
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'build_info')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'build_info')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'build_info'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'build_info'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'build_info')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: ALTER TABLE "build_info" RENAME COLUMN "imageRef" TO "snapshotRef"
+query: ALTER TABLE "build_info" RENAME CONSTRAINT "build_info_imageRef_pk" TO "build_info_snapshotRef_pk"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'image' AND "column_name"='state'
+query: ALTER TABLE "image" RENAME TO "snapshot"
+query: ALTER TABLE "snapshot" RENAME CONSTRAINT "image_buildInfoImageRef_fk" TO "public.snapshot_buildInfoImageRef_fk"
+query: ALTER TYPE "public"."image_state_enum" RENAME TO "snapshot_state_enum"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'snapshot')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'snapshot')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'snapshot'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'snapshot'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'snapshot')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'snapshot' AND "column_name"='state'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'snapshot' AND "column_name"='entrypoint'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'snapshot_state_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'text'
+query: ALTER TABLE "snapshot" RENAME COLUMN "buildInfoImageRef" TO "buildInfoSnapshotRef"
+query: ALTER TYPE "public"."snapshot_state_enum" RENAME VALUE 'pulling_image' TO 'pulling'
+query: ALTER TABLE "workspace" RENAME COLUMN "image" TO "snapshot"
+query: ALTER TABLE "workspace" RENAME COLUMN "buildInfoImageRef" TO "buildInfoSnapshotRef"
+query: ALTER TABLE "workspace" RENAME CONSTRAINT "workspace_buildInfoImageRef_fk" TO "workspace_buildInfoSnapshotRef_fk"
+query: ALTER TABLE "workspace" RENAME COLUMN "backupImage" TO "backupSnapshot"
+query: ALTER TABLE "workspace" RENAME COLUMN "existingBackupImages" TO "existingBackupSnapshots"
+query: ALTER TYPE "public"."workspace_state_enum" RENAME VALUE 'pulling_image' TO 'pulling_snapshot'
+query: ALTER TYPE "public"."workspace_state_enum" RENAME VALUE 'building_image' TO 'building_snapshot'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='region'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='class'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='state'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='desiredState'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'workspace' AND "column_name"='backupState'
+query: ALTER TABLE "workspace" RENAME TO "sandbox"
+query: ALTER TABLE "sandbox" RENAME CONSTRAINT "workspace_id_pk" TO "public.sandbox_id_pk"
+query: ALTER TABLE "sandbox" RENAME CONSTRAINT "workspace_buildInfoSnapshotRef_fk" TO "public.sandbox_buildInfoSnapshotRef_fk"
+query: ALTER TYPE "public"."workspace_region_enum" RENAME TO "sandbox_region_enum"
+query: ALTER TYPE "public"."workspace_class_enum" RENAME TO "sandbox_class_enum"
+query: ALTER TYPE "public"."workspace_state_enum" RENAME TO "sandbox_state_enum"
+query: ALTER TYPE "public"."workspace_desiredstate_enum" RENAME TO "sandbox_desiredstate_enum"
+query: ALTER TYPE "public"."workspace_backupstate_enum" RENAME TO "sandbox_backupstate_enum"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'workspace_usage_periods')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'workspace_usage_periods')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'workspace_usage_periods'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'workspace_usage_periods'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'workspace_usage_periods')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: ALTER TABLE "workspace_usage_periods" RENAME TO "sandbox_usage_periods"
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'sandbox_usage_periods')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'sandbox_usage_periods')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'sandbox_usage_periods'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'sandbox_usage_periods'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'sandbox_usage_periods')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: ALTER TABLE "sandbox_usage_periods" RENAME COLUMN "workspaceId" TO "sandboxId"
+query: ALTER TABLE "organization" RENAME COLUMN "max_cpu_per_workspace" TO "max_cpu_per_sandbox"
+query: ALTER TABLE "organization" RENAME COLUMN "max_memory_per_workspace" TO "max_memory_per_sandbox"
+query: ALTER TABLE "organization" RENAME COLUMN "max_disk_per_workspace" TO "max_disk_per_sandbox"
+query: ALTER TABLE "snapshot" ADD "imageName" character varying NOT NULL DEFAULT ''
+query: ALTER TABLE "snapshot" ADD "cpu" integer NOT NULL DEFAULT '1'
+query: ALTER TABLE "snapshot" ADD "gpu" integer NOT NULL DEFAULT '0'
+query: ALTER TABLE "snapshot" ADD "mem" integer NOT NULL DEFAULT '1'
+query: ALTER TABLE "snapshot" ADD "disk" integer NOT NULL DEFAULT '3'
+query: UPDATE "snapshot" SET "imageName" = "name"
+query: ALTER TABLE "snapshot" ADD "hideFromUsers" boolean NOT NULL DEFAULT false
+query: UPDATE "snapshot" SET "hideFromUsers" = true WHERE "general" = true AND "name" LIKE 'galaxyeye/%'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1749474791344,"Migration1749474791344"]
+Migration Migration1749474791344 has been executed successfully.
+query: ALTER TYPE "public"."sandbox_state_enum" RENAME TO "sandbox_state_enum_old"
+query: CREATE TYPE "public"."sandbox_state_enum" AS ENUM('creating', 'restoring', 'destroyed', 'destroying', 'started', 'stopped', 'starting', 'stopping', 'error', 'build_failed', 'pending_build', 'building_snapshot', 'unknown', 'pulling_snapshot', 'archiving', 'archived')
+query: ALTER TABLE "sandbox" ALTER COLUMN "state" DROP DEFAULT
+query: ALTER TABLE "sandbox" ALTER COLUMN "state" TYPE "public"."sandbox_state_enum" USING "state"::"text"::"public"."sandbox_state_enum"
+query: ALTER TABLE "sandbox" ALTER COLUMN "state" SET DEFAULT 'unknown'
+query: DROP TYPE "public"."sandbox_state_enum_old"
+query: ALTER TYPE "public"."snapshot_state_enum" RENAME TO "snapshot_state_enum_old"
+query: CREATE TYPE "public"."snapshot_state_enum" AS ENUM('build_pending', 'building', 'pending', 'pulling', 'pending_validation', 'validating', 'active', 'error', 'build_failed', 'removing')
+query: ALTER TABLE "snapshot" ALTER COLUMN "state" DROP DEFAULT
+query: ALTER TABLE "snapshot" ALTER COLUMN "state" TYPE "public"."snapshot_state_enum" USING "state"::"text"::"public"."snapshot_state_enum"
+query: ALTER TABLE "snapshot" ALTER COLUMN "state" SET DEFAULT 'pending'
+query: DROP TYPE "public"."snapshot_state_enum_old"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1749474791345,"Migration1749474791345"]
+Migration Migration1749474791345 has been executed successfully.
+query: ALTER TABLE "sandbox" ADD "daemonVersion" character varying
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1750077343089,"Migration1750077343089"]
+Migration Migration1750077343089 has been executed successfully.
+query: CREATE TABLE "audit_log" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "actorId" character varying NOT NULL, "actorEmail" character varying NOT NULL DEFAULT '', "organizationId" character varying, "action" character varying NOT NULL, "targetType" character varying, "targetId" character varying, "statusCode" integer, "errorMessage" character varying, "ipAddress" character varying, "userAgent" text, "source" character varying, "metadata" jsonb, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "audit_log_id_pk" PRIMARY KEY ("id"))
+query: CREATE INDEX "audit_log_organizationId_createdAt_index" ON "audit_log" ("organizationId", "createdAt") 
+query: CREATE INDEX "audit_log_createdAt_index" ON "audit_log" ("createdAt") 
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1750436374899,"Migration1750436374899"]
+Migration Migration1750436374899 has been executed successfully.
+query: ALTER TABLE "sandbox" ADD "autoDeleteInterval" integer NOT NULL DEFAULT '-1'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1750668569562,"Migration1750668569562"]
+Migration Migration1750668569562 has been executed successfully.
+query: ALTER TYPE "public"."snapshot_state_enum" RENAME TO "snapshot_state_enum_old"
+query: CREATE TYPE "public"."snapshot_state_enum" AS ENUM('build_pending', 'building', 'pending', 'pulling', 'pending_validation', 'validating', 'active', 'inactive', 'error', 'build_failed', 'removing')
+query: ALTER TABLE "snapshot" ALTER COLUMN "state" DROP DEFAULT
+query: ALTER TABLE "snapshot" ALTER COLUMN "state" TYPE "public"."snapshot_state_enum" USING "state"::"text"::"public"."snapshot_state_enum"
+query: ALTER TABLE "snapshot" ALTER COLUMN "state" SET DEFAULT 'pending'
+query: DROP TYPE "public"."snapshot_state_enum_old"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1750751712412,"Migration1750751712412"]
+Migration Migration1750751712412 has been executed successfully.
+query: ALTER TYPE "public"."api_key_permissions_enum" RENAME TO "api_key_permissions_enum_old"
+query: CREATE TYPE "public"."api_key_permissions_enum" AS ENUM('write:registries', 'delete:registries', 'write:snapshots', 'delete:snapshots', 'write:sandboxes', 'delete:sandboxes', 'read:volumes', 'write:volumes', 'delete:volumes', 'read:audit_logs')
+query: ALTER TABLE "api_key" ALTER COLUMN "permissions" TYPE "public"."api_key_permissions_enum"[] USING "permissions"::"text"::"public"."api_key_permissions_enum"[]
+query: DROP TYPE "public"."api_key_permissions_enum_old"
+query: ALTER TYPE "public"."organization_role_permissions_enum" RENAME TO "organization_role_permissions_enum_old"
+query: CREATE TYPE "public"."organization_role_permissions_enum" AS ENUM('write:registries', 'delete:registries', 'write:snapshots', 'delete:snapshots', 'write:sandboxes', 'delete:sandboxes', 'read:volumes', 'write:volumes', 'delete:volumes', 'read:audit_logs')
+query: ALTER TABLE "organization_role" ALTER COLUMN "permissions" TYPE "public"."organization_role_permissions_enum"[] USING "permissions"::"text"::"public"."organization_role_permissions_enum"[]
+query: DROP TYPE "public"."organization_role_permissions_enum_old"
+query: 
+        INSERT INTO "organization_role" 
+          ("id", "name", "description", "permissions", "isGlobal")
+        VALUES 
+          (
+            '00000000-0000-0000-0000-000000000007',    
+            'Auditor', 
+            'Grants access to audit logs in the organization', 
+            ARRAY[
+              'read:audit_logs'
+            ]::organization_role_permissions_enum[],
+            TRUE
+          )
+      
+query: ALTER TABLE "organization_role_assignment" DROP CONSTRAINT "organization_role_assignment_roleId_fk"
+query: ALTER TABLE "organization_role_assignment" ADD CONSTRAINT "organization_role_assignment_roleId_fk" FOREIGN KEY ("roleId") REFERENCES "organization_role"("id") ON DELETE CASCADE ON UPDATE CASCADE
+query: ALTER TABLE "organization_role_assignment_invitation" DROP CONSTRAINT "organization_role_assignment_invitation_roleId_fk"
+query: ALTER TABLE "organization_role_assignment_invitation" ADD CONSTRAINT "organization_role_assignment_invitation_roleId_fk" FOREIGN KEY ("roleId") REFERENCES "organization_role"("id") ON DELETE CASCADE ON UPDATE CASCADE
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1751456907334,"Migration1751456907334"]
+Migration Migration1751456907334 has been executed successfully.
+query: DROP TABLE "team"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1752494676200,"Migration1752494676200"]
+Migration Migration1752494676200 has been executed successfully.
+query: ALTER TABLE "runner" ALTER COLUMN "region" TYPE varchar USING "region"::text
+query: ALTER TABLE "runner" ALTER COLUMN "region" SET DEFAULT 'us'
+query: ALTER TABLE "sandbox" ALTER COLUMN "region" TYPE varchar USING "region"::text
+query: ALTER TABLE "sandbox" ALTER COLUMN "region" SET DEFAULT 'us'
+query: ALTER TABLE "warm_pool" ALTER COLUMN "target" TYPE varchar USING "target"::text
+query: ALTER TABLE "warm_pool" ALTER COLUMN "target" SET DEFAULT 'us'
+query: DROP TYPE IF EXISTS "public"."runner_region_enum"
+query: DROP TYPE IF EXISTS "public"."sandbox_region_enum"
+query: DROP TYPE IF EXISTS "public"."warm_pool_target_enum"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1752494676205,"Migration1752494676205"]
+Migration Migration1752494676205 has been executed successfully.
+query: ALTER TABLE "warm_pool" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "warm_pool" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "runner" ALTER COLUMN "lastChecked" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "runner" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "runner" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "sandbox_usage_periods" ALTER COLUMN "startAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "sandbox_usage_periods" ALTER COLUMN "endAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "snapshot_runner" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "snapshot_runner" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "sandbox" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "sandbox" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "sandbox" ALTER COLUMN "lastActivityAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "sandbox" ALTER COLUMN "lastBackupAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "build_info" ALTER COLUMN "lastUsedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "build_info" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "build_info" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "snapshot" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "snapshot" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "docker_registry" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "docker_registry" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "volume" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "volume" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_user" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_user" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_invitation" ALTER COLUMN "expiresAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_invitation" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_invitation" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization" ALTER COLUMN "suspendedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization" ALTER COLUMN "suspendedUntil" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_role" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE
+query: ALTER TABLE "organization_role" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1752848014862,"Migration1752848014862"]
+Migration Migration1752848014862 has been executed successfully.
+query: SELECT * FROM current_schema()
+query: SELECT * FROM current_database()
+query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'runner')
+query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype" AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'runner')
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'runner'))
+query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'runner'))
+query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'runner')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'runner' AND "column_name"='class'
+query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'runner' AND "column_name"='state'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'runner_class_enum'
+query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'runner_state_enum'
+query: ALTER TABLE "runner" RENAME COLUMN "memory" TO "memoryGiB"
+query: ALTER TABLE "runner" RENAME COLUMN "disk" TO "diskGiB"
+query: ALTER TABLE "runner" ADD "currentCpuUsagePercentage" double precision NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "currentMemoryUsagePercentage" double precision NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "currentDiskUsagePercentage" double precision NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "currentAllocatedCpu" integer NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "currentAllocatedMemoryGiB" integer NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "currentAllocatedDiskGiB" integer NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "currentSnapshotCount" integer NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "availabilityScore" integer NOT NULL DEFAULT '0'
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1753100751730,"Migration1753100751730"]
+Migration Migration1753100751730 has been executed successfully.
+query: 
+      UPDATE "organization_role" 
+      SET "name" = 'Snapshots Admin', "description" = 'Grants admin access to snapshots in the organization'
+      WHERE "id" = '00000000-0000-0000-0000-000000000003'
+    
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1753100751731,"Migration1753100751731"]
+Migration Migration1753100751731 has been executed successfully.
+query: ALTER TABLE "runner" ADD "version" character varying NOT NULL DEFAULT '0'
+query: ALTER TABLE "runner" ADD "proxyUrl" character varying NOT NULL DEFAULT ''
+query: UPDATE "runner" SET "proxyUrl" = "apiUrl"
+query: INSERT INTO "migrations"("timestamp", "name") VALUES ($1, $2) -- PARAMETERS: [1753185133351,"Migration1753185133351"]
+Migration Migration1753185133351 has been executed successfully.
+query: COMMIT
+[32m[Nest] 1  - [39m08/12/2025, 1:50:05 PM [32m    LOG[39m [38;5;3m[OpenTelemetry] [39m[32mOpenTelemetry SDK initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAnalyticsModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mServeStaticModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventEmitterModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypedConfigModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypedConfigModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisCoreModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsageModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[ApiKeyStrategy] [39m[32mApiKeyStrategy constructor called[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectStorageModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDockerRegistryModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mApiKeyModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrganizationModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSandboxModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationModule dependencies initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [32mCreating default runner: localhost:3003[39m
+[33m[API] 1  - [39m08/12/2025, 1:50:07 PM [33m   WARN[39m [38;5;3m[LegacyRouteConverter] [39m[33mUnsupported route path: "/api/*". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+[33m[API] 1  - [39m08/12/2025, 1:50:07 PM [33m   WARN[39m [38;5;3m[LegacyRouteConverter] [39m[33mUnsupported route path: "/api/*". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of "path-to-regexp" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with "/users", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert...[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConfigController {/api/config}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/config, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mApiKeyController {/api/api-keys}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/api-keys, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/api-keys, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/api-keys/current, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/api-keys/:name, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/api-keys/:name, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrganizationController {/api/organizations}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/invitations, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/invitations/count, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/invitations/:invitationId/accept, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/invitations/:invitationId/decline, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/usage, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/quota, PATCH} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/leave, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/suspend, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/unsuspend, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrganizationRoleController {/api/organizations/:organizationId/roles}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/roles, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/roles, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/roles/:roleId, PUT} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/roles/:roleId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrganizationUserController {/api/organizations/:organizationId/users}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/users, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/users/:userId/role, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/users/:userId/assigned-roles, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/users/:userId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrganizationInvitationController {/api/organizations/:organizationId/invitations}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/invitations, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/invitations/:invitationId, PUT} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/invitations, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/organizations/:organizationId/invitations/:invitationId/cancel, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUserController {/api/users}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/me, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id/regenerate-key-pair, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/account-providers, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/linked-accounts, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/linked-accounts/:provider/:providerUserId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/mfa/sms/enroll, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/users/:id, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mConfigController {/api/config}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/config, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSandboxController {/api/sandbox}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/start, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/stop, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/labels, PUT} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/backup, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/public/:isPublic, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/autostop/:interval, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/autoarchive/:interval, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/autodelete/:interval, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/archive, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/ports/:port/preview-url, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sandbox/:sandboxId/build-logs, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mRunnerController {/api/runners}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/runners, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/runners, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/runners/:id/scheduling, PATCH} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/runners/by-sandbox/:sandboxId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/runners/by-snapshot-ref, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mToolboxController {/api/toolbox}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/project-dir, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/download, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/find, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/folder, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/info, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/move, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/permissions, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/replace, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/search, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/upload, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/files/bulk-upload, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/add, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/branches, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/branches, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/branches, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/clone, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/commit, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/history, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/pull, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/push, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/checkout, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/git/status, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/execute, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId/exec, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId/command/:commandId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/process/session/:sessionId/command/:commandId/logs, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/completions, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/did-close, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/did-open, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/document-symbols, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/start, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/stop, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/lsp/workspace-symbols, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/start, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/stop, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/status, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/process/:processName/status, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/process/:processName/restart, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/process/:processName/logs, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/process/:processName/errors, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/mouse/position, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/mouse/move, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/mouse/click, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/mouse/drag, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/mouse/scroll, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/keyboard/type, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/keyboard/key, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/keyboard/hotkey, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/screenshot, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/screenshot/region, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/screenshot/compressed, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/screenshot/region/compressed, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/display/info, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/toolbox/:sandboxId/toolbox/computeruse/display/windows, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSnapshotController {/api/snapshots}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/can-cleanup-image, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/:id, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/:id/toggle, PATCH} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/:id, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/:id/general, PATCH} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/:id/build-logs, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/snapshots/:id/activate, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mWorkspaceController {/api/workspace}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/start, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/stop, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/labels, PUT} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/backup, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/public/:isPublic, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/autostop/:interval, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/autoarchive/:interval, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/archive, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/ports/:port/preview-url, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/workspace/:workspaceId/build-logs, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPreviewController {/api/preview}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/preview/:sandboxId/public, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/preview/:sandboxId/validate/:authToken, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/preview/:sandboxId/access, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mVolumeController {/api/volumes}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/volumes, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/volumes, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/volumes/:volumeId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/volumes/:volumeId, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/volumes/by-name/:name, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDockerRegistryController {/api/docker-registry}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry/registry-push-access, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry/:id, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry/:id, PATCH} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry/:id, DELETE} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/docker-registry/:id/set-default, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mObjectStorageController {/api/object-storage}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/object-storage/push-access, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/audit}:[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit/organizations/:organizationId, GET} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit, POST} route[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:07 PM [32m    LOG[39m [38;5;3m[ApiKeyStrategy] [39m[32mApiKeyStrategy initialized[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32m
+=========================================
+=========================================
+Admin user created with API key: dtn_47eb5d437bc20a60aa5c10f3bf55876738f4d6d07eea08695e9ddef86efb9585
+=========================================
+=========================================[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32mInitializing default transient registry...[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32mDefault transient registry initialized successfully[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32mInitializing default internal registry...[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32mDefault internal registry initialized successfully[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32mDefault snapshot not found, creating...[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[AppService] [39m[32mDefault snapshot created successfully[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m
+[32m[API] 1  - [39m08/12/2025, 1:50:08 PM [32m    LOG[39m [32m🚀 Daytona API is running on: http://0.0.0.0:3000/api[39m
