@@ -43,6 +43,7 @@ import { TypedConfigService } from '../../config/typed-config.service'
 import { WarmPool } from '../entities/warm-pool.entity'
 import { SandboxDto } from '../dto/sandbox.dto'
 import { isValidUuid } from '../../common/utils/uuid'
+import { alwaysTrue } from '../../common/utils/lang'
 
 const DEFAULT_CPU = 1
 const DEFAULT_MEMORY = 1
@@ -163,6 +164,13 @@ export class SandboxService {
     if (sandbox.pending) {
       throw new SandboxError('Sandbox state change in progress')
     }
+
+    if (alwaysTrue()) {
+      // todo: correct backup creation
+      this.logger.log(`Skipping archive sandbox ${sandboxId}, waiting for bug fix`)
+      return
+    }
+
     sandbox.pending = true
     sandbox.desiredState = SandboxDesiredState.ARCHIVED
     await this.sandboxRepository.save(sandbox)

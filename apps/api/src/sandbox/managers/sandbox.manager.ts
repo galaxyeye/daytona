@@ -116,7 +116,8 @@ export class SandboxManager {
     }
   }
 
-  @Cron(CronExpression.EVERY_MINUTE, { name: 'auto-archive-check' })
+  // @Cron(CronExpression.EVERY_MINUTE, { name: 'auto-archive-check' })
+  @Cron(CronExpression.EVERY_YEAR, { name: 'auto-archive-check' })
   async autoArchiveCheck(): Promise<void> {
     const lockKey = 'auto-archive-check-worker-selected'
     //  lock the sync to only run one instance at a time
