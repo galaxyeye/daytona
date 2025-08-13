@@ -1,4 +1,4 @@
-# Spacedock Docker Image Build Makefile
+# Daytona Docker Image Build Makefile
 
 # Default configuration
 REGISTRY ?= docker.io
@@ -25,7 +25,7 @@ NC := \033[0m
 
 # Default target
 help: ## Show help information
-	@echo "Spacedock Docker Image Build Tool"
+	@echo "Daytona Docker Image Build Tool"
 	@echo ""
 	@echo "Usage: make [target] [variable=value]"
 	@echo ""

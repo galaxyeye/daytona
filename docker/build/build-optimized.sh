@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$HELP" = true ]; then
-    echo "🚀 spacedock Docker Build Script"
+    echo "🚀 daytona Docker Build Script"
     echo ""
     echo "Usage: $0 [options]"
     echo ""
@@ -83,7 +83,7 @@ case $CACHE_TYPE in
         cp docker/docker-compose.build.yaml docker/docker-compose.build-local-cache.yaml
         
         # Add local cache configuration (temporary)
-        sed -i '/target: spacedock/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
+        sed -i '/target: daytona/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         sed -i '/target: proxy/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         sed -i '/target: runner/a\      cache_from:\n        - type=local,src=/tmp/.buildx-cache\n      cache_to:\n        - type=local,dest=/tmp/.buildx-cache' docker/docker-compose.build-local-cache.yaml
         
@@ -111,7 +111,7 @@ echo "✅ Build completed successfully!"
 
 # Show image sizes
 echo "📊 Image sizes:"
-docker images | grep spacedock-dev | head -10
+docker images | grep daytona-dev | head -10
 
 # Show build performance information
 echo ""

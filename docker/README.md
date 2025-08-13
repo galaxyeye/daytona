@@ -1,6 +1,6 @@
-# Docker Compose Setup for Spacedock
+# Docker Compose Setup for Daytona
 
-This folder contains a Docker Compose setup for running Spacedock locally.
+This folder contains a Docker Compose setup for running Daytona locally.
 
 ⚠️ **Important**:
 
@@ -9,11 +9,11 @@ This folder contains a Docker Compose setup for running Spacedock locally.
 
 ## Overview
 
-The Docker Compose configuration includes all the necessary services to run Spacedock:
+The Docker Compose configuration includes all the necessary services to run Daytona:
 
-- **API**: Main Spacedock application server
+- **API**: Main Daytona application server
 - **Proxy**: Request proxy service
-- **Runner**: Service that hosts the Spacedock Runner
+- **Runner**: Service that hosts the Daytona Runner
 - **Database**: PostgreSQL database for data persistence
 - **Redis**: In-memory data store for caching and sessions
 - **Dex**: OIDC authentication provider
@@ -27,7 +27,7 @@ The Docker Compose configuration includes all the necessary services to run Spac
 
 ### Option 1: 标准构建 (推荐用于开发)
 
-1. Start all services (from the root of the Spacedock repo):
+1. Start all services (from the root of the Daytona repo):
 
    ```bash
    docker compose -f docker/docker-compose.yaml up -d
@@ -80,8 +80,8 @@ The Docker Compose configuration includes all the necessary services to run Spac
    ```
 
 2. Access the services:
-   - Spacedock Dashboard: http://localhost:3000
-     - Access Credentials: dev@Spacedock.io `password`
+   - Daytona Dashboard: http://localhost:3000
+     - Access Credentials: dev@Daytona.io `password`
      - Make sure that the default snapshot is active at http://localhost:3000/dashboard/snapshots
    - PgAdmin: http://localhost:5050
    - Registry UI: http://localhost:5100
@@ -126,7 +126,7 @@ docker-compose -f docker/docker-compose.build.yaml build --parallel
 
 ```bash
 # 完整优化构建
-docker build -f docker/Dockerfile . --target Spacedock
+docker build -f docker/Dockerfile . --target Daytona
 
 # 构建所有服务
 docker-compose -f docker/docker-compose.build.yaml build

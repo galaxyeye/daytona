@@ -9,7 +9,7 @@ COPY --from=golang:1.23.5-alpine /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-WORKDIR /spacedock
+WORKDIR /daytona
 
 # Copy package files first for better caching
 COPY package.json yarn.lock ./
@@ -58,26 +58,26 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     NX_DAEMON=false yarn nx run-many --target=build --projects=proxy,daemon,cli --parallel --configuration=production
 
 # Runtime stage
-FROM docker:28.2.2-dind-alpine3.22 AS spacedock
+FROM docker:28.2.2-dind-alpine3.22 AS daytona
 
 # Install only runtime dependencies
 RUN --mount=type=cache,target=/var/cache/apk \
   apk --update add nodejs=22.16.0-r2 npm bash
 RUN npm install -g corepack && corepack enable
 
-WORKDIR /spacedock
+WORKDIR /daytona
 
 # Copy only built artifacts from builder stage
-COPY --from=builder /spacedock/dist ./dist
-COPY --from=builder /spacedock/package.json ./package.json
-COPY --from=builder /spacedock/yarn.lock ./yarn.lock
-COPY --from=builder /spacedock/.yarnrc.yml ./.yarnrc.yml
-COPY --from=builder /spacedock/nx.json ./nx.json
-COPY --from=builder /spacedock/node_modules ./node_modules
+COPY --from=builder /daytona/dist ./dist
+COPY --from=builder /daytona/package.json ./package.json
+COPY --from=builder /daytona/yarn.lock ./yarn.lock
+COPY --from=builder /daytona/.yarnrc.yml ./.yarnrc.yml
+COPY --from=builder /daytona/nx.json ./nx.json
+COPY --from=builder /daytona/node_modules ./node_modules
 # Copy apps/api directory for migrations
-COPY --from=builder /spacedock/apps/api ./apps/api
+COPY --from=builder /daytona/apps/api ./apps/api
 # Copy TypeScript config files for migrations
-COPY --from=builder /spacedock/tsconfig.base.json ./tsconfig.base.json
+COPY --from=builder /daytona/tsconfig.base.json ./tsconfig.base.json
 
 RUN mkdir -p /etc/docker && echo '{"iptables": false, "ip-forward": false, "ip-masq": false, "userland-proxy": false,"insecure-registries": ["localhost:6000"]}' > /etc/docker/daemon.json
 
@@ -94,7 +94,7 @@ ENV DB_HOST=db \
     DB_PORT=5432 \
     DB_USERNAME=user \
     DB_PASSWORD=pass \
-    DB_DATABASE=spacedock
+    DB_DATABASE=daytona
 
 # Redis Configuration
 ENV REDIS_HOST=redis \
@@ -102,8 +102,8 @@ ENV REDIS_HOST=redis \
 
 # OIDC Configuration (using local dex)
 ENV OIDC_ISSUER_BASE_URL=http://localhost:5556/dex \
-    OIDC_CLIENT_ID=spacedock \
-    OIDC_AUDIENCE=spacedock \
+    OIDC_CLIENT_ID=daytona \
+    OIDC_AUDIENCE=daytona \
     OIDC_MANAGEMENT_API_ENABLED= \
     OIDC_MANAGEMENT_API_CLIENT_ID= \
     OIDC_MANAGEMENT_API_CLIENT_SECRET= \
@@ -118,11 +118,11 @@ ENV POSTHOG_API_KEY=phc_bYtEsdMDrNLydXPD4tufkBrHKgfO2zbycM30LOowYNv \
 ENV TRANSIENT_REGISTRY_URL=http://localhost:6000 \
     TRANSIENT_REGISTRY_ADMIN=admin \
     TRANSIENT_REGISTRY_PASSWORD=password \
-    TRANSIENT_REGISTRY_PROJECT_ID=spacedock \
+    TRANSIENT_REGISTRY_PROJECT_ID=daytona \
     INTERNAL_REGISTRY_URL=http://localhost:6000 \
     INTERNAL_REGISTRY_ADMIN=admin \
     INTERNAL_REGISTRY_PASSWORD=password \
-    INTERNAL_REGISTRY_PROJECT_ID=spacedock
+    INTERNAL_REGISTRY_PROJECT_ID=daytona
 
 # SMTP Configuration
 ENV SMTP_HOST=maildev \
@@ -138,7 +138,7 @@ ENV S3_ENDPOINT=http://minio:9000 \
     S3_REGION=us-east-1 \
     S3_ACCESS_KEY=minioadmin \
     S3_SECRET_KEY=minioadmin \
-    S3_DEFAULT_BUCKET=spacedock \
+    S3_DEFAULT_BUCKET=daytona \
     S3_ACCOUNT_ID=/ \
     S3_ROLE_NAME=/
 
@@ -173,14 +173,14 @@ FROM alpine:3.18 AS proxy
 
 WORKDIR /usr/local/bin
 
-COPY --from=spacedock /spacedock/dist/apps/proxy spacedock-proxy
+COPY --from=daytona /daytona/dist/apps/proxy daytona-proxy
 
-RUN chmod +x spacedock-proxy
+RUN chmod +x daytona-proxy
 
-# Spacedock API Configuration
+# Daytona API Configuration
 ENV DAYTODAY_API_URL=http://localhost:3000/api
-# Spacedock API URL for compatibility
-ENV SPACEDOCK_API_URL=http://localhost:3000/api
+# Daytona API URL for compatibility
+ENV DAYTONA_API_URL=http://localhost:3000/api
 
 # Proxy Configuration
 ENV PROXY_PORT=4000 \
@@ -189,25 +189,25 @@ ENV PROXY_PORT=4000 \
     PROXY_PROTOCOL=http
 
 # OIDC Configuration
-ENV OIDC_CLIENT_ID=spacedock \
+ENV OIDC_CLIENT_ID=daytona \
     OIDC_CLIENT_SECRET= \
     OIDC_ISSUER_BASE_URL=http://localhost:5556/dex \
     OIDC_DOMAIN=http://localhost:5556/dex \
-    OIDC_AUDIENCE=spacedock
+    OIDC_AUDIENCE=daytona
 
 # Redis Configuration
 ENV REDIS_HOST=redis \
     REDIS_PORT=6379
 
-ENTRYPOINT ["spacedock-proxy"]
+ENTRYPOINT ["daytona-proxy"]
 
 FROM docker:28.2.2-dind-alpine3.22 AS runner
 
 WORKDIR /usr/local/bin
 
-COPY --from=spacedock /spacedock/dist/apps/runner spacedock-runner
+COPY --from=daytona /daytona/dist/apps/runner daytona-runner
 
-RUN chmod +x spacedock-runner
+RUN chmod +x daytona-runner
 
 RUN mkdir -p /etc/docker && echo '{"iptables": false, "ip-forward": false, "ip-masq": false, "userland-proxy": false,"insecure-registries": ["localhost:6000"]}' > /etc/docker/daemon.json
 
@@ -219,27 +219,27 @@ ENV ENVIRONMENT=development \
 ENV API_PORT=3003 \
     API_TOKEN=secret_api_token
 
-# Spacedock Configuration
-ENV SPACEDOCK_BINARY_PATH=/workspaces/spacedock/dist/apps/daemon-amd64 \
-    LOG_FILE_PATH=/home/spacedock/runner/runner.log
+# Daytona Configuration
+ENV DAYTONA_BINARY_PATH=/workspaces/daytona/dist/apps/daemon-amd64 \
+    LOG_FILE_PATH=/home/daytona/runner/runner.log
 
 # AWS Configuration
 ENV AWS_ENDPOINT_URL=http://minio:9000 \
     AWS_REGION=us-east-1 \
     AWS_ACCESS_KEY_ID=minioadmin \
     AWS_SECRET_ACCESS_KEY=minioadmin \
-    AWS_DEFAULT_BUCKET=spacedock
+    AWS_DEFAULT_BUCKET=daytona
 
-ENTRYPOINT ["sh", "-c", "dockerd & spacedock-runner"]
+ENTRYPOINT ["sh", "-c", "dockerd & daytona-runner"]
 
 FROM node:22-alpine AS docs
 
-WORKDIR /spacedock
+WORKDIR /daytona
 
-COPY --from=spacedock /spacedock/node_modules node_modules
-COPY --from=spacedock /spacedock/dist/apps/docs dist/apps/docs
-COPY --from=spacedock /spacedock/apps/docs/server dist/apps/docs/server
+COPY --from=daytona /daytona/node_modules node_modules
+COPY --from=daytona /daytona/dist/apps/docs dist/apps/docs
+COPY --from=daytona /daytona/apps/docs/server dist/apps/docs/server
 
-WORKDIR /spacedock/dist/apps/docs
+WORKDIR /daytona/dist/apps/docs
 
 ENTRYPOINT ["sh", "-c", "node server/index.mjs"]

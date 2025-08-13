@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build and publish Docker images for the spacedock project
+# Build and publish Docker images for the daytona project
 #
 
 set -euo pipefail
@@ -50,7 +50,7 @@ log() {
 # Show help information
 show_help() {
     cat << EOF
-Build and publish Docker images for the spacedock project
+Build and publish Docker images for the daytona project
 
 Usage: $0 [options]
 
@@ -198,7 +198,7 @@ check_buildx() {
 
 # Create buildx builder
 setup_builder() {
-    local builder_name="spacedock-builder"
+    local builder_name="daytona-builder"
     
     # Check if builder already exists
     if ! docker buildx ls | grep -q "$builder_name"; then
@@ -223,18 +223,18 @@ build_service_image() {
     # Build image names (version tag and latest tag)
     local image_base
     if [[ "$REGISTRY" == "docker.io" ]]; then
-        image_base="$NAMESPACE/spacedock-$service"
+        image_base="$NAMESPACE/daytona-$service"
     else
-        image_base="$REGISTRY/$NAMESPACE/spacedock-$service"
+        image_base="$REGISTRY/$NAMESPACE/daytona-$service"
     fi
     
     local version_image="$image_base:$VERSION"
     local latest_image="$image_base:latest"
     
-    # For API service, use "spacedock" as target name
+    # For API service, use "daytona" as target name
     local target_name="$service"
     if [[ "$service" == "api" ]]; then
-        target_name="spacedock"
+        target_name="daytona"
     fi
     
     # Prepare build arguments (both version and latest tags)
@@ -311,7 +311,7 @@ main() {
         exit 1
     fi
     
-    log "INFO" "Starting to build spacedock Docker images"
+    log "INFO" "Starting to build daytona Docker images"
     log "INFO" "Registry: $REGISTRY"
     log "INFO" "Namespace: $NAMESPACE"
     log "INFO" "Version: $VERSION"
@@ -378,9 +378,9 @@ main() {
             service=$(echo "$service" | xargs)
             local image_base
             if [[ "$REGISTRY" == "docker.io" ]]; then
-                image_base="$NAMESPACE/spacedock-$service"
+                image_base="$NAMESPACE/daytona-$service"
             else
-                image_base="$REGISTRY/$NAMESPACE/spacedock-$service"
+                image_base="$REGISTRY/$NAMESPACE/daytona-$service"
             fi
             log "INFO" "  - $image_base:$VERSION"
             log "INFO" "  - $image_base:latest"

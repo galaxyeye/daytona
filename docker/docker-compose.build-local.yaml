@@ -1,20 +1,20 @@
 # Docker Compose 配置用于本地构建和测试镜像
 # 使用方法: docker-compose -f docker-compose.build-local.yaml build
 
-name: spacedock-build-local
+name: daytona-build-local
 services:
   # 主 API 服务
   api:
     build:
       context: ../../
       dockerfile: docker/Dockerfile
-      target: spacedock
+      target: daytona
       args:
         VERSION: ${VERSION:-0.0.1}
         PUBLIC_WEB_URL: ${PUBLIC_WEB_URL:-http://localhost:3000}
         PUBLIC_ALGOLIA_APP_ID: ${PUBLIC_ALGOLIA_APP_ID:-}
         PUBLIC_ALGOLIA_API_KEY: ${PUBLIC_ALGOLIA_API_KEY:-}
-    image: ${REGISTRY:-galaxyeye88}/spacedock-api:${VERSION:-0.0.1}
+    image: ${REGISTRY:-galaxyeye88}/daytona-api:${VERSION:-0.0.1}
 
   # 代理服务
   proxy:
@@ -24,7 +24,7 @@ services:
       target: proxy
       args:
         VERSION: ${VERSION:-0.0.1}
-    image: ${REGISTRY:-galaxyeye88}/spacedock-proxy:${VERSION:-0.0.1}
+    image: ${REGISTRY:-galaxyeye88}/daytona-proxy:${VERSION:-0.0.1}
     
   # 运行器服务
   runner:
@@ -34,7 +34,7 @@ services:
       target: runner
       args:
         VERSION: ${VERSION:-0.0.1}
-    image: ${REGISTRY:-galaxyeye88}/spacedock-runner:${VERSION:-0.0.1}
+    image: ${REGISTRY:-galaxyeye88}/daytona-runner:${VERSION:-0.0.1}
     
   # 文档服务
   docs:
@@ -44,4 +44,4 @@ services:
       target: docs
       args:
         VERSION: ${VERSION:-0.0.1}
-    image: ${REGISTRY:-galaxyeye88}/spacedock-docs:${VERSION:-0.0.1}
+    image: ${REGISTRY:-galaxyeye88}/daytona-docs:${VERSION:-0.0.1}

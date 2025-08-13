@@ -1,14 +1,14 @@
-name: spacedock
+name: daytona
 services:
   api:
-    image: ghcr.io/galaxyeye/spacedock-api:latest
+    image: ghcr.io/galaxyeye/daytona-api:latest
     privileged: true
     environment:
       - DAYTONA_API_URL=http://localhost:3000/api # Added for compatibility
-      - SPACEDOCK_API_URL=http://localhost:3000/api
+      - DAYTONA_API_URL=http://localhost:3000/api
       - OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
-      - OIDC_CLIENT_ID=spacedock
-      - OIDC_AUDIENCE=spacedock
+      - OIDC_CLIENT_ID=daytona
+      - OIDC_AUDIENCE=daytona
     ports:
       - 3000:3000
       - 3003:3003
@@ -23,15 +23,15 @@ services:
         condition: service_started
 
   proxy:
-    image: ghcr.io/galaxyeye/spacedock-proxy:latest
+    image: ghcr.io/galaxyeye/daytona-proxy:latest
     network_mode: service:api
     environment:
       - DAYTONA_API_URL=http://localhost:3000/api # Added for compatibility
-      - SPACEDOCK_API_URL=http://localhost:3000/api
+      - DAYTONA_API_URL=http://localhost:3000/api
       - OIDC_DOMAIN=http://localhost:5556/dex
 
   runner:
-    image: ghcr.io/galaxyeye/spacedock-runner:latest
+    image: ghcr.io/galaxyeye/daytona-runner:latest
     network_mode: service:api
     privileged: true
 
@@ -53,9 +53,9 @@ services:
     environment:
       - POSTGRES_PASSWORD=pass
       - POSTGRES_USER=user
-      - POSTGRES_DB=spacedock
+      - POSTGRES_DB=daytona
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d spacedock"]
+      test: ["CMD-SHELL", "pg_isready -U user -d daytona"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -64,7 +64,7 @@ services:
     image: dpage/pgadmin4:9.2.0
     entrypoint: ['sh', '-c', 'chmod 600 /pgpass && exec /entrypoint.sh']
     environment:
-      PGADMIN_DEFAULT_EMAIL: dev@spacedock.io
+      PGADMIN_DEFAULT_EMAIL: dev@daytona.io
       PGADMIN_DEFAULT_PASSWORD: pgadmin
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
