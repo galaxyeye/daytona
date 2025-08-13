@@ -60,8 +60,9 @@ cd docker/build
 
 # Build and push to GitHub Container Registry
 ./build.sh \
+  --platform linux/amd64 \
   --registry ghcr.io \
-  --namespace myorg \
+  --namespace galaxyeye \
   --version 0.0.1 \
   --push
 
@@ -79,7 +80,7 @@ cd docker/build
 
 # Set environment variables
 export VERSION=0.0.1
-export REGISTRY=myregistry
+export REGISTRY=ghcr.io
 
 # Build all images
 docker-compose -f docker-compose.build-local.yaml build
@@ -162,8 +163,8 @@ make github VERSION=0.0.1
 
 # Push to private registry
 make build-push \
-  REGISTRY=docker.io \
-  NAMESPACE=galaxyeye \
+  REGISTRY=your-registry \
+  NAMESPACE=your-namespace \
   VERSION=0.0.1
 ```
 
