@@ -1,11 +1,11 @@
 name: spacedock
 services:
-  api:
+  spacedock-api:
     image: ghcr.io/galaxyeye/spacedock-api:latest
     privileged: true
     environment:
-      - DAYTONA_API_URL=http://localhost:3000/api # Added for compatibility
-      - SPACEDOCK_API_URL=http://localhost:3000/api
+      - DAYTONA_API_URL=http://localhost:3000/api
+      - SPACEDOCK_API_URL=http://localhost:3000/api # Added for compatibility
       - OIDC_ISSUER_BASE_URL=http://localhost:5556/dex
       - OIDC_CLIENT_ID=spacedock
       - OIDC_AUDIENCE=spacedock
@@ -13,8 +13,8 @@ services:
       - 3000:3000
       - 3003:3003
       - 4000:4000
-      - 6000:6000
       - 5556:5556
+      - 6000:6000
       - 5100:5100
     depends_on:
       db:
@@ -22,27 +22,28 @@ services:
       redis:
         condition: service_started
 
-  proxy:
+  spacedock-proxy:
     image: ghcr.io/galaxyeye/spacedock-proxy:latest
-    network_mode: service:api
+    ports:
+      - 4000:4000
     environment:
-      - DAYTONA_API_URL=http://localhost:3000/api # Added for compatibility
-      - SPACEDOCK_API_URL=http://localhost:3000/api
-      - OIDC_DOMAIN=http://localhost:5556/dex
+      - DAYTONA_API_URL=http://spacedock-api:3000/api
+      - SPACEDOCK_API_URL=http://spacedock-api:3000/api # Added for compatibility
+      - OIDC_DOMAIN=http://spacedock-dex:5556/dex
 
-  runner:
+  spacedock-runner:
     image: ghcr.io/galaxyeye/spacedock-runner:latest
-    network_mode: service:api
     privileged: true
 
-  dex:
+  spacedock-dex:
     image: dexidp/dex:v2.42.0
+    ports:
+      - 5556:5556
     volumes:
       - ./dex/config.yaml:/etc/dex/config.yaml
     command: ['dex', 'serve', '/etc/dex/config.yaml']
-    network_mode: service:api
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5556/dex/healthz"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://spacedock-dex:5556/dex/healthz"]
       interval: 5s
       timeout: 3s
       retries: 10

@@ -60,8 +60,9 @@ cd docker/build
 
 # Build and push to GitHub Container Registry
 ./build.sh \
+  --platform linux/amd64 \
   --registry ghcr.io \
-  --namespace myorg \
+  --namespace galaxyeye \
   --version 0.0.1 \
   --push
 
@@ -79,7 +80,7 @@ cd docker/build
 
 # Set environment variables
 export VERSION=0.0.1
-export REGISTRY=myregistry
+export REGISTRY=ghcr.io
 
 # Build all images
 docker-compose -f docker-compose.build-local.yaml build
@@ -114,7 +115,7 @@ Then use the script:
 | Variable Name | Default Value | Description |
 |---------------|---------------|-------------|
 | `REGISTRY` | `docker.io` | Docker image registry address |
-| `NAMESPACE` | `daytonaio` | Image namespace |
+| `NAMESPACE` | `galaxyeye` | Image namespace |
 | `VERSION` | `latest` | Image version tag |
 | `PLATFORM` | `linux/amd64,linux/arm64` | Build platforms |
 | `SERVICES` | `api,proxy,runner,docs` | Services to build |
@@ -162,8 +163,8 @@ make github VERSION=0.0.1
 
 # Push to private registry
 make build-push \
-  REGISTRY=docker.io \
-  NAMESPACE=daytonaio \
+  REGISTRY=your-registry \
+  NAMESPACE=your-namespace \
   VERSION=0.0.1
 ```
 
