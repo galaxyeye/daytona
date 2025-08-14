@@ -1,7 +1,7 @@
 name: spacedock
 services:
   api:
-    image: ghcr.io/galaxyeye/spacedock-api:latest
+    image: galaxyeye88/spacedock-api:latest
     privileged: true
     environment:
       - DAYTONA_API_URL=http://localhost:3000/api # Added for compatibility
@@ -10,12 +10,12 @@ services:
       - OIDC_CLIENT_ID=spacedock
       - OIDC_AUDIENCE=spacedock
     ports:
-      - 3000:3000
-      - 3003:3003
-      - 4000:4000
-      - 6000:6000
-      - 5556:5556
-      - 5100:5100
+      - "3000:3000"
+      - "3003:3003"
+      - "4000:4000"
+      - "6000:6000"
+      - "5556:5556"
+      - "5100:5100"
     depends_on:
       db:
         condition: service_healthy
@@ -23,7 +23,7 @@ services:
         condition: service_started
 
   proxy:
-    image: ghcr.io/galaxyeye/spacedock-proxy:latest
+    image: galaxyeye88/spacedock-proxy:latest
     network_mode: service:api
     environment:
       - DAYTONA_API_URL=http://localhost:3000/api # Added for compatibility
@@ -31,7 +31,7 @@ services:
       - OIDC_DOMAIN=http://localhost:5556/dex
 
   runner:
-    image: ghcr.io/galaxyeye/spacedock-runner:latest
+    image: galaxyeye88/spacedock-runner:latest
     network_mode: service:api
     privileged: true
 
