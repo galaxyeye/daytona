@@ -281,7 +281,7 @@ build_service_image() {
     if [[ "$VERBOSE" == "true" ]]; then
         log "INFO" "Executing command: ${build_cmd[*]}"
     fi
-    
+
     # Execute build
     if "${build_cmd[@]}"; then
         log "INFO" "$service image build successful: $version_image and $latest_image"
@@ -362,7 +362,7 @@ main() {
     for service in "${service_list[@]}"; do
         service=$(echo "$service" | xargs) # trim whitespace
         if build_service_image "$service" "$use_buildx"; then
-            ((success_count++))
+            success_count=$((success_count + 1))
         fi
     done
     
