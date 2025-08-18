@@ -35,7 +35,7 @@ def main():
             "CHROME_CDP": "",
         },
         resources=Resources(cpu=2, memory=4, disk=5),
-        auto_stop_interval=5,
+        auto_stop_interval=60,
         auto_archive_interval=60,
     )
 
@@ -78,17 +78,28 @@ def main():
     # Wait for the sandbox to be ready
     print("Waiting for the sandbox to be ready...")
     while True:
+        sleep(1)
+        if sandbox.state == SandboxState.STARTED:
+            print("Sandbox is already ready.")
+            break
+        if sandbox.state == SandboxState.CREATING:
+            print("Sandbox is starting ...")
+            continue
         if sandbox.state == SandboxState.STOPPED:
             print("Sandbox is stopped, starting it...")
             sandbox.start()
             sandbox = daytona.get(sandbox.id)
             print("Sandbox started.")
-        if not sandbox.state or sandbox.state != SandboxState.STARTED:
-            print("Sandbox is not ready, waiting... | State: ", sandbox.state)
-            sleep(1000)
+        if sandbox.state == SandboxState.ARCHIVED:
+            print("Sandbox is archived, unarchiving it...")
+            sandbox.unarchive()
+            sandbox = daytona.get(sandbox.id)
+            print("Sandbox unarchived.")
         else:
-            print("Sandbox is already ready.")
-            break
+            print("Sandbox is not available, exiting...")
+            # delete the file
+            os.remove(sandbox_id_file)
+            return
 
     # Run the code securely inside the sandbox
     response = sandbox.process.code_run('print("Hello World!")')
